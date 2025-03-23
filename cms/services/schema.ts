@@ -1,6 +1,6 @@
 import useSWR from "swr";
 import {fullCmsApiUrl } from "../configs";
-import {decodeError, fetcher, swrConfig} from "../../api-util.ts/util";
+import {decodeError, fetcher, swrConfig} from "../../utils/apiUtils";
 import { XEntity } from "../types/xEntity";
 
 export function useSchema (schemaName:string){

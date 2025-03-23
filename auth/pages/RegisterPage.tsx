@@ -8,10 +8,11 @@ import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import {register} from "../services/auth";
-import {configs} from "../../../../src/config";
 import {LoginRoute} from "../AccountRouter";
 
-export const RegisterPage: React.FC = () => {
+export const RegisterPage = (
+    {baseRouter}:{baseRouter:string}
+) => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
@@ -57,7 +58,7 @@ export const RegisterPage: React.FC = () => {
                     {success ? (
                         <div className="p-field">
                             <span className="p-message ">
-                                Registration succeeded. <Link to={`${configs.authBaseRouter}${LoginRoute}`}>Click here to go to login</Link>
+                                Registration succeeded. <Link to={`${baseRouter}${LoginRoute}`}>Click here to go to login</Link>
                             </span>
                         </div>
                     ) : (<>
@@ -94,7 +95,7 @@ export const RegisterPage: React.FC = () => {
                             className="p-mt-2"
                         />
                         <div className="p-mt-3">
-                            <Link to={`${configs.authBaseRouter}${LoginRoute}`}>Already have an account? Login</Link>
+                            <Link to={`${baseRouter}${LoginRoute}`}>Already have an account? Login</Link>
                         </div>
                     </>)
                     }

@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import { XEntity } from "../types/xEntity";
 import { fullCmsApiUrl } from "../configs";
-import {catchResponse, decodeError, fetcher, swrConfig } from "../../api-util.ts/util";
+import {catchResponse, decodeError, fetcher, swrConfig } from "../../utils/apiUtils";
 import { ListResponse } from "../types/listResponse";
 import axios from "axios";
 

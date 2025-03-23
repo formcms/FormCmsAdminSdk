@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import {fullCmsApiUrl} from "../configs";
 import axios from "axios";
-import {catchResponse, decodeError, fetcher, swrConfig} from "../../api-util.ts/util";
+import {catchResponse, decodeError, fetcher, swrConfig} from "../../utils/apiUtils";
 import { LookupListResponse } from "../types/lookupListResponse";
 import { ListResponse } from "../types/listResponse";
 

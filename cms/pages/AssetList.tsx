@@ -62,8 +62,8 @@ export function AssetList(
     }
 
     const onEdit = (rowData: any) => {
-        var id = rowData[schema.primaryKey];
-        const url = `${baseRouter}/${id}?ref=${encodeURIComponent(window.location.href)}`;
+        const id = rowData[schema.primaryKey];
+        const url = `${baseRouter}/${schema.name}/${id}?ref=${encodeURIComponent(window.location.href)}`;
         navigate(url);
     }
     const canDelete = (rowData: any) => {

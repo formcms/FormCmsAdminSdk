@@ -1,6 +1,6 @@
 import axios from "axios";
 import useSWR from "swr";
-import {catchResponse, fetcher, swrConfig} from "../../api-util.ts/util";
+import {catchResponse, fetcher, swrConfig} from "../../utils/apiUtils";
 import {fullAuthApiUrl} from "../configs";
 import { UserAccess } from "../types/userAccess";
 import { ProfileDto } from "../types/profileDto";

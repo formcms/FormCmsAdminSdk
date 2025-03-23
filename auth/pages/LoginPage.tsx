@@ -8,10 +8,11 @@ import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import {Link, useLocation} from "react-router-dom";
 import {login, useUserInfo} from "../services/auth";
-import {configs} from "../../../../src/config";
 import {RegisterRoute} from "../AccountRouter";
 
-export  const LoginPage: React.FC = () => {
+export  const LoginPage= (
+    {baseRouter}:{baseRouter:string}
+) => {
     const location = useLocation();
     const ref = new URLSearchParams(location.search).get("ref");
 
@@ -79,7 +80,7 @@ export  const LoginPage: React.FC = () => {
                     <div className="p-field">&nbsp;</div>
 
                     <div className="p-mt-3">
-                        <Link to={`${configs.authBaseRouter}${RegisterRoute}`}>Don't have an account? Register</Link>
+                        <Link to={`${baseRouter}${RegisterRoute}`}>Don't have an account? Register</Link>
                     </div>
                 </div>
             </Card>

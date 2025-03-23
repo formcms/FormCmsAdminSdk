@@ -1,6 +1,6 @@
 import useSWR from "swr";
 
-import {fetcher, swrConfig} from "../../api-util.ts/util";
+import {fetcher, swrConfig} from "../../utils/apiUtils";
 import { Menu,MenuItem } from "../types/menu";
 import { fullAuthApiUrl } from "../configs";
 

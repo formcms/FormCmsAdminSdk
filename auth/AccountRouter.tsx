@@ -5,8 +5,6 @@ import {RoleListPage} from "./pages/RoleListPage";
 import {RoleDetailPage} from "./pages/RoleDetailPage";
 import {ChangePasswordPage} from "./pages/ChangePasswordPage";
 import React from "react";
-import {LoginPage} from "./pages/LoginPage";
-import {RegisterPage} from "./pages/RegisterPage";
 
 export const LoginRoute= "/login";
 export const RegisterRoute= "/register";
@@ -22,13 +20,5 @@ export function AccountRouter({baseRouter}:{baseRouter:string}) {
         <Route path={RoleRoute} element={<RoleListPage/>}/>
         <Route path={`${RoleRoute}/:name`} element={<RoleDetailPage baseRouter={baseRouter}/>}/>
         <Route path={ChangePasswordRoute} element={<ChangePasswordPage/>}/>
-    </Routes>
-}
-
-export function NotLoginAccountRouter() {
-    return <Routes>
-        <Route path={`${LoginRoute}`} element={<LoginPage/>}/>
-        <Route path={`${RegisterRoute}`} element={<RegisterPage/>}/>
-        <Route path={`/`} element={<LoginPage/>}/>
     </Routes>
 }

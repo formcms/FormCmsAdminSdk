@@ -1,6 +1,6 @@
 import useSWR from "swr";
 import { fullAuditLogUrl } from "../config";
-import {decodeError, fetcher, swrConfig} from "../../api-util.ts/util";
+import {decodeError, fetcher, swrConfig} from "../../utils/apiUtils";
 import { XEntity } from "../types/xEntity";
 import { ListResponse } from "../types/listResponse";
 import { AuditLog } from "../types/auditLog";
