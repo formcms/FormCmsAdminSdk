@@ -1,11 +1,21 @@
 import {Route, Routes} from "react-router-dom";
-import {LoginPage} from "./pages/LoginPage";
-import {RegisterPage} from "./pages/RegisterPage";
 import React from "react";
 import {LoginRoute, RegisterRoute} from "./AccountRouter";
 
+export interface BaseRouterProps {
+    baseRouter:string;
+}
+interface AuthRouterProps {
+    baseRouter: string;
+    LoginPage: React.FC<BaseRouterProps>;
+    RegisterPage: React.FC<BaseRouterProps>;
+}
 export function AuthRouter(
-    {baseRouter}:{baseRouter:string}
+    {
+        baseRouter,
+        LoginPage,
+        RegisterPage,
+    }:AuthRouterProps
 ) {
     return <Routes>
         <Route path={`${LoginRoute}`} element={<LoginPage baseRouter={baseRouter}/>}/>

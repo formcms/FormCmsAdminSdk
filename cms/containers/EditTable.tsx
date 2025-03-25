@@ -1,8 +1,6 @@
 import {Button} from "primereact/button";
-import {useDialogState} from "../../components/dialogs/useDialogState";
 import {useEditTable} from "./useEditTable";
 import {addCollectionItem, useCollectionData} from "../services/entity";
-import {SaveDialog} from "../../components/dialogs/SaveDialog";
 import {ItemForm} from "./ItemForm";
 import {EditDataTable} from "../../components/data/EditDataTable";
 import {XAttr, XEntity} from "../types/xEntity";
@@ -12,6 +10,8 @@ import {createColumn} from "../../components/data/columns/createColumn";
 import {getFileUploadURL} from "../services/asset";
 import {useCheckError} from "../../components/useCheckError";
 import {useNavigate} from "react-router-dom";
+import {useState} from "react";
+import {Dialog} from "primereact/dialog";
 
 
 export function EditTable(
@@ -38,10 +38,9 @@ export function EditTable(
 
     const formId = "edit-table" + column.field;
 
-    //conponent
     const navigate = useNavigate();
     const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError();
-    const {visible, showDialog, hideDialog} = useDialogState()
+    const [visible, setVisible] = useState(false);
 
     function onEdit(rowData: any) {
         var id = rowData[targetSchema!.primaryKey];
@@ -53,24 +52,30 @@ export function EditTable(
         const {error} = await addCollectionItem(schema.name, id, column.field, formData)
         await handleErrorOrSuccess(error, "submit success", () => {
             mutate();
-            hideDialog();
+            setVisible(false);
         });
     }
 
+    const footer = <>
+            <Button label="Cancel" icon="pi pi-times" outlined onClick={()=>setVisible(false)}/>
+            <Button label="Save" icon="pi pi-check" type="submit" form={formId}/>
+        </>
     return <div className={'card col-12'}>
         <label id={column.field} className="font-bold">
             {column.header}
         </label><br/>
-        <Button outlined label={'Add ' + column.header} onClick={showDialog} size="small"/>
+        <Button outlined label={'Add ' + column.header} onClick={()=>setVisible(true)} size="small"/>
         {' '}
         <EditDataTable dataKey={schema.primaryKey} 
                        columns={tableColumns} 
                        data={collectionData}
                        stateManager={stateManager}/>
-        <SaveDialog
-            formId={formId}
+        <Dialog
+            maximizable
             visible={visible}
-            handleHide={hideDialog}
+            onHide={()=>setVisible(false)}
+            modal className="p-fluid"
+            footer={footer}
             header={'Add ' + column.header}>
             <>
                 <CheckErrorStatus/>
@@ -83,6 +88,6 @@ export function EditTable(
                     getFullAssetsURL={getFullAssetsURL}
                     onSubmit={onSubmit}/>
             </>
-        </SaveDialog>
+        </Dialog>
     </div>
 }

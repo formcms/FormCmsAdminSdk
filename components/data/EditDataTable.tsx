@@ -1,8 +1,8 @@
 import {DataTable} from "primereact/datatable";
 import {ListResponse} from "../../cms/types/listResponse";
 import {Column} from "primereact/column";
-import {useNavigate} from "react-router-dom";
 import { Button } from "primereact/button";
+import React from "react";
 
 export function EditDataTable(
     {

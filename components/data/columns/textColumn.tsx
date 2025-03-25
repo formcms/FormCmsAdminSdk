@@ -9,7 +9,7 @@ export function textColumn(
 ) {
     
     const bodyTemplate = (item: any) => {
-        var val = item;
+        let val = item;
         for(const f of field.split('.')){
             if (!val) break;
             val = val[f]

@@ -3,13 +3,13 @@ import {Button} from "primereact/button";
 import {useCheckError} from "../../components/useCheckError";
 import {useConfirm} from "../../components/useConfirm";
 import {usePicklist} from "./usePicklist";
-import {useDialogState} from "../../components/dialogs/useDialogState";
 import {SelectDataTable} from "../../components/data/SelectDataTable";
-import {SaveDialog} from "../../components/dialogs/SaveDialog";
 import { XAttr, XEntity } from "../types/xEntity";
 import { useDataTableStateManager } from "../../components/data/useDataTableStateManager";
 import { encodeDataTableState } from "../../components/data/dataTableStateUtil";
 import { createColumn } from "../../components/data/columns/createColumn";
+import {useState} from "react";
+import {Dialog} from "primereact/dialog";
 
 export function Picklist({column, data, schema, getFullAssetsURL}: {
     data: any,
@@ -17,7 +17,7 @@ export function Picklist({column, data, schema, getFullAssetsURL}: {
     schema: XEntity,
     getFullAssetsURL : (arg:string) =>string
 }) {
-    const {visible, showDialog, hideDialog} = useDialogState()
+    const [visible, setVisible] = useState(false);
     const {
         id, listColumns,
         existingItems, setExistingItems,
@@ -47,20 +47,27 @@ export function Picklist({column, data, schema, getFullAssetsURL}: {
 
     const handleSave = async () => {
         const {error} = await saveJunctionItems(schema.name, id, column.field, toAddItems)
-        handleErrorOrSuccess(error, 'Save success', ()=> {
+        await handleErrorOrSuccess(error, 'Save success', () => {
             mutateDate()
-            hideDialog()
+            setVisible(false)
         })
     }
 
     const onDelete = async () => {
         confirm('Do you want to delete these item?', async () => {
             const {error} = await deleteJunctionItems(schema.name, id, column.field, existingItems)
-            handleErrorOrSuccess(error, 'Delete Succeed', ()=> {
+            await handleErrorOrSuccess(error, 'Delete Succeed', () => {
                 mutateDate()
             })
         })
     }
+
+    const footer = (
+        <>
+            <Button label="Cancel" icon="pi pi-times" outlined onClick={()=>setVisible(false)}/>
+            <Button label="Save" icon="pi pi-check" onClick={handleSave}/>
+        </>
+    );
 
     return <div className={'card col-12'}>
         <label id={column.field} className="font-bold">
@@ -68,7 +75,7 @@ export function Picklist({column, data, schema, getFullAssetsURL}: {
         </label><br/>
         <CheckErrorStatus/>
         <Confirm/>
-        <Button outlined label={'Select ' + column.header} onClick={showDialog} size="small"/>
+        <Button outlined label={'Select ' + column.header} onClick={()=>setVisible(true)} size="small"/>
         {' '}
         <Button type={'button'} label={"Delete "} severity="danger" onClick={onDelete} outlined size="small"/>
         <SelectDataTable
@@ -79,10 +86,11 @@ export function Picklist({column, data, schema, getFullAssetsURL}: {
             setSelectedItems={setExistingItems}
             stateManager={existingStateManager}
         />
-        <SaveDialog
+        <Dialog
+            modal className="p-fluid"
             visible={visible}
-            handleHide={hideDialog}
-            handleSave={handleSave}
+            onHide={()=>setVisible(false)}
+            footer={footer}
             header={'Select ' + column.header}>
             <SelectDataTable
                 selectionMode={'multiple'}
@@ -93,6 +101,6 @@ export function Picklist({column, data, schema, getFullAssetsURL}: {
                 selectedItems={toAddItems}
                 setSelectedItems={setToAddItems}
             />
-        </SaveDialog>
+        </Dialog>
     </div>
 }

@@ -12,24 +12,15 @@ import {useCheckError} from "../../components/useCheckError";
 import {useLocation, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {GalleryView} from "../../components/data/GalleryView";
-import {SelectButton, SelectButtonChangeEvent} from "primereact/selectbutton";
 
 enum DisplayMode {
     'List' = 'List',
     'Gallery' = 'Gallery',
 }
 
-const displayModes: DisplayMode[] = [DisplayMode.List, DisplayMode.Gallery];
+export const displayModes: DisplayMode[] = [DisplayMode.List, DisplayMode.Gallery];
 
-export function AssetList(
-    {
-        baseRouter,
-        schema
-    }: {
-        baseRouter: string,
-        schema: XEntity
-    }
-) {
+export function useAssetList( baseRouter: string, schema: XEntity) {
     //entrance
     const location = useLocation();
     const initDisplayMode = new URLSearchParams(location.search).get("displayMode");
@@ -76,46 +67,40 @@ export function AssetList(
             await handleErrorOrSuccess(error, 'Delete Succeed', mutate);
         })
     }
+    return {displayMode, setDisplayMode,AssetListPageMain}
+    function AssetListPageMain() {
+        return <>
+            <CheckErrorStatus key={'AssetList'}/>
+            <FetchingStatus isLoading={isLoading} error={error}/>
+            <div className="card">
+                {data && columns && displayMode === DisplayMode.List &&
+                    <EditDataTable
+                        dataKey={schema.primaryKey}
+                        columns={tableColumns()}
+                        data={data}
+                        stateManager={stateManager}
+                        canDelete={canDelete}
+                        onDelete={onDelete}
+                        onEdit={onEdit}
+                    />
+                }
+                {
+                    data && columns && displayMode === DisplayMode.Gallery &&
+                    <GalleryView
+                        onSelect={onEdit}
+                        state={stateManager.state}
+                        onPage={stateManager.handlers.onPage}
+                        data={data}
+                        getAssetUrl={getCmsAssetUrl}
 
-    return <>
-        <FetchingStatus isLoading={isLoading} error={error}/>
-        <CheckErrorStatus key={'AssetList'}/>
-        <h2>{schema?.displayName} list</h2>
-        <div className="flex gap-5 justify-between">
-            <SelectButton
-                value={displayMode}
-                onChange={(e: SelectButtonChangeEvent) => setDisplayMode(e.value)}
-                options={displayModes}
-            />
-        </div>
-        <div className="card">
-            {data && columns && displayMode === DisplayMode.List &&
-                <EditDataTable
-                    dataKey={schema.primaryKey}
-                    columns={tableColumns()}
-                    data={data}
-                    stateManager={stateManager}
-                    canDelete={canDelete}
-                    onDelete={onDelete}
-                    onEdit={onEdit}
-                />
-            }
-            {
-                data && columns && displayMode === DisplayMode.Gallery &&
-                <GalleryView
-                    onSelect={onEdit}
-                    state={stateManager.state}
-                    onPage={stateManager.handlers.onPage}
-                    data={data}
-                    getAssetUrl={getCmsAssetUrl}
-
-                    pathField={AssetField('path')}
-                    nameField={AssetField('name')}
-                    titleField={AssetField('title')}
-                    typeField={AssetField('type')}
-                />
-            }
-        </div>
-        <Confirm/>
-    </>
+                        pathField={AssetField('path')}
+                        nameField={AssetField('name')}
+                        titleField={AssetField('title')}
+                        typeField={AssetField('type')}
+                    />
+                }
+            </div>
+            <Confirm/>
+        </>
+    }
 }

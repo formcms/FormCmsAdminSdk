@@ -29,7 +29,7 @@ type AssetSelectorProps = {
 export function AssetSelector(
     props: AssetSelectorProps
 ) {
-    var {data: assetEntity} = useAssetEntity();
+    const {data: assetEntity} = useAssetEntity();
     return assetEntity ?
         <AssetSelectorComponent schema={assetEntity} {...props} /> : <></>
 }

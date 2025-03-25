@@ -11,7 +11,7 @@ import {XEntity} from "../types/xEntity";
 import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
 
-export function AuditLogList({baseRouter, schema}: { baseRouter: string, schema: XEntity }) {
+export function useAuditLogListPage(baseRouter: string, schema: XEntity) {
     //entrance
     const initQs = location.search.replace("?", "");
 
@@ -28,23 +28,26 @@ export function AuditLogList({baseRouter, schema}: { baseRouter: string, schema:
     //referencing
     const navigate = useNavigate();
 
+    return {AuditLogListPageMain}
+
     function onEdit(rowData: any) {
         const url = `${baseRouter}/${schema.name}/${rowData[schema.primaryKey]}?ref=${encodeURIComponent(window.location.href)}`;
         navigate(url);
     }
 
-    return <>
-        <FetchingStatus isLoading={isLoading} error={error}/>
-        <h2>{schema?.displayName} list</h2>
-        {data && columns && (
-            <div className="card">
-                <EditDataTable
-                    dataKey={schema.primaryKey}
-                    columns={tableColumns}
-                    data={data}
-                    stateManager={stateManager}
-                    onView={onEdit}/>
-            </div>
-        )}
-    </>
+    function AuditLogListPageMain() {
+        return <>
+            <FetchingStatus isLoading={isLoading} error={error}/>
+            {data && columns && (
+                <div className="card">
+                    <EditDataTable
+                        dataKey={schema.primaryKey}
+                        columns={tableColumns}
+                        data={data}
+                        stateManager={stateManager}
+                        onView={onEdit}/>
+                </div>
+            )}
+        </>
+    }
 }

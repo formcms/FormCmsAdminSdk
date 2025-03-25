@@ -11,12 +11,10 @@ import { useCheckError } from "../../components/useCheckError";
 import { Column } from "primereact/column";
 import { SystemTask } from "../types/systemTask";
 import { FileUpload } from "primereact/fileupload";
-import { useDialogState } from "../../components/dialogs/useDialogState";
 import { Dialog } from "primereact/dialog";
+import {useState} from "react";
 
-
-
-export function TaskList({schema}:{schema:XEntity}){
+export function useTaskListPage({schema}:{schema:XEntity}){
     //data
     const columns = schema?.attributes?.filter(column => column.inList) ?? [];
     const stateManager = useDataTableStateManager(schema.primaryKey,schema.defaultPageSize, columns,undefined )
@@ -24,7 +22,7 @@ export function TaskList({schema}:{schema:XEntity}){
     const tableColumns = columns.map(x=>createColumn(x));
     
     //state
-    const {visible, showDialog, hideDialog} = useDialogState()
+    const [visible, setVisible] = useState(false)
 
     //error
     const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError();
@@ -38,13 +36,13 @@ export function TaskList({schema}:{schema:XEntity}){
         await handleErrorOrSuccess(error, 'Task added!', mutate);
     }
     
-    function onAddImportTaskUpload(){
-        mutate();
-        hideDialog();
+    async function onAddImportTaskUpload(){
+        await mutate();
+        setVisible(false);
     }
     
     async function handleAddImportTask(){
-        showDialog();
+        setVisible(true)
     }
     
     async function handleArchiveExportTask(id:number){
@@ -65,21 +63,31 @@ export function TaskList({schema}:{schema:XEntity}){
     tableColumns.push(
         <Column key={'action'} body={actionBodyTemplate} exportable={false} style={{minWidth: '12rem'}}></Column>
     )
-    
-    return <>
-        <FetchingStatus isLoading={isLoading} error={error}/>
-        <h2>{schema?.displayName} list</h2>
-        <Button onClick={handleAddExportTask}>Add Export Task</Button>{' '}
-        <Button onClick={handleAddImportTask}>Add Import Task</Button>{' '}
-        <Button onClick={handleImportDemoData}>Import Demo Data</Button>
-        <CheckErrorStatus/>
-        <div className="card">
-            {data && columns &&<EditDataTable dataKey={schema.primaryKey} columns={tableColumns} data={data} stateManager={stateManager}/>}
-        </div>
-        <Dialog visible={visible} 
-                header={'Select a file to upload'} modal className="p-fluid" 
-                onHide={hideDialog}>
-            <FileUpload withCredentials mode={"basic"} auto url={getAddImportTaskUploadUrl()}  name={'files'} onUpload={onAddImportTaskUpload}/>
-        </Dialog>
-    </>
+
+    function TaskListMain() {
+        return <>
+            <FetchingStatus isLoading={isLoading} error={error}/>
+            <div className="card">
+                {
+                    data && columns && <EditDataTable
+                        dataKey={schema.primaryKey}
+                        columns={tableColumns}
+                        data={data}
+                        stateManager={stateManager}/>
+                }
+            </div>
+                 <Dialog visible={visible}
+                         header={'Select a file to upload'} modal className="p-fluid"
+                         onHide={()=>setVisible(false)}>
+                     <FileUpload withCredentials mode={"basic"} auto url={getAddImportTaskUploadUrl()}  name={'files'} onUpload={onAddImportTaskUpload}/>
+                 </Dialog>
+        </>
+    }
+    return {
+        handleAddExportTask,
+        handleAddImportTask,
+        handleImportDemoData,
+        TaskListMain,
+        CheckErrorStatus,
+    }
 }

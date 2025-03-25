@@ -5,7 +5,6 @@ import {useForm} from "react-hook-form";
 import {createInput} from "../containers/createInput";
 import {Button} from "primereact/button";
 import {FetchingStatus} from "../../components/FetchingStatus";
-import {FileUpload} from "primereact/fileupload";
 import {Image} from 'primereact/image';
 import {AssetField, AssetLinkField} from "../types/assetUtils";
 import {useState} from "react";
@@ -17,18 +16,10 @@ import {ArrayToObject} from "../../components/inputs/DictionaryInputUtils";
 import { useConfirm } from "../../components/useConfirm";
 import { formatFileSize } from "../../components/formatter";
 
-export function AssetEdit(
-    {
-        baseRouter,
-        schema,
-    }: {
-        baseRouter: string;
-        schema: XEntity,
-    }
-) {
+export function useAssetEditPage( baseRouter: string, schema: XEntity) {
     //entrance
     const {id} = useParams()
-    const referingUrl = new URLSearchParams(location.search).get("ref");
+    const refUrl = new URLSearchParams(location.search).get("ref");
 
     // data
     const {data, isLoading, error, mutate} = useSingleAsset(id);
@@ -43,10 +34,8 @@ export function AssetEdit(
     const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError();
     const {confirm, Confirm} = useConfirm("dataItemPage" + schema.name);
 
-    function getFormId(){
-        return "AssetEdit" + schema.name;
+    const formId = "AssetEdit" + schema.name;
         
-    }
     function actionBodyTemplate (rowData: AssetLink) {
         return (<Button icon="pi pi-eye" rounded outlined className="mr-2"
                         onClick={() => navigate(`${baseRouter}/${rowData.entityName}/${rowData.recordId}`)}/>);
@@ -83,91 +72,69 @@ export function AssetEdit(
         }
     }
 
-    async function onDelete ()  {
+    async function handleDelete ()  {
         data && confirm('Do you want to delete this item?', async () => {
             const {error} = await deleteAsset(data.id);
             await handleErrorOrSuccess(error, 'Delete Succeed', () => {
-                window.location.href = referingUrl ?? `${baseRouter}/${schema.name}`
+                window.location.href = refUrl ?? `${baseRouter}/${schema.name}`
             });
         })
     }
 
-    return <>
-        <FetchingStatus isLoading={isLoading} error={error}/>
-        <CheckErrorStatus/>
-        <Confirm/>
-
-        <br/>
-        {data?.type?.startsWith("image") &&
+    function FeaturedImage() {
+        return data?.type?.startsWith("image") &&
             <div className="card flex justify-content-start">
                 <Image src={getCmsAssetUrl(data.path + `?version=${version}`)}
                        indicatorIcon={<i className="pi pi-search"></i>} alt="Image" preview width="400"/>
             </div>
-        }
-        <br/>
-        {data &&<>
-            <div className="mt-2 flex gap-4">
-                <label className="block font-bold">File Name:</label>
-                <label>{data.name}</label>
+    }
 
-                <label className="block font-bold">Type:</label>
-                <label className="block">{data.type}</label>
+    function FileInfo() {
+        return data && <div className="mt-2 flex gap-4">
+            <label className="block font-bold">File Name:</label>
+            <label>{data.name}</label>
 
-                <label className="block font-bold">Size:</label>
-                <label>{formatFileSize(data.size)}</label>
+            <label className="block font-bold">Type:</label>
+            <label className="block">{data.type}</label>
 
-            </div>
-            <br/>
-            <div style={{display: "flex", gap: "10px", alignItems: "center"}}>
-                <Button
-                    label="Download"
-                    icon="pi pi-download"
-                    onClick={handleDownload}
-                    className="p-button-secondary"
-                />
-                <FileUpload
-                    withCredentials
-                    mode={"basic"}
-                    auto
-                    url={getAssetReplaceUrl(data.id)}
-                    onUpload={() => {
-                        setVersion(x => x + 1);
-                        mutate();
-                    }}
-                    chooseLabel="Replace file"
-                    name={'files'}
-                />
-                <Button
-                    label={'Save Metadata'}
-                    type="submit"
-                    form={getFormId()}
-                    icon="pi pi-check"/>
-                <Button
-                    label={'Delete'}
-                    type="button"
-                    onClick={onDelete}
-                    className="p-button-danger"
-                    icon="pi pi-remove"/>
-            </div>
-            <form onSubmit={handleSubmit(onSubmit)} id={getFormId()}>
+            <label className="block font-bold">Size:</label>
+            <label>{formatFileSize(data.size)}</label>
+
+        </div>
+    }
+    function handleUpload(){
+        setVersion(x => x + 1);
+        mutate();
+    }
+    const replaceAssetUrl = getAssetReplaceUrl(data?.id??0);
+    function MetaDataForm(){
+        return data && <>
+            <FetchingStatus isLoading={isLoading} error={error}/>
+            <CheckErrorStatus/>
+            <Confirm/>
+            <form onSubmit={handleSubmit(onSubmit)} id={formId}>
                 <div className="formgrid grid">
                     {
                         GetColumns().map(column => createInput(
-                            {
-                                data,
-                                column,
-                                register,
-                                control,
-                                id: column.field,
-                                getFullAssetsURL: getCmsAssetUrl,
-                                uploadUrl: ''
-                            },
-                            'col-4' 
+                                {
+                                    data,
+                                    column,
+                                    register,
+                                    control,
+                                    id: column.field,
+                                    getFullAssetsURL: getCmsAssetUrl,
+                                    uploadUrl: ''
+                                },
+                                'col-4'
                             )
                         )
                     }
                 </div>
             </form>
+        </>
+    }
+    function AssetLinkTable() {
+        return data && <>
             {data.links && <h3>Used By:</h3>}
             {data.links && <DataTable value={data.links} tableStyle={{minWidth: '50rem'}}>
                 <Column field={AssetLinkField('entityName')} header={'Entity Name'}></Column>
@@ -176,6 +143,9 @@ export function AssetEdit(
                 <Column body={actionBodyTemplate} style={{minWidth: '12rem'}}></Column>
             </DataTable>}
         </>
-        }
-    </>
+    }
+    return {formId, replaceAssetUrl,
+        handleDownload, handleUpload, handleDelete,
+        FeaturedImage, AssetLinkTable, MetaDataForm, FileInfo,
+    }
 }

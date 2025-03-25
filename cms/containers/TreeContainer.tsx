@@ -5,8 +5,8 @@ import {deleteJunctionItems, saveJunctionItems, useJunctionIds} from "../service
 import {useEffect, useState } from "react";
 
 function getSelectionKeys(nodes:any[], selectedKeys:any[]) {
-    var ret:any = {}
-    var root = {key:undefined,children:nodes};
+    let ret: any = {};
+    let root = {key: undefined, children: nodes};
     wfs(root);
     function wfs(current:any){
         const currentChecked = selectedKeys.includes(current.key);
@@ -31,7 +31,7 @@ function getSelectionKeys(nodes:any[], selectedKeys:any[]) {
 }
 
 function getAdded(testingKeys: TreeCheckboxSelectionKeys, basedKeys :TreeCheckboxSelectionKeys) {
-    var ret:any[] = [];
+    let ret: any[] = [];
     Object.keys(testingKeys).forEach(testingKey => {
         if (!basedKeys[testingKey]) {
             ret.push(testingKey);
@@ -49,8 +49,8 @@ export function TreeContainer(
 
     const [expandedKeys, setExpandedKeys] = useState<any>();
     const [selectionKeys, setSelectionKeys] = useState<any>();
-    
-    var targetEntity = column.junction!
+
+    const targetEntity = column.junction!;
     const sourceId = data[entity.primaryKey];
     
     const nodes = useTree(targetEntity);

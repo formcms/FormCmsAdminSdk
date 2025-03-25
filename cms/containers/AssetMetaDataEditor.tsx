@@ -1,8 +1,7 @@
 import { Dialog } from "primereact/dialog";
-import { XEntity } from "../types/xEntity";
 import { ArrayToObject } from "../../components/inputs/DictionaryInputUtils";
 import { AssetField } from "../types/assetUtils";
-import {updateAssetMeta, useAssetEntity, useGetCmsAssetsUrl, useSingleAssetByPath } from "../services/asset";
+import {updateAssetMeta, useAssetEntity, useGetCmsAssetsUrl, useSingleAssetByPath} from "../services/asset";
 import { FetchingStatus } from "../../components/FetchingStatus";
 import { useCheckError } from "../../components/useCheckError";
 import { useForm } from "react-hook-form";
@@ -11,40 +10,24 @@ import { Button } from "primereact/button";
 import {Image} from 'primereact/image';
 import { formatFileSize } from "../../components/formatter";
 
-type AssetMetaDataDialogProps = {
-    path: string,
-    show: boolean;
-    setShow: (show: boolean) => void;
-}
-
 export function AssetMetadataEditor(
-    props: AssetMetaDataDialogProps
-) {
-    var {data: assetEntity} = useAssetEntity();
-    return assetEntity 
-        ? <AssetMetadataEditorComponent schema={assetEntity} {...props} /> 
-        : <></>
-}
-
-export function AssetMetadataEditorComponent(
     {
         path,
         show,
         setShow,
-        schema,
-
-    }: AssetMetaDataDialogProps & {schema: XEntity}
+    }: {
+        path: string,
+        show: boolean;
+        setShow: (show: boolean) => void;
+    }
 ) {
-    const formId = "AssetMetaDataDialog" + schema.name
+    //entrance
+    const {data: schema} = useAssetEntity();
+
+    const formId = "AssetMetaDataDialog" + schema?.name
     const getCmsAssetUrl = useGetCmsAssetsUrl();
 
-    const {
-        register,
-        handleSubmit,
-        control,
-        reset,
-        
-    } = useForm()
+    const { register, handleSubmit, control, reset} = useForm()
 
     const {data, isLoading, error} = useSingleAssetByPath(show ? path: null);
     const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError();
@@ -54,11 +37,11 @@ export function AssetMetadataEditorComponent(
         setShow(false);
     }
     const onSubmit = async (formData: any) => {
-        var payload = {
+        const payload = {
             ...formData,
             metadata: ArrayToObject(formData[AssetField('metadata')]),
-            id:data?.id,
-        }
+            id: data?.id,
+        };
         const {error} = await updateAssetMeta(payload)
         await handleErrorOrSuccess(error, 'Save Meta Data Succeed', ()=>{
             reset();
