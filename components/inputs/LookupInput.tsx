@@ -3,9 +3,9 @@ import {InputPanel} from "./InputPanel";
 import React, {useState} from "react";
 import {AutoComplete} from "primereact/autocomplete";
 
-export function LookupInput(props: {
+export type LookupInputProps = {
     data: any,
-    column:  { field: string, header: string },
+    column: { field: string, header: string },
     idField: string,
     labelField: string,
     control: any,
@@ -13,14 +13,16 @@ export function LookupInput(props: {
     register: any,
     items: any[]
     id: any
-    search:(s:string) => Promise<any[]|undefined>, 
-    hasMore:boolean,
-}) {
-    const {items, search, hasMore,idField, labelField} = props;
+    search: (s: string) => Promise<any[] | undefined>,
+    hasMore: boolean,
+}
+
+export function LookupInput(props: LookupInputProps) {
+    const {items, search, hasMore, idField, labelField} = props;
     const [filteredItems, setFilteredItems] = useState(items);
     const searchItems = async (event: any) => {
         const items = await search(event.query)
-        setFilteredItems(items??[]);
+        setFilteredItems(items ?? []);
     }
 
     return <InputPanel  {...props} childComponent={(field: any) => {

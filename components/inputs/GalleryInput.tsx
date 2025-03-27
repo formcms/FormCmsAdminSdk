@@ -23,7 +23,7 @@ const itemTemplate = (item: any) => {
     return <img src={item.itemImageSrc} style={{width: '100%'}} alt={''}/>
 }
 
-export function GalleryInput(props: {
+export type GalleryInputProps = {
     data: any,
     column: { field: string, header: string },
     register: any
@@ -34,17 +34,19 @@ export function GalleryInput(props: {
     getFullAssetsURL: (arg: string) => string
     fileSelector?: React.ComponentType<{
         show: boolean;
-        setShow:(show: boolean) => void
-        
+        setShow: (show: boolean) => void
+
         setPaths: (selectedPath: string[]) => void
         paths: string[]
     }>
     metadataEditor?: React.ComponentType<{
-        path:string;
+        path: string;
         show: boolean;
         setShow: (show: boolean) => void;
     }>
-}) {
+}
+
+export function GalleryInput(props: GalleryInputProps) {
     const FileSelectDialog = props.fileSelector;
     const [showChooseLib,setShowChooseLib] = useState(false)
 

@@ -1,8 +1,6 @@
-import {textColumn} from "./textColumn";
-import {imageColumn} from "./imageColumn";
-import {fileColumn} from "./fileColumn";
-import {DisplayType, XAttr} from "../../xEntity";
-import {toDateStr, toDatetimeStr, utcStrToDatetimeStr} from "../../formatter";
+import {DisplayType, XAttr} from "../../components/xEntity";
+import {toDateStr, toDatetimeStr, utcStrToDatetimeStr} from "../types/formatter";
+import {IComponentConfig} from "../../componentConfig";
 
 const formater :any = {
     [DisplayType.Datetime]: toDatetimeStr,
@@ -14,8 +12,10 @@ const formater :any = {
 
 export function createColumn(
     column: XAttr,
+    componentConfig:IComponentConfig,
     getFullAssetsURL?: (arg: string) => string | undefined,
     onClick?: (rowData: any) => void,
+
 ) {
     const field = column.displayType == "lookup" || column.displayType === "treeSelect"
         ? column.lookup!.name + "." + column.lookup!.labelAttributeName
@@ -30,10 +30,24 @@ export function createColumn(
     switch (column.displayType) {
         case 'image':
         case 'gallery':
-            return imageColumn(field, column.header, getFullAssetsURL)
+            return componentConfig.dataTableColumns.image({
+                field,
+                header:column.header,
+                getFullAssetsURL:getFullAssetsURL
+            });
         case 'file':
-            return fileColumn(field, column.header, getFullAssetsURL)
+            return componentConfig.dataTableColumns.file({
+                field:field,
+                header:column.header,
+                getFullAssetsURL:getFullAssetsURL,
+            })
         default:
-            return textColumn(field, column.header, formater[column.displayType], colType, onClick)
+            return componentConfig.dataTableColumns.text({
+                field,
+                colType,
+                onClick,
+                header:column.header,
+                formater:formater[column.displayType],
+            });
     }
 }

@@ -1,13 +1,13 @@
 import {Column} from "primereact/column";
-
-export function textColumn(
-    field:string,
-    header:string,
-    formatter:any,
-    colType: 'numeric'|'date'|'text',
+export type TextColumnProps = {
+    field: string,
+    header: string,
+    formater?: (arg: any) => any,
+    colType?: 'numeric'|'date'|'text',
     onClick?: (rowData:any) => void,
-) {
-    
+}
+
+export function textColumn({field, header, formater, colType, onClick}: TextColumnProps ) {
     const bodyTemplate = (item: any) => {
         let val = item;
         for(const f of field.split('.')){
@@ -15,8 +15,8 @@ export function textColumn(
             val = val[f]
         }
         
-        if (val && formatter) {
-            val = formatter(val)
+        if (val && formater) {
+            val = formater(val)
         }
         
         return onClick

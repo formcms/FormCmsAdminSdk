@@ -1,64 +1,95 @@
-import {useNavigate, useParams} from "react-router-dom"
-import {getAssetReplaceUrl, updateAssetMeta, useGetCmsAssetsUrl, useSingleAsset, deleteAsset} from "../services/asset";
-import {XEntity} from "../types/xEntity";
-import {useForm} from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
+import { getAssetReplaceUrl, updateAssetMeta, useGetCmsAssetsUrl, useSingleAsset, deleteAsset } from "../services/asset";
+import { XEntity } from "../types/xEntity";
+import { useForm } from "react-hook-form";
 import {createInput} from "../containers/createInput";
-import {Button} from "primereact/button";
-import {FetchingStatus} from "../../components/FetchingStatus";
-import {Image} from 'primereact/image';
-import {AssetField, AssetLinkField} from "../types/assetUtils";
-import {useState} from "react";
-import {useCheckError} from "../../components/useCheckError";
-import {DataTable} from "primereact/datatable";
-import {Column} from "primereact/column";
-import {AssetLink} from "../types/asset";
-import {ArrayToObject} from "../../components/inputs/DictionaryInputUtils";
+import { Button } from "primereact/button";
+import { FetchingStatus } from "../../components/FetchingStatus";
+import { Image } from 'primereact/image';
+import { AssetField, AssetLinkField } from "../types/assetUtils";
+import { useState } from "react";
+import { useCheckError } from "../../components/useCheckError";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { AssetLink } from "../types/asset";
 import { useConfirm } from "../../components/useConfirm";
-import { formatFileSize } from "../../components/formatter";
+import {ArrayToObject, formatFileSize} from "../types/formatter";
+import { getInputAttrs } from "../types/attrUtils";
+import {getDefaultComponentConfig, IComponentConfig} from "../../componentConfig";
 
-export function useAssetEditPage( baseRouter: string, schema: XEntity) {
-    //entrance
-    const {id} = useParams()
+interface IAssetEditPageConfig {
+    deleteConfirmHeader: string;
+    deleteConfirm: (label?: string) => string;
+    deleteSuccess: (label?: string) => string;
+    saveSuccess: (label?: string) => string;
+    assetLinksTitle:string
+    assetLinksTableHeaderEntityName: string;
+    assetLinksTableHeaderRecordId: string;
+    assetLinksTableHeaderCreatedAt: string;
+}
+
+export function getDefaultAssetEditPageConfig(): IAssetEditPageConfig {
+    return  {
+        deleteConfirmHeader:"Confirm",
+        deleteConfirm: (label?: string) => `Do you want to delete this item${label ? ` [${label}]` : ''}?`,
+        deleteSuccess: (label?: string) => `Delete${label ? ` [${label}]` : ''} Succeed`,
+        saveSuccess: (label?: string) => `Save ${label ? ` [${label}]` : ''} Succeed`,
+        assetLinksTitle: 'Used By:',
+        assetLinksTableHeaderEntityName: 'Entity Name',
+        assetLinksTableHeaderRecordId: 'Record Id',
+        assetLinksTableHeaderCreatedAt: 'Created At'
+    };
+}
+
+// Main hook for AssetEditPage with unified config
+export function useAssetEditPage(
+    baseRouter: string,
+    schema: XEntity,
+    pageConfig: IAssetEditPageConfig = getDefaultAssetEditPageConfig(),
+    inputConfig :IComponentConfig = getDefaultComponentConfig()
+) {
+    // Entrance
+    const { id } = useParams();
     const refUrl = new URLSearchParams(location.search).get("ref");
 
-    // data
-    const {data, isLoading, error, mutate} = useSingleAsset(id);
+    // Data
+    const { data, isLoading, error, mutate } = useSingleAsset(id);
 
-    // stat
+    // State
     const [version, setVersion] = useState(1);
-    
-    // ref
+
+    // Refs
     const navigate = useNavigate();
     const getCmsAssetUrl = useGetCmsAssetsUrl();
-    const { register, handleSubmit, control } = useForm()
-    const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError();
-    const {confirm, Confirm} = useConfirm("dataItemPage" + schema.name);
+    const { register, handleSubmit, control } = useForm();
+    const { handleErrorOrSuccess, CheckErrorStatus } = useCheckError();
+    const { confirm, Confirm } = useConfirm("dataItemPage" + schema.name);
 
     const formId = "AssetEdit" + schema.name;
-        
-    function actionBodyTemplate (rowData: AssetLink) {
-        return (<Button icon="pi pi-eye" rounded outlined className="mr-2"
-                        onClick={() => navigate(`${baseRouter}/${rowData.entityName}/${rowData.recordId}`)}/>);
-    }
-    
-    function GetColumns() {
-        return schema.attributes.filter(
-            x => {
-                return x.inDetail && !x.isDefault && x.displayType != "editTable" && x.displayType != "tree" && x.displayType != 'picklist';
-            }
-        ) ?? [];
+
+    function actionBodyTemplate(rowData: AssetLink) {
+        return (
+            <Button
+                icon="pi pi-eye"
+                rounded
+                outlined
+                className="mr-2"
+                onClick={() => navigate(`${baseRouter}/${rowData.entityName}/${rowData.recordId}`)}
+            />
+        );
     }
 
+    const inputs = getInputAttrs(schema.attributes);
+
     async function onSubmit(formData: any) {
-        var payload = {
+        const payload = {
             ...formData,
             metadata: ArrayToObject(formData[AssetField('metadata')]),
             id: data?.id,
-        }
-        const {error} = await updateAssetMeta(payload)
-        await handleErrorOrSuccess(error, 'Save Meta Data Succeed', mutate)
+        };
+        const { error } = await updateAssetMeta(payload);
+        await handleErrorOrSuccess(error, pageConfig.saveSuccess(data?.name), mutate);
     }
-
 
     function handleDownload() {
         if (data && data.path) {
@@ -72,80 +103,89 @@ export function useAssetEditPage( baseRouter: string, schema: XEntity) {
         }
     }
 
-    async function handleDelete ()  {
-        data && confirm('Do you want to delete this item?', async () => {
-            const {error} = await deleteAsset(data.id);
-            await handleErrorOrSuccess(error, 'Delete Succeed', () => {
-                window.location.href = refUrl ?? `${baseRouter}/${schema.name}`
+    async function handleDelete() {
+        data && confirm(pageConfig.deleteConfirm(data.name),pageConfig.deleteConfirmHeader, async () => {
+            const { error } = await deleteAsset(data.id);
+            await handleErrorOrSuccess(error, pageConfig.deleteSuccess(data.name), () => {
+                window.location.href = refUrl ?? `${baseRouter}/${schema.name}`;
             });
-        })
+        });
     }
 
     function FeaturedImage() {
-        return data?.type?.startsWith("image") &&
+        return data?.type?.startsWith("image") && (
             <div className="card flex justify-content-start">
-                <Image src={getCmsAssetUrl(data.path + `?version=${version}`)}
-                       indicatorIcon={<i className="pi pi-search"></i>} alt="Image" preview width="400"/>
+                <Image
+                    src={getCmsAssetUrl(data.path + `?version=${version}`)}
+                    indicatorIcon={<i className="pi pi-search"></i>}
+                    alt="Image"
+                    preview
+                    width="400"
+                />
             </div>
+        );
     }
 
-    function FileInfo() {
-        return data && <div className="mt-2 flex gap-4">
-            <label className="block font-bold">File Name:</label>
-            <label>{data.name}</label>
-
-            <label className="block font-bold">Type:</label>
-            <label className="block">{data.type}</label>
-
-            <label className="block font-bold">Size:</label>
-            <label>{formatFileSize(data.size)}</label>
-
-        </div>
-    }
-    function handleUpload(){
+    async function handleUpload() {
         setVersion(x => x + 1);
-        mutate();
+        await mutate();
     }
-    const replaceAssetUrl = getAssetReplaceUrl(data?.id??0);
-    function MetaDataForm(){
-        return data && <>
-            <FetchingStatus isLoading={isLoading} error={error}/>
-            <CheckErrorStatus/>
-            <Confirm/>
-            <form onSubmit={handleSubmit(onSubmit)} id={formId}>
-                <div className="formgrid grid">
-                    {
-                        GetColumns().map(column => createInput(
-                                {
-                                    data,
-                                    column,
-                                    register,
-                                    control,
-                                    id: column.field,
-                                    getFullAssetsURL: getCmsAssetUrl,
-                                    uploadUrl: ''
-                                },
-                                'col-4'
-                            )
-                        )
-                    }
-                </div>
-            </form>
-        </>
+
+    const replaceAssetUrl = getAssetReplaceUrl(data?.id ?? 0);
+
+    function MetaDataForm() {
+        return data && (
+            <>
+                <FetchingStatus isLoading={isLoading} error={error} />
+                <CheckErrorStatus />
+                <Confirm />
+                <form onSubmit={handleSubmit(onSubmit)} id={formId}>
+                    <div className="formgrid grid">
+                        {inputs.map(column => createInput(
+                            {
+                                data,
+                                column,
+                                register,
+                                control,
+                                id: column.field,
+                                getFullAssetsURL: getCmsAssetUrl,
+                                uploadUrl: '',
+                                fullRowClassName:'field col-12',
+                                partialRowClassName:'field col-12 md:col-4'
+                            },
+                            inputConfig
+                        ))}
+                    </div>
+                </form>
+            </>
+        );
     }
-    function AssetLinkTable() {
-        return data && <>
-            {data.links && <h3>Used By:</h3>}
-            {data.links && <DataTable value={data.links} tableStyle={{minWidth: '50rem'}}>
-                <Column field={AssetLinkField('entityName')} header={'Entity Name'}></Column>
-                <Column field={AssetLinkField('recordId')} header={'Record Id'}></Column>
-                <Column field={AssetLinkField('createdAt')} header={'Created At'}></Column>
-                <Column body={actionBodyTemplate} style={{minWidth: '12rem'}}></Column>
-            </DataTable>}
-        </>
+
+    function AssetLinks() {
+        return data && (
+            <>
+                {data.links && <h3>{pageConfig.assetLinksTitle}</h3>}
+                {data.links && (
+                    <DataTable value={data.links} tableStyle={{ minWidth: '50rem' }}>
+                        <Column field={AssetLinkField('entityName')} header={pageConfig.assetLinksTableHeaderEntityName}></Column>
+                        <Column field={AssetLinkField('recordId')} header={pageConfig.assetLinksTableHeaderRecordId}></Column>
+                        <Column field={AssetLinkField('createdAt')} header={pageConfig.assetLinksTableHeaderCreatedAt}></Column>
+                        <Column body={actionBodyTemplate} style={{ minWidth: '12rem' }}></Column>
+                    </DataTable>
+                )}
+            </>
+        );
     }
-    return {formId, replaceAssetUrl,
-        handleDownload, handleUpload, handleDelete,
-        FeaturedImage, AssetLinkTable, MetaDataForm, FileInfo,
-    }
+
+    return {
+        asset: { ...data ?? {}, size: formatFileSize(data?.size) },
+        formId,
+        replaceAssetUrl,
+        handleDownload,
+        handleUpload,
+        handleDelete,
+        FeaturedImage,
+        AssetLinkTable: AssetLinks,
+        MetaDataForm
+    };
 }

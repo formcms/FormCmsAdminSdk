@@ -3,6 +3,13 @@ import {Controller, useFieldArray} from "react-hook-form";
 import {InputText} from "primereact/inputtext";
 import {Button} from "primereact/button";
 
+export type DictionaryInputProps = {
+    data: any;
+    column: { field: string; header: string };
+    control: any;
+    className: any;
+    id: any;
+}
 export function DictionaryInput(
     {
         data,
@@ -10,13 +17,7 @@ export function DictionaryInput(
         control,
         className,
         id,
-    }: {
-        data: any;
-        column: { field: string; header: string };
-        control: any;
-        className: any;
-        id: any;
-    }) {
+    }: DictionaryInputProps) {
     const defaultValue = data[column.field] || {}; // e.g., { author: "John", tags: ["photo"] }
     console.log("in dictionary input",{data,defaultValue});
 

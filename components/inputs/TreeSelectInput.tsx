@@ -1,23 +1,24 @@
-import { InputPanel } from "./InputPanel"
-import { TreeSelect } from 'primereact/treeselect';
+import {InputPanel} from "./InputPanel"
+import {TreeSelect} from 'primereact/treeselect';
 
-export function TreeSelectInput(
-    props: {
-        data: any,
-        options: any[],
-        column: { field: string, header: string },
-        register: any
-        className: any
-        control: any
-        id: any
-    }) {
-    const {column,options} = props
+export type TreeSelectInputProps = {
+    data: any,
+    options: any[],
+    column: { field: string, header: string },
+    register: any
+    className: any
+    control: any
+    id: any
+}
+
+export function TreeSelectInput(props: TreeSelectInputProps) {
+    const {column, options} = props
     return <InputPanel  {...props} childComponent={(field: any) => {
         return <TreeSelect
             display="chip"
             value={field.value}
             onChange={(e) => {
-                console.log("e.value",e.value)
+                console.log("e.value", e.value)
                 field.onChange(e.value)
             }}
             options={options}

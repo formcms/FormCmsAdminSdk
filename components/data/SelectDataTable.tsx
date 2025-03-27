@@ -1,6 +1,7 @@
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import {ListResponse} from "../../cms/types/listResponse";
+import React from "react";
 
 export function SelectDataTable(
     {

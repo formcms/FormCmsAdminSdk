@@ -2,15 +2,15 @@ import React from "react";
 import {InputPanel} from "./InputPanel";
 import {InputNumber} from "primereact/inputnumber";
 
-export function NumberInput(
-    props: {
+export type NumberInputProps = {
     data: any,
     column: { field: string, header: string },
     register: any
     className:any
     control:any
-        id:any
-}) {
+    id:any
+}
+export function NumberInput( props: NumberInputProps ) {
     return <InputPanel  {...props} childComponent={(field: any) =>
         <><br/>
             <InputNumber

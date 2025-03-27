@@ -1,21 +1,26 @@
-import {TreeSelectInput} from "../../components/inputs/TreeSelectInput";
 import {XAttr} from "../types/xEntity";
-import { useTree } from "./useTree";
+import {useTree} from "./useTree";
+import {IComponentConfig} from "../../componentConfig";
+
+type TreeSelectContainerProps = {
+    data: any, column: XAttr, id: any, control: any, register: any, className: string
+    componentConfig: IComponentConfig
+}
 
 export function TreeSelectContainer(
     {
-        data: item, column, id, className, control, register
-    }: {
-        data: any, column: XAttr, id: any, control: any, register: any, className: string
-    }) {
+        data: item, column, id, className, control, register,
+        componentConfig
+    }: TreeSelectContainerProps
+) {
 
     const targetEntity = column.lookup!
     const options = useTree(targetEntity)
-    if (item[column.field] && typeof item[column.field] === "object" ) {
+    if (item[column.field] && typeof item[column.field] === "object") {
         item[column.field] = item[column.field][targetEntity.primaryKey];
     }
 
-
+    const TreeSelectInput = componentConfig.inputComponent.treeSelect;
     return <TreeSelectInput
         options={options ?? []}
         data={item}

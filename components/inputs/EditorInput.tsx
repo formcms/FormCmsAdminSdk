@@ -1,6 +1,7 @@
 import {Editor} from 'primereact/editor';
 import {InputPanel} from "./InputPanel";
 import React from "react";
+
 const renderHeader = () => {
     return <>
             <span className="ql-formats">
@@ -39,19 +40,20 @@ const renderHeader = () => {
             </span>
     </>
 };
-export function EditorInput(props: {
+export type EditorInputProps = {
     data: any
     control: any
     column: { field: string, header: string },
     className: any
     register: any
     id: any
+}
 
-}) {
-    return <InputPanel  {...props} childComponent={ (field:any) =>
+export function EditorInput(props: EditorInputProps) {
+    return <InputPanel  {...props} childComponent={(field: any) =>
         <Editor id={field.name} name={props.column.field} value={field.value}
                 headerTemplate={renderHeader()}
                 onTextChange={(e) => field.onChange(e.htmlValue)}
                 style={{height: '320px'}}/>
-        }/>
+    }/>
 }

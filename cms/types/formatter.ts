@@ -16,18 +16,16 @@ export const toZonelessStr = (date : Date|undefined|null) => {
 
 //str can be 2025-03-18 18:50:22.323 And ISO format 2025-03-18T18:50:22.323
 export const toDatetime = (s:string) => {
-    s = s.replaceAll(' ', 'T');
-    var d = new Date(s);
-    return d;
+    return new Date(s.replaceAll(' ', 'T'));
 }
 
 export const toDateStr = (s:string) => {
-    var d = toDatetime(s);
+    const d = toDatetime(s);
     return d.toLocaleDateString();
 }
 
 export const toDatetimeStr = (s:string) => {
-    var d = toDatetime(s);
+    const d = toDatetime(s);
     return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
 }
 
@@ -41,6 +39,16 @@ export const utcStrToDatetime = (s:string) => {
 }
 
 export const utcStrToDatetimeStr = (s:string) => {
-    var d = utcStrToDatetime(s);
+    const d = utcStrToDatetime(s);
     return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
+}
+
+export function ArrayToObject(items: any[]){
+    return  items.reduce(
+        (acc: any, item: any) => {
+            if (item.key) acc[item.key] = item.value;
+            return acc;
+        },
+        {}
+    );
 }

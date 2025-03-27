@@ -1,78 +1,79 @@
-import { Dialog } from "primereact/dialog";
-import { ArrayToObject } from "../../components/inputs/DictionaryInputUtils";
-import { AssetField } from "../types/assetUtils";
+import {Dialog} from "primereact/dialog";
+import {AssetField} from "../types/assetUtils";
 import {updateAssetMeta, useAssetEntity, useGetCmsAssetsUrl, useSingleAssetByPath} from "../services/asset";
-import { FetchingStatus } from "../../components/FetchingStatus";
-import { useCheckError } from "../../components/useCheckError";
-import { useForm } from "react-hook-form";
-import { createInput } from "./createInput";
-import { Button } from "primereact/button";
+import {FetchingStatus} from "../../components/FetchingStatus";
+import {useCheckError} from "../../components/useCheckError";
+import {useForm} from "react-hook-form";
+import {createInput} from "./createInput";
+import {Button} from "primereact/button";
 import {Image} from 'primereact/image';
-import { formatFileSize } from "../../components/formatter";
+import {ArrayToObject, formatFileSize} from "../types/formatter";
+import {getInputAttrs} from "../types/attrUtils";
+import {CmsComponentConfig} from "../cmsComponentConfig";
+
+export type AssetMetaDataEditorProps = {
+    path: string,
+    show: boolean;
+    setShow: (show: boolean) => void;
+}
 
 export function AssetMetadataEditor(
     {
         path,
         show,
         setShow,
-    }: {
-        path: string,
-        show: boolean;
-        setShow: (show: boolean) => void;
-    }
+        config
+    }: AssetMetaDataEditorProps & { config: CmsComponentConfig }
 ) {
-    //entrance
-    const {data: schema} = useAssetEntity();
+    //data
+    const {data: assetSchema} = useAssetEntity();
+    const inputAttrs = getInputAttrs(assetSchema?.attributes);
+    const {data, isLoading, error} = useSingleAssetByPath(show ? path : null);
 
-    const formId = "AssetMetaDataDialog" + schema?.name
-    const getCmsAssetUrl = useGetCmsAssetsUrl();
-
-    const { register, handleSubmit, control, reset} = useForm()
-
-    const {data, isLoading, error} = useSingleAssetByPath(show ? path: null);
+    //ui variables
+    const formId = "AssetMetaDataDialog" + assetSchema?.name
+    //ref
     const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError();
+    const getCmsAssetUrl = useGetCmsAssetsUrl();
+    const {register, handleSubmit, control, reset} = useForm()
 
-    function handleClose (){
+    function handleClose() {
         reset();
         setShow(false);
     }
-    const onSubmit = async (formData: any) => {
+
+    async function handleSubmitAssetMeta(formData: any) {
         const payload = {
             ...formData,
             metadata: ArrayToObject(formData[AssetField('metadata')]),
             id: data?.id,
         };
         const {error} = await updateAssetMeta(payload)
-        await handleErrorOrSuccess(error, 'Save Meta Data Succeed', ()=>{
+        await handleErrorOrSuccess(error, config.metaDataEditor.saveSuccessMessage, () => {
             reset();
             setShow(false);
-            // mutate();
         })
     }
-    const columns = schema?.attributes?.filter(
-        x => {
-            return x.inDetail && !x.isDefault && x.displayType != "editTable" && x.displayType != "tree" && x.displayType != 'picklist';
-        }
-    ) ?? [];
-    return  <Dialog maximizable
-                    header={'Edit Metadata'}
-                    visible={show}
-                    style={{width: '700px'}}
-                    modal className="p-fluid"
-                    onHide={handleClose}>
+
+    return <Dialog maximizable
+                   header={config.metaDataEditor.dialogHeader}
+                   visible={show}
+                   style={{width: '700px'}}
+                   modal className="p-fluid"
+                   onHide={handleClose}>
         <FetchingStatus isLoading={isLoading} error={error}/>
         <CheckErrorStatus/>
         {data?.type?.startsWith("image") &&
             <div className="card flex justify-content-start">
                 <Image src={getCmsAssetUrl(data.path)}
-                       indicatorIcon={<i className="pi pi-search"></i>} 
-                       alt="Image" 
-                       preview 
+                       indicatorIcon={<i className="pi pi-search"></i>}
+                       alt="Image"
+                       preview
                        width="650"></Image>
             </div>
         }
         <br/>
-        {data &&  <div className="mt-2 flex gap-4">
+        {data && <div className="mt-2 flex gap-4">
             <label className="block font-bold">File Name:</label>
             <label>{data.name}</label>
 
@@ -83,24 +84,26 @@ export function AssetMetadataEditor(
             <label>{formatFileSize(data.size)}</label>
 
         </div>}
-        {data && <form onSubmit={handleSubmit(onSubmit)} id={formId}>
+        {data && <form onSubmit={handleSubmit(handleSubmitAssetMeta)} id={formId}>
             <Button
-                label={'Save'}
+                label={config.metaDataEditor.saveButtonLabel}
                 type="submit"
                 form={formId}
                 style={{width: '100px'}}
-                icon="pi pi-check"/> 
+                icon="pi pi-check"/>
             <div className="formgrid grid">
                 {
-                    columns.map((column: any) => createInput({
+                    inputAttrs.map((column: any) => createInput({
                         data,
                         column,
                         register,
                         control,
-                        id:column.field,
+                        id: column.field,
                         getFullAssetsURL: getCmsAssetUrl,
-                        uploadUrl: ''
-                    },'col-12'))
+                        uploadUrl: '',
+                        fullRowClassName:'field col-12',
+                        partialRowClassName:'field col-12'
+                    }, config))
                 }
             </div>
         </form>

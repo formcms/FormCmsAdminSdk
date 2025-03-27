@@ -1,52 +1,84 @@
-import {ItemForm} from "../containers/ItemForm";
 import {addItem, useItemData} from "../services/entity";
 import {useCheckError} from "../../components/useCheckError";
-import {DisplayType, XEntity } from "../types/xEntity";
-import { getFileUploadURL, useGetCmsAssetsUrl } from "../services/asset";
-import { ArrayToObject } from "../../components/inputs/DictionaryInputUtils";
+import {DisplayType, XEntity} from "../types/xEntity";
+import {getFileUploadURL, useGetCmsAssetsUrl} from "../services/asset";
+import {createInput } from "../containers/createInput";
+import {getInputAttrs} from "../types/attrUtils";
+import {useForm} from "react-hook-form";
+import {getDefaultComponentConfig, IComponentConfig} from "../../componentConfig";
+import {ArrayToObject} from "../types/formatter";
 
-export function userNewDataItemPage(schema:XEntity, baseRouter:string) {
-    const formId =  "newDataItemForm" + schema.name;
-    return {handleGoBack, formId, NewDataItemPageMain}
+interface INewDataItemPageConfig {
+    saveSuccess: (label?: string) => string; // Success message for saving
+}
+
+export function getDefaultNewDataItemPageConfig(): INewDataItemPageConfig{
+    return {
+        saveSuccess: (label?: string) => `Save${label ? ` [${label}]` : ''} Succeed`
+    };
+}
+
+export function userNewDataItemPage(
+    schema: XEntity,
+    baseRouter: string,
+    pageConfig: INewDataItemPageConfig = getDefaultNewDataItemPageConfig(),
+    componentConfig: IComponentConfig = getDefaultComponentConfig()
+) {
+    const formId = "newDataItemForm" + schema.name;
+    const {register, handleSubmit, control} = useForm()
 
     function handleGoBack() {
         const refUrl = new URLSearchParams(location.search).get("ref");
-        window.location.href = refUrl ?? `${baseRouter}/${schema.name}`
+        window.location.href = refUrl ?? `${baseRouter}/${schema.name}`;
     }
 
-    function NewDataItemPageMain(){
-        //entrance and data
-        const id =  new URLSearchParams(location.search).get("sourceId");
-        const {data} = useItemData(schema.name, id)
-
+    function NewDataItemPageMain() {
+        // Entrance and data
+        const id = new URLSearchParams(location.search).get("sourceId");
+        const {data} = useItemData(schema.name, id);
 
         const getFullAssetsURL = useGetCmsAssetsUrl();
-        const uploadUrl = getFileUploadURL()
+        const uploadUrl = getFileUploadURL();
         const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError();
 
-        function inputColumns () {
-            return schema?.attributes?.filter(
-                x => {
-                    return x.inDetail && !x.isDefault && x.displayType != "editTable" && x.displayType != "tree" && x.displayType != 'picklist';
-                }
-            ) ?? [];
-        }
+        const inputAttrs = getInputAttrs(schema.attributes);
 
-        const onSubmit = async (formData: any) => {
-            schema.attributes.filter(x=>x.displayType == DisplayType.Dictionary).forEach(a=>{
+        const handleSaveData = async (formData: any) => {
+            schema.attributes.filter(x => x.displayType === DisplayType.Dictionary).forEach(a => {
                 formData[a.field] = ArrayToObject(formData[a.field]);
             });
 
-            const {data, error} = await addItem(schema.name, formData)
-            await handleErrorOrSuccess(error, 'Save Succeed', () => {
-                window.location.href = `${baseRouter}/${schema.name}/${data[schema.primaryKey]}`;
-            })
-        }
+            const {data: savedData, error} = await addItem(schema.name, formData);
+            await handleErrorOrSuccess(error, pageConfig.saveSuccess(formData[schema.labelAttributeName]), () => {
+                window.location.href = `${baseRouter}/${schema.name}/${savedData[schema.primaryKey]}`;
+            });
+        };
 
-        return <>
-            <CheckErrorStatus/>
-            {(!id || data) && <ItemForm columns={inputColumns()} {...{data:data??{} , onSubmit,  formId,uploadUrl,  getFullAssetsURL}}/>}
-        </>
+        return (
+            <>
+                <CheckErrorStatus/>
+                {
+                    (!id || data) && <form onSubmit={handleSubmit(handleSaveData)} id={formId}>
+                    <div className="formgrid grid">
+                        {
+                            inputAttrs.map((column: any) => createInput({
+                                data: data??{},
+                                column,
+                                register,
+                                control,
+                                id,
+                                uploadUrl,
+                                getFullAssetsURL,
+                                fullRowClassName:'field col-12',
+                                partialRowClassName:'field col-12 md:col-4'
+                            }, componentConfig))
+                        }
+                    </div>
+                </form>
+                }
+            </>
+        );
     }
-}
 
+    return {handleGoBack, formId, NewDataItemPageMain};
+}

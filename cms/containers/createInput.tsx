@@ -1,126 +1,138 @@
 import {LookupContainer} from "./LookupContainer";
 import {TreeSelectContainer} from "./TreeSelectContainer";
-
-import {TextInput} from "../../components/inputs/TextInput";
-import {TextAreaInput} from "../../components/inputs/TextAreaInput";
-import {EditorInput} from "../../components/inputs/EditorInput";
-import {NumberInput} from "../../components/inputs/NumberInput";
-import {DatetimeInput} from "../../components/inputs/DatetimeInput";
-import {FileInput} from "../../components/inputs/FileInput";
-import {GalleryInput} from "../../components/inputs/GalleryInput";
-import {DropDownInput} from "../../components/inputs/DropDownInput";
-import {MultiSelectInput} from "../../components/inputs/MultiSelectInput";
 import {XAttr} from "../types/xEntity";
-import {AssetSelector} from "./AssetSelector";
-import {DictionaryInput} from "../../components/inputs/DictionaryInput";
-import {AssetMetadataEditor} from "./AssetMetaDataEditor";
-import {LocalDatetimeInput} from "../../components/inputs/LocalDatetimeInput";
+import {AssetSelector, AssetSelectorProps} from "./AssetSelector";
+import {AssetMetadataEditor, AssetMetaDataEditorProps} from "./AssetMetaDataEditor";
+import React from "react";
+import {IComponentConfig} from "../../componentConfig";
+import {toDatetime, toZonelessStr, utcStrToDatetime} from "../types/formatter";
 
-export function createInput(props: {
-    column: XAttr,
-    data: any,
-    id: any,
-    control: any,
-    register: any,
-    uploadUrl: string,
-    getFullAssetsURL: (arg: string) => string
-}, mdCols: 'col-12' | 'col-4' | 'col-6' | 'col-3') {
+export function createInput(
+    props: {
+        column: XAttr,
+        data: any,
+        id: any,
+        control: any,
+        register: any,
+        uploadUrl: string,
+        getFullAssetsURL: (arg: string) => string
+        fullRowClassName:string,
+        partialRowClassName:string
+    },
+    config: IComponentConfig
+) {
     const {field, displayType, options} = props.column
+    const ConfiguredMetadataEditor = (props: AssetMetaDataEditorProps) => <AssetMetadataEditor {...props} config={config}/>
+    const ConfiguredAssetSelector = (props: AssetSelectorProps) => <AssetSelector {...props} componentConfig={config}/>
 
-    const mdClass = `field col-12 md:${mdCols}`
+
     switch (displayType) {
         case 'dictionary':
+            const DictionaryInput = config.inputComponent.dictionary;
             return <DictionaryInput
-                className={'field col-12'}
+                className={props.fullRowClassName}
                 {...props}
                 key={field}/>
         case 'editor':
+            const EditorInput = config.inputComponent.editor;
             return <EditorInput
-                className={'field col-12'}
-                key={field}
-                {...props}/>
-
-        case 'text':
-            return <TextInput
-                className={mdClass}
+                className={props.fullRowClassName}
                 key={field}
                 {...props}/>
         case 'textarea':
+            const TextAreaInput = config.inputComponent.textarea;
             return <TextAreaInput
-                className={mdClass}
+                className={props.partialRowClassName}
                 key={field}
                 {...props}/>
         case 'number':
+            const NumberInput = config.inputComponent.number;
             return <NumberInput
-                className={mdClass}
+                className={props.partialRowClassName}
                 key={field}
                 {...props}/>
         case 'localDatetime':
+            const LocalDatetimeInput = config.inputComponent.datetime;
             return <LocalDatetimeInput
-                className={mdClass}
+                showTime={true}
+                parseDate={utcStrToDatetime}
+                formatDate={x=>x}
+                className={props.partialRowClassName}
                 inline={false}
                 key={field}
                 {...props}/>
         case 'datetime':
+            const DatetimeInput = config.inputComponent.datetime;
             return <DatetimeInput
-                className={mdClass}
+                className={props.partialRowClassName}
+                parseDate={toDatetime}
+                formatDate={toZonelessStr}
                 showTime={true}
                 inline={false}
                 key={field}
                 {...props}/>
         case 'date':
-            return <DatetimeInput
-                className={mdClass}
+            const DateInput = config.inputComponent.datetime;
+            return <DateInput
+                parseDate={toDatetime}
+                formatDate={toZonelessStr}
+                className={props.partialRowClassName}
                 inline={false}
                 showTime={false}
                 key={field}
                 {...props}/>
         case 'image':
-            return <FileInput
-                fileSelector={AssetSelector}
-                metadataEditor={AssetMetadataEditor}
+            const Image = config.inputComponent.file;
+            return <Image
+                fileSelector={ConfiguredAssetSelector}
+                metadataEditor={ConfiguredMetadataEditor}
                 previewImage
-                className={mdClass}
+                className={props.partialRowClassName}
                 key={field}
                 {...props} />
         case 'gallery':
+            const GalleryInput = config.inputComponent.gallery;
             return <GalleryInput
-                fileSelector={AssetSelector}
-                metadataEditor={AssetMetadataEditor}
-                className={mdClass}
+                fileSelector={ConfiguredAssetSelector}
+                metadataEditor={ConfiguredMetadataEditor}
+                className={props.partialRowClassName}
                 key={field}
                 {...props} />
         case 'file':
+            const FileInput = config.inputComponent.file;
             return <FileInput
-                fileSelector={AssetSelector}
-                metadataEditor={AssetMetadataEditor}
+                fileSelector={ConfiguredAssetSelector}
+                metadataEditor={ConfiguredMetadataEditor}
                 download
-                className={mdClass}
+                className={props.partialRowClassName}
                 key={field}
                 {...props} />
         case 'dropdown':
+            const DropDownInput = config.inputComponent.dropdown;
             return <DropDownInput
                 options={props.column.options.split(',')}
-                className={mdClass}
+                className={props.partialRowClassName}
                 key={field}
                 {...props} />
         case 'lookup':
             return <LookupContainer
-                className={mdClass} key={field}{...props}/>
+                className={props.partialRowClassName} key={field}{...props} componentConfig={config}/>
         case 'multiselect':
+            const MultiSelectInput = config.inputComponent.multiSelect;
             return <MultiSelectInput
                 options={(options ?? '').split(',')}
-                className={mdClass}
+                className={props.partialRowClassName}
                 key={field}
                 {...props} />
         case 'treeSelect':
-            return <TreeSelectContainer
-                className={mdClass}
+            return <TreeSelectContainer componentConfig={config}
+                className={props.partialRowClassName}
                 key={field}
                 {...props}/>
         default:
+            const TextInput = config.inputComponent.text;
             return <TextInput
-                className={mdClass}
+                className={props.partialRowClassName}
                 key={field}
                 {...props}/>
     }

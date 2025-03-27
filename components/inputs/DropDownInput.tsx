@@ -2,16 +2,18 @@ import {Dropdown} from "primereact/dropdown";
 import {InputPanel} from "./InputPanel";
 import React from "react";
 
-export function DropDownInput(props: {
+export type DropDownInputProps = {
     data: any,
-    column: { field: string, header: string},
-    options:string[],
+    column: { field: string, header: string },
+    options: string[],
     control: any
     className: any
     register: any
-    id:any
-}) {
-    return <InputPanel  {...props} childComponent={ (field:any) =>
+    id: any
+}
+
+export function DropDownInput(props: DropDownInputProps) {
+    return <InputPanel  {...props} childComponent={(field: any) =>
         <Dropdown
             id={field.name}
             value={field.value}

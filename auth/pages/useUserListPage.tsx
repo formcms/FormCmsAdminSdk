@@ -1,22 +1,55 @@
-import {DataTable} from "primereact/datatable";
-import {useUsers} from "../services/accounts";
-import {Column} from "primereact/column";
-import {Link} from "react-router-dom";
+import { DataTable } from "primereact/datatable";
+import { useUsers } from "../services/accounts";
+import { Column } from "primereact/column";
+import { Link } from "react-router-dom";
 
-export function useUserListPage() {
-    const {data,isLoading} = useUsers();
-    const roleTemplate = (record:{roles:string[]}) => {
-        return record.roles.join(',');
+interface IUseUserListPageConfig {
+    emailHeader: string;
+    roleHeader: string;
+}
+
+function getDefaultUseUserListPageConfig()  {
+    return {
+        emailHeader:  "Email",
+        roleHeader:  "Role",
     };
-    const emailTemplate = (record:{email:string,id:string[]}) => {
-        return <Link to={record.id.toString()}>{record.email}</Link>
-    }
-    return {UserListPageMain}
+}
 
-    function UserListPageMain(){
-        return  <DataTable loading={isLoading} dataKey={"id"} value={data} paginator rows={100} >
-            <Column header={'Email'} field={'email'} sortable filter body={emailTemplate}/>
-            <Column header={'Role'} field={'role'} body={roleTemplate}/>
-        </DataTable>
+export function useUserListPage(config: IUseUserListPageConfig = getDefaultUseUserListPageConfig()) {
+    const { data, isLoading } = useUsers();
+
+    const roleTemplate = (record: { roles: string[] }) => {
+        return record.roles.join(",");
+    };
+
+    const emailTemplate = (record: { email: string; id: string[] }) => {
+        return <Link to={record.id.toString()}>{record.email}</Link>;
+    };
+
+    return { UserListPageMain };
+
+    function UserListPageMain() {
+        return (
+            <DataTable
+                loading={isLoading}
+                dataKey={"id"}
+                value={data}
+                paginator
+                rows={100}
+            >
+                <Column
+                    header={config.emailHeader}
+                    field={"email"}
+                    sortable
+                    filter
+                    body={emailTemplate}
+                />
+                <Column
+                    header={config.roleHeader}
+                    field={"role"}
+                    body={roleTemplate}
+                />
+            </DataTable>
+        );
     }
 }

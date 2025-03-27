@@ -2,29 +2,31 @@ import {deleteJunctionItems, saveJunctionItems, useJunctionData} from "../servic
 import {Button} from "primereact/button";
 import {useCheckError} from "../../components/useCheckError";
 import {useConfirm} from "../../components/useConfirm";
-import {usePicklist} from "./usePicklist";
 import {SelectDataTable} from "../../components/data/SelectDataTable";
 import { XAttr, XEntity } from "../types/xEntity";
 import { useDataTableStateManager } from "../../components/data/useDataTableStateManager";
 import { encodeDataTableState } from "../../components/data/dataTableStateUtil";
-import { createColumn } from "../../components/data/columns/createColumn";
+import { createColumn } from "./createColumn";
 import {useState} from "react";
 import {Dialog} from "primereact/dialog";
+import {getListAttrs} from "../types/attrUtils";
+import {CmsComponentConfig} from "../cmsComponentConfig";
 
-export function Picklist({column, data, schema, getFullAssetsURL}: {
+export function Picklist({column, data, schema, getFullAssetsURL,componentConfig}: {
     data: any,
     column: XAttr,
     schema: XEntity,
     getFullAssetsURL : (arg:string) =>string
+    componentConfig:CmsComponentConfig
 }) {
     const [visible, setVisible] = useState(false);
-    const {
-        id, listColumns,
-        existingItems, setExistingItems,
-        toAddItems, setToAddItems
-    } = usePicklist(data, schema, column)
-    
-    const tableColumns = listColumns.map(x=>createColumn(x,getFullAssetsURL));
+    const id = (data ?? {})[schema?.primaryKey ?? '']
+    const targetSchema = column.junction;
+    const listColumns = getListAttrs(targetSchema?.attributes);
+    const [existingItems, setExistingItems] = useState(null)
+    const [toAddItems, setToAddItems] = useState(null)
+
+    const tableColumns = listColumns.map(x=>createColumn(x,componentConfig,getFullAssetsURL));
     
     const existingStateManager= useDataTableStateManager(schema.primaryKey,10, listColumns,"");
     const {data: subgridData, mutate: subgridMutate} = useJunctionData(schema.name, id, column.field, false, 
@@ -47,16 +49,16 @@ export function Picklist({column, data, schema, getFullAssetsURL}: {
 
     const handleSave = async () => {
         const {error} = await saveJunctionItems(schema.name, id, column.field, toAddItems)
-        await handleErrorOrSuccess(error, 'Save success', () => {
+        await handleErrorOrSuccess(error, componentConfig.picklist.saveSuccessMessage, () => {
             mutateDate()
             setVisible(false)
         })
     }
 
     const onDelete = async () => {
-        confirm('Do you want to delete these item?', async () => {
+        confirm(componentConfig.picklist.deleteConfirmationMessage, componentConfig.picklist.deleteConfirmationHeader, async () => {
             const {error} = await deleteJunctionItems(schema.name, id, column.field, existingItems)
-            await handleErrorOrSuccess(error, 'Delete Succeed', () => {
+            await handleErrorOrSuccess(error, componentConfig.picklist.deleteSuccessMessage, () => {
                 mutateDate()
             })
         })
@@ -64,8 +66,8 @@ export function Picklist({column, data, schema, getFullAssetsURL}: {
 
     const footer = (
         <>
-            <Button label="Cancel" icon="pi pi-times" outlined onClick={()=>setVisible(false)}/>
-            <Button label="Save" icon="pi pi-check" onClick={handleSave}/>
+            <Button label={componentConfig.picklist.cancelButtonLabel} icon="pi pi-times" outlined onClick={()=>setVisible(false)}/>
+            <Button label={componentConfig.picklist.saveButtonLabel} icon="pi pi-check" onClick={handleSave}/>
         </>
     );
 
@@ -75,9 +77,9 @@ export function Picklist({column, data, schema, getFullAssetsURL}: {
         </label><br/>
         <CheckErrorStatus/>
         <Confirm/>
-        <Button outlined label={'Select ' + column.header} onClick={()=>setVisible(true)} size="small"/>
+        <Button outlined label={componentConfig.picklist.selectButtonLabel(column.header)} onClick={()=>setVisible(true)} size="small"/>
         {' '}
-        <Button type={'button'} label={"Delete "} severity="danger" onClick={onDelete} outlined size="small"/>
+        <Button type={'button'} label={componentConfig.picklist.deleteButtonLabel} severity="danger" onClick={onDelete} outlined size="small"/>
         <SelectDataTable
             selectionMode={'multiple'}
             data={subgridData}
@@ -91,7 +93,7 @@ export function Picklist({column, data, schema, getFullAssetsURL}: {
             visible={visible}
             onHide={()=>setVisible(false)}
             footer={footer}
-            header={'Select ' + column.header}>
+            header={componentConfig.picklist.dialogHeader(column.header)}>
             <SelectDataTable
                 selectionMode={'multiple'}
                 columns={tableColumns}

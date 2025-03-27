@@ -4,7 +4,7 @@ import {InputText} from "primereact/inputtext";
 import {InputPanel} from "./InputPanel";
 import {Button} from "primereact/button";
 
-export function FileInput(props: {
+export type FileInputProps = {
     data: any,
     column: { field: string, header: string },
     register: any
@@ -22,13 +22,15 @@ export function FileInput(props: {
         path: string;
         setPath: (paths: string) => void;
     }>
-    
+
     metadataEditor?: React.ComponentType<{
-        path:string;    
+        path:string;
         show: boolean;
         setShow: (show: boolean) => void;
     }>
-}) {
+}
+
+export function FileInput(props: FileInputProps ) {
     const FileSelectDialog = props.fileSelector;
     const MetadataEditDialog = props.metadataEditor;
     const [showChooseLib,setShowChooseLib] = useState(false)

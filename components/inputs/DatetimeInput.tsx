@@ -1,22 +1,23 @@
 import React from "react";
 import {Calendar} from "primereact/calendar";
 import {InputPanel} from "./InputPanel";
-import { toDatetime, toZonelessStr } from "../formatter";
+export type DatetimeInputProps = {
+    showTime:boolean,
+    data: any,
+    column: { field: string, header: string },
+    register: any
+    className: any
+    control: any
+    id: any
+    inline:boolean
+    parseDate:(date:string)=>Date
+    formatDate:(date:any)=>any
+}
 
-export function DatetimeInput(
-    props: {
-        showTime:boolean,
-        data: any,
-        column: { field: string, header: string },
-        register: any
-        className: any
-        control: any
-        id: any
-        inline:boolean
-    }) {
+export function DatetimeInput( props: DatetimeInputProps) {
     return <InputPanel  {...props} childComponent={(field: any) => {
         const d = field.value && typeof(field.value) === "string" 
-            ? toDatetime(field.value) 
+            ? props.parseDate(field.value)
             : field.value;
         
         return <Calendar
@@ -29,8 +30,7 @@ export function DatetimeInput(
             readOnlyInput={false}
             onChange={
                 e => {
-                    //remove zone info, let backend save date as it is
-                    field.onChange(toZonelessStr(e.value));
+                    field.onChange(props.formatDate(e.value));
                 }
             }/>
     }}/>

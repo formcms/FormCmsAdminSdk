@@ -1,7 +1,7 @@
 import {FetchingStatus} from "../../components/FetchingStatus"
 import {EditDataTable} from "../../components/data/EditDataTable";
 import {encodeDataTableState} from "../../components/data/dataTableStateUtil";
-import {createColumn} from "../../components/data/columns/createColumn";
+import {createColumn} from "../../cms/containers/createColumn";
 import {useDataTableStateManager} from "../../components/data/useDataTableStateManager";
 
 import {useAuditLogs} from "../services/auditLog"
@@ -10,8 +10,11 @@ import {XEntity} from "../types/xEntity";
 
 import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
+import {Button} from "primereact/button";
+import {Column} from "primereact/column";
+import {getDefaultComponentConfig, IComponentConfig} from "../../componentConfig";
 
-export function useAuditLogListPage(baseRouter: string, schema: XEntity) {
+export function useAuditLogListPage(baseRouter: string, schema: XEntity, componentConfig:IComponentConfig = getDefaultComponentConfig()) {
     //entrance
     const initQs = location.search.replace("?", "");
 
@@ -20,7 +23,13 @@ export function useAuditLogListPage(baseRouter: string, schema: XEntity) {
     const stateManager = useDataTableStateManager(schema.primaryKey, schema.defaultPageSize, columns, initQs)
     const qs = encodeDataTableState(stateManager.state);
     const {data, error, isLoading} = useAuditLogs(qs)
-    const tableColumns = columns.map(x => createColumn(x, undefined, x.field == schema.labelAttributeName ? onEdit : undefined));
+    const tableColumns = columns.map(x => createColumn(x,componentConfig, undefined, x.field == schema.labelAttributeName ? onEdit : undefined));
+    tableColumns.push(<Column
+        body={
+            (rowData) => <Button icon="pi pi-search" rounded outlined className="mr-2" onClick={() => onEdit(rowData)}/>
+        }
+        exportable={false}
+        style={{minWidth: '12rem'}}/>)
 
     //nav
     useEffect(() => window.history.replaceState(null, "", `?${qs}`), [stateManager.state]);
@@ -45,7 +54,7 @@ export function useAuditLogListPage(baseRouter: string, schema: XEntity) {
                         columns={tableColumns}
                         data={data}
                         stateManager={stateManager}
-                        onView={onEdit}/>
+                    />
                 </div>
             )}
         </>
