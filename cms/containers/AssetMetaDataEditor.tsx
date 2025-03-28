@@ -49,14 +49,14 @@ export function AssetMetadataEditor(
             id: data?.id,
         };
         const {error} = await updateAssetMeta(payload)
-        await handleErrorOrSuccess(error, config.metaDataEditor.saveSuccessMessage, () => {
+        await handleErrorOrSuccess(error, config.assetEditor.saveSuccessMessage, () => {
             reset();
             setShow(false);
         })
     }
 
     return <Dialog maximizable
-                   header={config.metaDataEditor.dialogHeader}
+                   header={config.assetEditor.dialogHeader}
                    visible={show}
                    style={{width: '700px'}}
                    modal className="p-fluid"
@@ -74,19 +74,19 @@ export function AssetMetadataEditor(
         }
         <br/>
         {data && <div className="mt-2 flex gap-4">
-            <label className="block font-bold">File Name:</label>
+            <label className="block font-bold">{config.assetEditor.fileNameLabel}</label>
             <label>{data.name}</label>
 
-            <label className="block font-bold">Type:</label>
+            <label className="block font-bold">{config.assetEditor.fileTypeLabel}</label>
             <label className="block">{data.type}</label>
 
-            <label className="block font-bold">Size:</label>
+            <label className="block font-bold">{config.assetEditor.fileSizeLabel}</label>
             <label>{formatFileSize(data.size)}</label>
 
         </div>}
         {data && <form onSubmit={handleSubmit(handleSubmitAssetMeta)} id={formId}>
             <Button
-                label={config.metaDataEditor.saveButtonLabel}
+                label={config.assetEditor.saveButtonLabel}
                 type="submit"
                 form={formId}
                 style={{width: '100px'}}

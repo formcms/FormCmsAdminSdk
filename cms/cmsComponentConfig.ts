@@ -1,16 +1,21 @@
 import {getDefaultComponentConfig, IComponentConfig} from "../componentConfig";
+import {AssetLabels} from "./types/assetUtils";
 
 export type CmsComponentConfig ={
-    metaDataEditor: {
+    assetEditor: {
         dialogHeader: string
         saveSuccessMessage: string
         saveButtonLabel: string
+        fileNameLabel: string
+        fileTypeLabel: string
+        fileSizeLabel: string
     }
-    metaDataSelector: {
+    assetSelector: {
         dialogHeader: string
         listLabel: string
         galleryLabel: string
         okButtonLabel: string
+        assetLabels:()=>AssetLabels|null
     }
     editTable: {
         submitSuccess: (field: string) => string;
@@ -39,16 +44,20 @@ export function getDefaultCmsComponentConfig():CmsComponentConfig {
         ...getDefaultComponentConfig(),
 
 
-        metaDataEditor: {
+        assetEditor: {
             dialogHeader: "Edit Metadata",
             saveSuccessMessage: "Metadata saved",
-            saveButtonLabel: "Save"
+            saveButtonLabel: "Save",
+            fileNameLabel:"File Name:",
+            fileTypeLabel:"Type:",
+            fileSizeLabel:"Size:",
         },
-        metaDataSelector: {
+        assetSelector: {
             dialogHeader: "Select Asset",
             listLabel: "Select Metadata",
             galleryLabel: "Select Metadata",
-            okButtonLabel: "Ok"
+            okButtonLabel: "Ok",
+            assetLabels:()=>null
         },
         editTable: {
             submitSuccess: (field: string) => `Saved ${field}`,

@@ -17,6 +17,12 @@ import {TreeSelectInput, TreeSelectInputProps} from "./components/inputs/TreeSel
 import {TreeInput, TreeInputProps} from "./components/inputs/TreeInput";
 
 export interface IComponentConfig {
+    fileInputLabels:{
+        upload : string
+        choose : string
+        edit : string
+        delete : string
+    }
 
     dataTableColumns:{
         file:(props:FileColumnProps)=>any
@@ -43,6 +49,12 @@ export interface IComponentConfig {
 
 export function getDefaultComponentConfig():IComponentConfig {
     return {
+        fileInputLabels:{
+            upload:'Upload',
+            choose:'Choose',
+            edit:'Edit',
+            delete:'Delete',
+        },
         inputComponent:{
             treeInput:TreeInput,
             treeSelect:TreeSelectInput,

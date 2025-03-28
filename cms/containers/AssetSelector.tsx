@@ -39,6 +39,13 @@ export function AssetSelector(
     function AssetSelectorMain(){
         const [displayMode, setDisplayMode] = useState<DisplayMode>(DisplayMode.List);
         const columns = schema!.attributes?.filter(column => column.inList) ?? [];
+        const assetLabels = componentConfig.assetSelector.assetLabels() as any;
+        if (assetLabels) {
+            columns.forEach(column => {
+                column.header = assetLabels[column.field];
+            })
+        }
+
         const stateManager = useDataTableStateManager(AssetField('id'), schema!.defaultPageSize, columns, undefined);
         const {data, error, isLoading} = useAssets(encodeDataTableState(stateManager.state), false);
         const getCmsAssetUrl = useGetCmsAssetsUrl();
@@ -57,11 +64,11 @@ export function AssetSelector(
             }
         };
 
-        const dialogHeader =  componentConfig.metaDataSelector.dialogHeader;
-        const okButtonLabel = componentConfig.metaDataSelector.okButtonLabel;
+        const dialogHeader =  componentConfig.assetSelector.dialogHeader;
+        const okButtonLabel = componentConfig.assetSelector.okButtonLabel;
         const displayModes = [
-            {value:DisplayMode.List, label: componentConfig.metaDataSelector.listLabel, icon: 'pi pi-list'},
-            {value:DisplayMode.Gallery,label: componentConfig.metaDataSelector.galleryLabel, icon: 'pi pi-image'}
+            {value:DisplayMode.List, label: componentConfig.assetSelector.listLabel, icon: 'pi pi-list'},
+            {value:DisplayMode.Gallery,label: componentConfig.assetSelector.galleryLabel, icon: 'pi pi-image'}
         ];
 
         return <Dialog maximizable

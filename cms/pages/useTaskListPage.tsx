@@ -12,34 +12,28 @@ import { SystemTask } from "../types/systemTask";
 import { FileUpload } from "primereact/fileupload";
 import { Dialog } from "primereact/dialog";
 import { useState } from "react";
+import {CmsComponentConfig, getDefaultCmsComponentConfig} from "../cmsComponentConfig";
 
-// Unified interface for TaskListPage prompts and table headers
 interface ITaskListPageConfig {
-    // Prompts
-    exportSuccess: string; // Success message for adding export task
-    importSuccess:  string; // Success message for adding import task or demo data
-    archiveSuccess:  string; // Success message for archiving export task
-    // Table headers (example headers, adjust based on schema.attributes)
-    actionHeader: string; // Header for the action column
+    exportSuccess: string;
+    importSuccess:  string;
+    archiveSuccess:  string;
     uploadImportDialogHeader : string
 }
 
-// Immutable default configuration for TaskListPage (prompts and headers)
-export function getDefaultTaskListPageConfig(): Readonly<ITaskListPageConfig> {
-    const config = {
+export function getDefaultTaskListPageConfig(): ITaskListPageConfig {
+    return  {
         exportSuccess:  `Export task added!`,
         importSuccess:  `Task added!`,
         archiveSuccess:  `Export task archived!`,
-        actionHeader: 'Actions' ,
         uploadImportDialogHeader: 'Upload a file to import'
     };
-    return Object.freeze(config);
 }
 
-// Main hook for TaskListPage with unified config
 export function useTaskListPage(
     { schema }: { schema: XEntity },
-    config: ITaskListPageConfig = getDefaultTaskListPageConfig() // Optional config with defaults
+    config: ITaskListPageConfig = getDefaultTaskListPageConfig() ,
+    componentConfig : CmsComponentConfig = getDefaultCmsComponentConfig()
 ) {
     // Data
     const columns = schema?.attributes?.filter(column => column.inList) ?? [];
@@ -90,12 +84,11 @@ export function useTaskListPage(
         return <></>;
     };
 
-    const tableColumns = columns.map(x => createColumn(x));
+    const tableColumns = columns.map(x => createColumn(x, componentConfig, undefined, undefined));
     tableColumns.push(
         <Column
             key={'action'}
             body={actionBodyTemplate}
-            header={config.actionHeader} // Configurable header
             exportable={false}
             style={{ minWidth: '12rem' }}
         />

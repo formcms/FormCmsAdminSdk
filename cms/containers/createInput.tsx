@@ -4,8 +4,8 @@ import {XAttr} from "../types/xEntity";
 import {AssetSelector, AssetSelectorProps} from "./AssetSelector";
 import {AssetMetadataEditor, AssetMetaDataEditorProps} from "./AssetMetaDataEditor";
 import React from "react";
-import {IComponentConfig} from "../../componentConfig";
 import {toDatetime, toZonelessStr, utcStrToDatetime} from "../types/formatter";
+import {CmsComponentConfig} from "../cmsComponentConfig";
 
 export function createInput(
     props: {
@@ -19,7 +19,7 @@ export function createInput(
         fullRowClassName:string,
         partialRowClassName:string
     },
-    config: IComponentConfig
+    config: CmsComponentConfig
 ) {
     const {field, displayType, options} = props.column
     const ConfiguredMetadataEditor = (props: AssetMetaDataEditorProps) => <AssetMetadataEditor {...props} config={config}/>
@@ -84,6 +84,7 @@ export function createInput(
         case 'image':
             const Image = config.inputComponent.file;
             return <Image
+                labels={config.fileInputLabels}
                 fileSelector={ConfiguredAssetSelector}
                 metadataEditor={ConfiguredMetadataEditor}
                 previewImage
@@ -101,6 +102,7 @@ export function createInput(
         case 'file':
             const FileInput = config.inputComponent.file;
             return <FileInput
+                labels={config.fileInputLabels}
                 fileSelector={ConfiguredAssetSelector}
                 metadataEditor={ConfiguredMetadataEditor}
                 download

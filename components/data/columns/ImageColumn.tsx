@@ -8,6 +8,7 @@ export type ImageColumnProps = {
     getFullAssetsURL?: (arg: string) => string | undefined
 }
 
+//have to return a <Column>, can not be Function Component
 export function imageColumn({field, header, getFullAssetsURL}: ImageColumnProps) {
     const bodyTemplate = (item: any) => {
         const value = item[field];

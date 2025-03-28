@@ -6,7 +6,7 @@ import {useDataTableStateManager} from "../../components/data/useDataTableStateM
 import {FetchingStatus} from "../../components/FetchingStatus";
 import {deleteAsset, useAssets, useGetCmsAssetsUrl} from "../services/asset";
 import {XEntity} from "../types/xEntity";
-import {AssetField} from "../types/assetUtils";
+import {AssetField, AssetLabels} from "../types/assetUtils";
 import {useConfirm} from "../../components/useConfirm";
 import {useCheckError} from "../../components/useCheckError";
 import {useLocation, useNavigate} from "react-router-dom";
@@ -15,26 +15,41 @@ import {GalleryView} from "../../components/data/GalleryView";
 import {Button} from "primereact/button";
 import {getDefaultComponentConfig, IComponentConfig} from "../../componentConfig";
 
-enum DisplayMode {
+export enum DisplayMode {
     'List' = 'List',
     'Gallery' = 'Gallery',
 }
 
-export const displayModes: DisplayMode[] = [DisplayMode.List, DisplayMode.Gallery];
+export type DisplayModeOption = {
+    label: string;
+    value: string;
+}
+
+export const displayModeOptions: DisplayModeOption[] = [
+    {
+        value: DisplayMode.List,
+        label: DisplayMode.List
+    },
+
+    {
+        value: DisplayMode.Gallery,
+        label: DisplayMode.Gallery
+    }
+];
 
 interface IAssetListPageConfig {
-    deleteConfirmHeader :string
+    deleteConfirmHeader: string
     deleteConfirm: (label?: string) => string;
     deleteSuccess: (label?: string) => string;
-    linkCountHeader: string; // For the linkCount column
+    assetLabels: () => AssetLabels | null;
 }
 
 export function getDefaultAssetListPageConfig(): IAssetListPageConfig {
     return ({
         deleteConfirm: (label?: string) => `Do you want to delete this item${label ? ` [${label}]` : ''}?`,
         deleteSuccess: (label?: string) => `Delete${label ? ` [${label}]` : ''} Succeed`,
-        linkCountHeader: 'Link Count',
-        deleteConfirmHeader:"Confirm"
+        deleteConfirmHeader: "Confirm",
+        assetLabels: () => null
     });
 }
 
@@ -42,8 +57,7 @@ export function useAssetList(
     baseRouter: string,
     schema: XEntity,
     pageConfig: IAssetListPageConfig = getDefaultAssetListPageConfig(),
-    componentConfig : IComponentConfig = getDefaultComponentConfig()
-
+    componentConfig: IComponentConfig = getDefaultComponentConfig()
 ) {
     // Entrance
     const location = useLocation();
@@ -51,13 +65,23 @@ export function useAssetList(
     const initQs = location.search.replace("?", "");
 
     // Data
-    const columns = schema?.attributes?.filter(column => column.inList && column.field !== AssetField('linkCount')) ?? [];
+    const columns = schema?.attributes
+        ?.filter(column => column.inList && column.field !== AssetField('linkCount')) ?? [];
+
+    const assetLabels = pageConfig.assetLabels() as any;
+    if (assetLabels) {
+        columns.forEach(column => {
+            column.header = assetLabels[column.field];
+        })
+    }
+
+
     const stateManager = useDataTableStateManager(schema.primaryKey, schema.defaultPageSize, columns, initQs);
     const qs = encodeDataTableState(stateManager.state);
     const {data, error, isLoading, mutate} = useAssets(qs, true);
 
     // State
-    const [displayMode, setDisplayMode] = useState<DisplayMode>(initDisplayMode as DisplayMode ?? displayModes[0]);
+    const [displayMode, setDisplayMode] = useState<DisplayMode>(initDisplayMode as DisplayMode ?? displayModeOptions[0].value);
 
     // Navigate
     useEffect(() => window.history.replaceState(null, "", `?displayMode=${displayMode}&${qs}`), [stateManager.state, displayMode]);
@@ -80,7 +104,7 @@ export function useAssetList(
     };
 
     const onDelete = async (rowData: any) => {
-        confirm(pageConfig.deleteConfirm(rowData[schema.labelAttributeName]),pageConfig.deleteConfirmHeader, async () => {
+        confirm(pageConfig.deleteConfirm(rowData[schema.labelAttributeName]), pageConfig.deleteConfirmHeader, async () => {
             const {error} = await deleteAsset(rowData[AssetField('id')]);
             await handleErrorOrSuccess(error, pageConfig.deleteSuccess(rowData[schema.labelAttributeName]), mutate);
         });
@@ -101,7 +125,7 @@ export function useAssetList(
             <Column
                 key={AssetField("linkCount")}
                 field={AssetField("linkCount")}
-                header={pageConfig.linkCountHeader} // Configurable header
+                header={assetLabels ? assetLabels.linkCount : 'Link Count'} // Configurable header
             />
         );
 
@@ -109,7 +133,8 @@ export function useAssetList(
             body={
                 (rowData) => <>
                     <Button icon="pi pi-pencil" rounded outlined className="mr-2" onClick={() => onEdit(rowData)}/>
-                    {canDelete(rowData) && <Button icon="pi pi-trash" rounded outlined severity="danger" onClick={() => onDelete(rowData)}/>}
+                    {canDelete(rowData) && <Button icon="pi pi-trash" rounded outlined severity="danger"
+                                                   onClick={() => onDelete(rowData)}/>}
                 </>
             }
             exportable={false}

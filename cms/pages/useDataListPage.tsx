@@ -36,22 +36,25 @@ export function useDataListPage(
     pageConfig: IDataListPageConfig = getDefaultDataListPageConfig(),
     componentConfig: IComponentConfig = getDefaultComponentConfig()
 ) {
+    //entrance
+    const initQs = useLocation().search.replace("?", "");
+
+    //data
+    const getCmsAssetUrl = useGetCmsAssetsUrl();
+    const columns = getListAttrs(schema.attributes);
+    const stateManager = useDataTableStateManager(schema.primaryKey, schema.defaultPageSize, columns, initQs);
+    const qs = encodeDataTableState(stateManager.state);
+    const currUrl = `${baseRouter}/${schema.name}?qs=${qs}`;
+    const {data, error, isLoading, mutate} = useListData(schema.name, qs);
+
     const navigate = useNavigate();
     const createNewItem = () => {
-        navigate(`${baseRouter}/${schema.name}/${NewItemRoute}`);
+        navigate(`${baseRouter}/${schema.name}/${NewItemRoute}?ref=${encodeURIComponent(currUrl)}`);
     }
     return {createNewItem, DataListPageMain}
 
     function DataListPageMain() {
-        //entrance
-        const initQs = useLocation().search.replace("?", "");
 
-        //data
-        const getCmsAssetUrl = useGetCmsAssetsUrl();
-        const columns = getListAttrs(schema.attributes);
-        const stateManager = useDataTableStateManager(schema.primaryKey, schema.defaultPageSize, columns, initQs);
-        const qs = encodeDataTableState(stateManager.state);
-        const {data, error, isLoading, mutate} = useListData(schema.name, qs);
 
         const dataTableColumns = columns.map(x =>
             createColumn(x,componentConfig, getCmsAssetUrl, x.field == schema.labelAttributeName ? onEdit : undefined));
@@ -78,13 +81,13 @@ export function useDataListPage(
 
         function onDuplicate(rowData: any) {
             const id = rowData[schema.primaryKey];
-            const url = `${baseRouter}/${schema.name}/${NewItemRoute}?sourceId=${id}&ref=${encodeURIComponent(window.location.href)}`;
+            const url = `${baseRouter}/${schema.name}/${NewItemRoute}?sourceId=${id}&ref=${encodeURIComponent(currUrl)}`;
             navigate(url);
         }
 
         function onEdit(rowData: any) {
             const id = rowData[schema.primaryKey];
-            const url = `${baseRouter}/${schema.name}/${id}?ref=${encodeURIComponent(window.location.href)}`;
+            const url = `${baseRouter}/${schema.name}/${id}?ref=${encodeURIComponent(currUrl)}`;
             navigate(url);
         }
 

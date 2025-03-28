@@ -7,6 +7,7 @@ export type TextColumnProps = {
     onClick?: (rowData:any) => void,
 }
 
+//have to return a <Column>, can not be Function Component
 export function textColumn({field, header, formater, colType, onClick}: TextColumnProps ) {
     const bodyTemplate = (item: any) => {
         let val = item;

@@ -5,8 +5,9 @@ import {getFileUploadURL, useGetCmsAssetsUrl} from "../services/asset";
 import {createInput } from "../containers/createInput";
 import {getInputAttrs} from "../types/attrUtils";
 import {useForm} from "react-hook-form";
-import {getDefaultComponentConfig, IComponentConfig} from "../../componentConfig";
 import {ArrayToObject} from "../types/formatter";
+import {CmsComponentConfig, getDefaultCmsComponentConfig} from "../cmsComponentConfig";
+import {useNavigate} from "react-router-dom";
 
 interface INewDataItemPageConfig {
     saveSuccess: (label?: string) => string; // Success message for saving
@@ -22,14 +23,15 @@ export function userNewDataItemPage(
     schema: XEntity,
     baseRouter: string,
     pageConfig: INewDataItemPageConfig = getDefaultNewDataItemPageConfig(),
-    componentConfig: IComponentConfig = getDefaultComponentConfig()
+    componentConfig: CmsComponentConfig = getDefaultCmsComponentConfig(),
 ) {
     const formId = "newDataItemForm" + schema.name;
     const {register, handleSubmit, control} = useForm()
+    const navigate = useNavigate();
 
     function handleGoBack() {
         const refUrl = new URLSearchParams(location.search).get("ref");
-        window.location.href = refUrl ?? `${baseRouter}/${schema.name}`;
+        navigate(refUrl??`${baseRouter}/${schema.name}`);
     }
 
     function NewDataItemPageMain() {

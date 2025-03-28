@@ -5,16 +5,20 @@ import {InputPanel} from "./InputPanel";
 import {Button} from "primereact/button";
 
 export type FileInputProps = {
+    id: any
     data: any,
     column: { field: string, header: string },
-    register: any
     className: any
+
+    register: any
     control: any
-    id: any
+
     uploadUrl: any
+    getFullAssetsURL: (arg: string) => string
+
     previewImage?: boolean
     download?: boolean
-    getFullAssetsURL: (arg: string) => string
+
     fileSelector?: React.ComponentType<{
         show: boolean;
         setShow: (show: boolean) => void;
@@ -28,6 +32,13 @@ export type FileInputProps = {
         show: boolean;
         setShow: (show: boolean) => void;
     }>
+
+    labels :{
+        upload : string
+        choose : string
+        edit : string
+        delete : string
+    }
 }
 
 export function FileInput(props: FileInputProps ) {
@@ -62,26 +73,26 @@ export function FileInput(props: FileInputProps ) {
                     onUpload={(e) => {
                         field.onChange(e.xhr.responseText);
                     }}
-                    chooseLabel="Upload"
+                    chooseLabel={props.labels.upload}
                     name={'files'}
                 />
                 {FileSelectDialog && (
                     <Button type='button'
                             icon={'pi pi-database'}
-                            label="Choose"
+                            label={props.labels.choose}
                             onClick={()=>setShowChooseLib(true)}
                             className="p-button " // Match FileUpload styling
                     />
                 )}
                 {MetadataEditDialog && <Button type='button'
                         icon={'pi pi-pencil'}
-                        label="Edit"
+                        label={props.labels.edit}
                         onClick={()=>setShowEditMetadata(true)}
                         className="p-button "
                 />}
                 <Button type='button'
                         icon={'pi pi-trash'}
-                        label="Delete"
+                        label={props.labels.delete}
                         onClick={()=>field.onChange("")}
                         className="p-button " 
                 />

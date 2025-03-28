@@ -8,3 +8,18 @@ export function AssetField(key: keyof Asset) {
 export function AssetLinkField(key: keyof AssetLink) {
     return key as string;
 }
+
+export interface AssetLabels{
+    path: string;
+    url: string;
+    name: string;
+    title: string;
+    size: string;
+    type: string;
+    metadata: string;
+    createdBy: string;
+    createdAt: string;
+    updatedAt: string;
+    linkCount: string;
+    id: string;
+}

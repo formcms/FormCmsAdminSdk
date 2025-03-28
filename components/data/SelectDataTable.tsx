@@ -5,21 +5,18 @@ import React from "react";
 
 export function SelectDataTable(
     {
+        dataKey,
         columns,
         data,
         selectedItems, 
         setSelectedItems,
         stateManager: {state, handlers: {onPage, onFilter, onSort}},
-
-        actionBodyTemplate,
-        dataKey,
         selectionMode
     }:
     {
+        dataKey?: string;
         columns: React.JSX.Element[];
         data: ListResponse | undefined
-        selectedItems: any
-        setSelectedItems: any
         stateManager: {
             state: any
             handlers: {
@@ -29,8 +26,8 @@ export function SelectDataTable(
             }
         }
 
-        actionBodyTemplate?: any
-        dataKey?: string;
+        selectedItems: any
+        setSelectedItems: any
         selectionMode: 'single' | 'multiple';
     }
 ) {
@@ -57,7 +54,5 @@ export function SelectDataTable(
     >
         <Column selectionMode={selectionMode} headerStyle={{width: '3rem'}}></Column>
         {columns}
-        {actionBodyTemplate &&
-            <Column body={actionBodyTemplate} exportable={false} style={{minWidth: '12rem'}}></Column>}
     </DataTable>
 }

@@ -15,6 +15,7 @@ import { useCheckError } from "../../components/useCheckError";
 
 // Interface for configuration with no optional properties
 interface IUseRoleDetailPageConfig {
+    deleteConfirmHeader:string
     deleteConfirmationMessage: string;
     deleteSuccessMessage: string;
     saveSuccessMessage: string;
@@ -23,6 +24,7 @@ interface IUseRoleDetailPageConfig {
 
 function getDefaultUseRoleDetailPageConfig(): IUseRoleDetailPageConfig {
     return {
+        deleteConfirmHeader:"Confirm",
         deleteConfirmationMessage: "Do you want to delete this role?",
         deleteSuccessMessage: "Delete Succeed",
         saveSuccessMessage: "Save Succeed",
@@ -47,7 +49,7 @@ export function useRoleDetailPage(
     return { isNewRole, roleData, handleDelete, RoleDetailPageMain };
 
     async function handleDelete() {
-        confirm(config.deleteConfirmationMessage, async () => {
+        confirm(config.deleteConfirmationMessage, config.deleteConfirmHeader,async () => {
             const { error } = await deleteRole(name!);
             await handleErrorOrSuccess(error, config.deleteSuccessMessage, () => {
                 window.location.href = baseRouter + "/roles/";

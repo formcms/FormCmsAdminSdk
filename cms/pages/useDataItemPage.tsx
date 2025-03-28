@@ -1,4 +1,4 @@
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {deleteItem, updateItem, useItemData, savePublicationSettings} from "../services/entity";
 import {Divider} from "primereact/divider";
 import {Picklist} from "../containers/Picklist";
@@ -66,6 +66,7 @@ export function useDataItemPage(
     const {id} = useParams()
     const {data, error, isLoading, mutate} = useItemData(schema.name, id)
     const previewUrl = getPreviewUrl();
+    const navigate = useNavigate();
 
     const formId = "dateItemEditForm" + schema.name;
     const showUnpublish = data && data[DefaultAttributeNames.PublicationStatus] === PublicationStatus.Published ||
@@ -88,7 +89,7 @@ export function useDataItemPage(
 
     function handleGoBack() {
         const refUrl = new URLSearchParams(location.search).get("ref");
-        window.location.href = refUrl ?? `${baseRouter}/${schema.name}`
+        navigate(refUrl??`${baseRouter}/${schema.name}`);
     }
 
     function getPreviewUrl() {
@@ -100,7 +101,6 @@ export function useDataItemPage(
     function DataItemPageMain() {
         const trees = schema.attributes.filter(x => x.displayType == DisplayType.Tree);
         const inputAttrs = getInputAttrs(schema.attributes);
-        console.log(inputAttrs)
         const getCmsAssetUrl = useGetCmsAssetsUrl();
         const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError();
         const {register, handleSubmit, control} = useForm();

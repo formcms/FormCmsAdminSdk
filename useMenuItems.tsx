@@ -28,8 +28,10 @@ export function useEntityMenuItems(entityRouterPrefix: string) {
     })
 
     const entityMenuItems: MenuItem[] = items.map((x: any) => {
+            const parts = x.url.split('?')[0].split('/');
             const url = x.url.replaceAll('/' + entityPrefix, entityRouterPrefix);
             return {
+                key: parts[2],
                 icon: 'pi ' + x.icon,
                 label: x.label,
                 command: () => {
@@ -41,15 +43,16 @@ export function useEntityMenuItems(entityRouterPrefix: string) {
     return entityMenuItems;
 }
 
-export function useAssetMenuItems(entityRouterPrefix: string) {
+export function useAssetMenuItems(entityRouterPrefix: string, assetMenuLabel:string = "Assets") {
     const navigate = useNavigate();
     const {data: asset} = useAssetEntity()
     const {data:userAccess} = useUserInfo();
     if (!canAccess(asset?.name ?? "", userAccess )) return [];
     return [
         {
+            key : asset?.name,
             icon: 'pi pi-images',
-            label: 'Assets',
+            label: assetMenuLabel,
             command: () => {
                 navigate(`${entityRouterPrefix}/${asset!.name}`)
             }
@@ -57,11 +60,26 @@ export function useAssetMenuItems(entityRouterPrefix: string) {
     ]
 }
 
+export type SystemMenuLabels = {
+    schemaBuilder : string,
+    users: string;
+    roles: string;
+    auditLog : string;
+    tasks:string
+}
+
 export function useSystemMenuItems(
     entityRouterPrefix: string,
     authRouterPrefix: string,
     auditLogRouterPrefix: string,
     schemaBuilderRouter: string,
+    labels :SystemMenuLabels = {
+        schemaBuilder: "Schema Builder",
+        users: "Users",
+        roles: "Roles",
+        auditLog: "Audit Log",
+        tasks: "Tasks"
+    }
 ) {
 
     const MenuSchemaBuilder = "menu_schema_builder";
@@ -78,7 +96,7 @@ export function useSystemMenuItems(
         {
             key: MenuTasks,
             icon: 'pi pi-clock',
-            label: 'Tasks',
+            label: labels.tasks,
             command: () => {
                 navigate(`${entityRouterPrefix}/${task?.name}`)
             }
@@ -86,7 +104,7 @@ export function useSystemMenuItems(
         {
             key: MenuRoles,
             icon: 'pi pi-sitemap',
-            label: 'Roles',
+            label: labels.roles,
             command: () => {
                 navigate(`${authRouterPrefix}${RoleRoute}`)
             }
@@ -94,7 +112,7 @@ export function useSystemMenuItems(
         {
             key: MenuUsers,
             icon: 'pi pi-users',
-            label: 'Users',
+            label: labels.users,
             command: () => {
                 navigate(`${authRouterPrefix}${UserRoute}`)
             }
@@ -102,7 +120,7 @@ export function useSystemMenuItems(
         {
             key: MenuAuditLog,
             icon: 'pi pi-file-edit',
-            label: 'Audit Log',
+            label: labels.auditLog,
             command: () => {
                 navigate(`${auditLogRouterPrefix}`)
             }
@@ -110,23 +128,30 @@ export function useSystemMenuItems(
         {
             key: MenuSchemaBuilder,
             icon: 'pi pi-cog',
-            label: 'Schema Builder',
+            label: labels.schemaBuilder,
             url: schemaBuilderRouter
         },
     ].filter(x => userAccess?.allowedMenus.includes(x.key));
 }
 
-export function useUserProfileMenu(authRouterPrefix: string) {
+export type UserProfileMenuLabels = {
+    changePassword: string,
+    logout:string
+}
+export function useUserProfileMenu(authRouterPrefix: string, labels :UserProfileMenuLabels = {
+    changePassword: "Change Password",
+    logout: "Logout",
+}) {
     const navigate = useNavigate();
     const {mutate} = useUserInfo();
     return[
         {
-            label: 'Change Password',
+            label: labels.changePassword,
             icon: 'pi pi-lock',
             command: ()=>navigate(`${authRouterPrefix}${ChangePasswordRoute}`)
         },
         {
-            label: 'Logout',
+            label: labels.logout,
             icon: 'pi pi-sign-out',
             command: async () => {
                 await logout();

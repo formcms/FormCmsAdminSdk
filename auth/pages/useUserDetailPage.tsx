@@ -9,11 +9,17 @@ import {getEntityPermissionInputs} from "../types/entityPermissionInputs";
 
 interface IUseUserDetailPageConfig {
     rolesHeader: string;
+    deleteConfirmHeader:string
+    deleteConfirmationMessage: string;
+    deleteSuccessMessage: string;
 }
 
 function getDefaultUseUserDetailPageConfig(): IUseUserDetailPageConfig {
     return {
         rolesHeader: "Roles",
+        deleteConfirmHeader:"Confirm",
+        deleteConfirmationMessage: "Do you want to delete this user?",
+        deleteSuccessMessage: "Delete Succeed",
     };
 }
 
@@ -38,9 +44,9 @@ export function useUserDetailPage(
     const formId = "UserDetailPage" + id;
 
     async function handleDelete() {
-        confirm("Do you want to delete this user?", async () => {
+        confirm(config.deleteConfirmationMessage,config.deleteConfirmHeader, async () => {
             const { error } = await deleteUser(id!);
-            await handleErrorOrSuccess(error, "Delete User", () => {
+            await handleErrorOrSuccess(error, config.deleteSuccessMessage, () => {
                 window.location.href = baseRouter + "/users";
             });
         });
