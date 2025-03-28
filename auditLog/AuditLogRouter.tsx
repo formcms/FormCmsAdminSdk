@@ -3,15 +3,10 @@ import {useAuditLogsEntity} from "./services/auditLog";
 import {XEntity} from "../cms/types/xEntity";
 import React from "react";
 
-export interface EntityPageProps {
-    baseRouter: string,
-    schema: XEntity
-}
-
 interface AuditLogRouterProps {
     baseRouter: string;
-    AuditLogListPage: React.FC<EntityPageProps>;
-    AuditLogDetailPage: React.FC<EntityPageProps>;
+    AuditLogListPage: React.FC<{schema:XEntity,baseRouter:string}>;
+    AuditLogDetailPage: React.FC<{schema:XEntity,baseRouter:string}>;
 
 }
 

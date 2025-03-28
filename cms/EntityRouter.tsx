@@ -7,19 +7,14 @@ import {XEntity} from "./types/xEntity";
 
 export const NewItemRoute = "new";
 
-export interface EntityPageProps{
-    baseRouter:string,
-    schema:XEntity
-}
-
 interface EntityRouterProps {
     baseRouter: string;
-    DataListPage: React.FC<EntityPageProps>;
-    NewDataItemPage:React.FC<EntityPageProps> ;
-    DataItemPage: React.FC<EntityPageProps>;
-    TaskListPage: React.FC<EntityPageProps>;
-    AssetListPage:React.FC<EntityPageProps>;
-    AssetEditPage: React.FC<EntityPageProps>;
+    DataListPage: React.FC<{schema:XEntity,baseRouter:string}>;
+    NewDataItemPage:React.FC<{schema:XEntity,baseRouter:string}> ;
+    DataItemPage: React.FC<{schema:XEntity,baseRouter:string}>;
+    TaskListPage: React.FC<{schema:XEntity,baseRouter:string}>;
+    AssetListPage:React.FC<{schema:XEntity,baseRouter:string}>;
+    AssetEditPage: React.FC<{schema:XEntity,baseRouter:string}>;
 }
 
 export function EntityRouter(
