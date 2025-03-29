@@ -63,3 +63,5 @@ export {useUserProfileMenu, useAssetMenuItems, useEntityMenuItems, useSystemMenu
 export {EntityRouter} from "./cms/EntityRouter";
 export {AccountRouter} from "./auth/AccountRouter";
 export {AuditLogRouter} from "./auditLog/AuditLogRouter";
+export {AuthRouter} from "./auth/AuthRouter";
+
