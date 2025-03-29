@@ -1,18 +1,18 @@
 import {Dialog} from "primereact/dialog";
 import {createColumn} from "./createColumn";
-import {encodeDataTableState} from "../../components/data/dataTableStateUtil";
-import {useDataTableStateManager} from "../../components/data/useDataTableStateManager";
-import {FetchingStatus} from "../../components/FetchingStatus";
+import {encodeDataTableState} from "../../types/dataTableStateUtil";
+import {useDataTableStateManager} from "../../hooks/useDataTableStateManager";
+import {FetchingStatus} from "../../containers/FetchingStatus";
 import {useAssetEntity, useAssets, useGetCmsAssetsUrl} from "../services/asset";
 import {SelectButton, SelectButtonChangeEvent} from "primereact/selectbutton";
 import {useState} from "react";
 import {Asset} from "../types/asset";
 import {SelectDataTable} from "../../components/data/SelectDataTable";
-import { GalleryView } from "../../components/data/GalleryView";
-import { AssetField } from "../types/assetUtils";
-import { Button } from "primereact/button";
-import { GallerySelector } from "../../components/data/GallerySelector";
-import {CmsComponentConfig} from "../cmsComponentConfig";
+import {GalleryView} from "../../components/data/GalleryView";
+import {AssetField} from "../types/assetUtils";
+import {Button} from "primereact/button";
+import {GallerySelector} from "../../components/data/GallerySelector";
+import {CmsComponentConfig} from "../types/cmsComponentConfig";
 
 export type AssetSelectorProps = {
     show: boolean;
@@ -23,26 +23,21 @@ export type AssetSelectorProps = {
     setPaths?: (paths: string[]) => void;
 };
 
-enum DisplayMode {
-    'List' = 'List',
-    'Gallery' = 'Gallery',
-}
-
 export function AssetSelector(
     {
         show, setShow, path, setPath, paths, setPaths, componentConfig,
-    }: AssetSelectorProps &{componentConfig: CmsComponentConfig}
+    }: AssetSelectorProps & { componentConfig: CmsComponentConfig }
 ) {
     const {data: schema} = useAssetEntity();
     return schema && <AssetSelectorMain/>
 
-    function AssetSelectorMain(){
-        const [displayMode, setDisplayMode] = useState<DisplayMode>(DisplayMode.List);
+    function AssetSelectorMain() {
+        const [displayMode, setDisplayMode] = useState<'List' | 'Gallery'>('List');
         const columns = schema!.attributes?.filter(column => column.inList) ?? [];
-        const assetLabels = componentConfig.assetSelector.assetLabels() as any;
+        const assetLabels = componentConfig.assetLabels
         if (assetLabels) {
             columns.forEach(column => {
-                column.header = assetLabels[column.field];
+                column.header = assetLabels[column.field as keyof typeof assetLabels];
             })
         }
 
@@ -50,7 +45,7 @@ export function AssetSelector(
         const {data, error, isLoading} = useAssets(encodeDataTableState(stateManager.state), false);
         const getCmsAssetUrl = useGetCmsAssetsUrl();
 
-        const tableColumns = columns.map(x => createColumn(x,componentConfig, getCmsAssetUrl, undefined));
+        const tableColumns = columns.map(x => createColumn(x, componentConfig, getCmsAssetUrl, undefined));
 
 
         const handleSetSelectItems = (item: any) => {
@@ -64,11 +59,11 @@ export function AssetSelector(
             }
         };
 
-        const dialogHeader =  componentConfig.assetSelector.dialogHeader;
+        const dialogHeader = componentConfig.assetSelector.dialogHeader;
         const okButtonLabel = componentConfig.assetSelector.okButtonLabel;
         const displayModes = [
-            {value:DisplayMode.List, label: componentConfig.assetSelector.listLabel, icon: 'pi pi-list'},
-            {value:DisplayMode.Gallery,label: componentConfig.assetSelector.galleryLabel, icon: 'pi pi-image'}
+            {value: 'List', label: componentConfig.assetSelector.listLabel, icon: 'pi pi-list'},
+            {value: 'Gallery', label: componentConfig.assetSelector.galleryLabel, icon: 'pi pi-image'}
         ];
 
         return <Dialog maximizable
@@ -81,7 +76,7 @@ export function AssetSelector(
                 <Button
                     icon={'pi pi-check'}
                     onClick={() => setShow(false)}
-                    style={{width: '70px'}}
+                    style={{width: '100px'}}
                     label={okButtonLabel}
                 />
                 <SelectButton
@@ -91,10 +86,10 @@ export function AssetSelector(
                 />
             </div>
 
-            <FetchingStatus isLoading={isLoading} error={error}/>
+            <FetchingStatus isLoading={isLoading} error={error} componentConfig={componentConfig} />
             <div className="card">
                 {
-                    data && columns && displayMode === DisplayMode.List &&
+                    data && columns && displayMode === 'List' &&
                     <SelectDataTable
                         selectionMode={setPath ? 'single' : 'multiple'}
                         dataKey={AssetField('path')}
@@ -106,7 +101,7 @@ export function AssetSelector(
                     />
                 }
                 {
-                    data && columns && displayMode === DisplayMode.Gallery && setPath &&
+                    data && columns && displayMode === 'Gallery' && setPath &&
                     <GalleryView
                         state={stateManager.state}
                         onPage={stateManager.handlers.onPage}
@@ -121,7 +116,7 @@ export function AssetSelector(
                     />
                 }
                 {
-                    data && columns && displayMode === DisplayMode.Gallery && setPaths &&
+                    data && columns && displayMode === 'Gallery' && setPaths &&
                     <GallerySelector
                         paths={paths}
                         setPaths={setPaths}

@@ -1,5 +1,4 @@
 import {DataTable} from "primereact/datatable";
-import {ListResponse} from "../../cms/types/listResponse";
 import React from "react";
 
 export function EditDataTable(
@@ -11,7 +10,10 @@ export function EditDataTable(
     }:
     {
         dataKey:string,
-        data: ListResponse | undefined
+        data: {
+            items: { [_: string]: any; }[];
+            totalRecords: number;
+        } | undefined
         stateManager:{
             state:any
             handlers:{

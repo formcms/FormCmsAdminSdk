@@ -1,5 +1,5 @@
-import {getDefaultComponentConfig, IComponentConfig} from "../componentConfig";
-import {AssetLabels} from "./types/assetUtils";
+import {getDefaultComponentConfig, ComponentConfig} from "../../componentConfig";
+import {AssetLabels} from "./assetUtils";
 
 export type CmsComponentConfig ={
     assetEditor: {
@@ -15,8 +15,8 @@ export type CmsComponentConfig ={
         listLabel: string
         galleryLabel: string
         okButtonLabel: string
-        assetLabels:()=>AssetLabels|null
     }
+    assetLabels:AssetLabels|null
     editTable: {
         submitSuccess: (field: string) => string;
         dialogHeader: (header: string) => string;
@@ -37,7 +37,7 @@ export type CmsComponentConfig ={
         dialogHeader: (lbl: string) => string;
         selectButtonLabel:(lbl :string)=> string;
     }
-}& IComponentConfig
+}& ComponentConfig
 
 export function getDefaultCmsComponentConfig():CmsComponentConfig {
     return {
@@ -57,8 +57,8 @@ export function getDefaultCmsComponentConfig():CmsComponentConfig {
             listLabel: "Select Metadata",
             galleryLabel: "Select Metadata",
             okButtonLabel: "Ok",
-            assetLabels:()=>null
         },
+        assetLabels:null,
         editTable: {
             submitSuccess: (field: string) => `Saved ${field}`,
             dialogHeader: (header: string) => `Edit ${header}`,

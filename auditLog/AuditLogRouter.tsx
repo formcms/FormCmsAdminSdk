@@ -1,7 +1,7 @@
 import {Route, Routes} from "react-router-dom";
 import {useAuditLogsEntity} from "./services/auditLog";
-import {XEntity} from "../cms/types/xEntity";
 import React from "react";
+import {XEntity} from "../types/xEntity";
 
 interface AuditLogRouterProps {
     baseRouter: string;

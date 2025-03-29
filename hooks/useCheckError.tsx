@@ -1,8 +1,7 @@
 import {useRef, useState} from "react";
-import {Message} from "primereact/message";
-import {Toast} from "primereact/toast";
+import {ComponentConfig} from "../componentConfig";
 
-export function useCheckError(){
+export function useCheckError(componentConfig: ComponentConfig) {
     const toast = useRef<any>(null);
     const [error, setError] = useState('')
     return {
@@ -19,11 +18,9 @@ export function useCheckError(){
         },
         CheckErrorStatus: ()=>{
             return <>
-                <Toast ref={toast} />
-                {error&& error.split('\n').map(e =>(<><Message key={e} severity={'error'} text={e}/>&nbsp;&nbsp;</>))}
+                <>{componentConfig.etc.toast(toast.current)}</>
+                {error&& error.split('\n').map(e =>(<>{componentConfig.etc.errorMessage(e)}&nbsp;&nbsp;</>))}
             </>
         }
     }
-
-
 }

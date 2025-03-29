@@ -1,17 +1,14 @@
 import { useState } from "react";
-import "primereact/resources/themes/saga-blue/theme.css";
-import "primereact/resources/primereact.min.css";
-import "primeicons/primeicons.css";
 import { useLocation } from "react-router-dom";
 import { login, useUserInfo } from "../services/auth";
 import { RegisterRoute } from "../AccountRouter";
 
 // Interface for configuration with no optional properties
-interface IUseLoginPageConfig {
+export interface UseLoginPageConfig {
     loginFailedError: string;
 }
 
-function getDefaultUseLoginPageConfig(): IUseLoginPageConfig {
+export function getDefaultUseLoginPageConfig(): UseLoginPageConfig {
     return {
         loginFailedError: "Login failed",
     };
@@ -19,7 +16,7 @@ function getDefaultUseLoginPageConfig(): IUseLoginPageConfig {
 
 export const useLoginPage = (
     baseRouter: string,
-    config: IUseLoginPageConfig = getDefaultUseLoginPageConfig()
+    config: UseLoginPageConfig = getDefaultUseLoginPageConfig()
 ) => {
     const location = useLocation();
     const ref = new URLSearchParams(location.search).get("ref");

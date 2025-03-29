@@ -1,20 +1,21 @@
 import { deleteUser, saveUser, useEntities, useSingleUser, useRoles } from "../services/accounts";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
-import { useConfirm } from "../../components/useConfirm";
-import { FetchingStatus } from "../../components/FetchingStatus";
+import { useConfirm } from "../../hooks/useConfirm";
+import { FetchingStatus } from "../../containers/FetchingStatus";
 import { MultiSelectInput } from "../../components/inputs/MultiSelectInput";
-import { useCheckError } from "../../components/useCheckError";
+import { useCheckError } from "../../hooks/useCheckError";
 import {getEntityPermissionInputs} from "../types/entityPermissionInputs";
+import {ComponentConfig, getDefaultComponentConfig} from "../../componentConfig";
 
-interface IUseUserDetailPageConfig {
+export interface UseUserDetailPageConfig {
     rolesHeader: string;
     deleteConfirmHeader:string
     deleteConfirmationMessage: string;
     deleteSuccessMessage: string;
 }
 
-function getDefaultUseUserDetailPageConfig(): IUseUserDetailPageConfig {
+export function getDefaultUseUserDetailPageConfig(): UseUserDetailPageConfig {
     return {
         rolesHeader: "Roles",
         deleteConfirmHeader:"Confirm",
@@ -25,14 +26,16 @@ function getDefaultUseUserDetailPageConfig(): IUseUserDetailPageConfig {
 
 export function useUserDetailPage(
     baseRouter: string,
-    config: IUseUserDetailPageConfig = getDefaultUseUserDetailPageConfig()
+    pageConfig: UseUserDetailPageConfig = getDefaultUseUserDetailPageConfig(),
+    componentConfig : ComponentConfig = getDefaultComponentConfig()
+
 ) {
     const { id } = useParams();
     const { data: userData, isLoading: loadingUser, error: errorUser, mutate: mutateUser } = useSingleUser(id!);
     const { data: roles, isLoading: loadingRoles, error: errorRoles } = useRoles();
     const { data: entities, isLoading: loadingEntity, error: errorEntities } = useEntities();
-    const { confirm, Confirm } = useConfirm("userDetailPage");
-    const { handleErrorOrSuccess, CheckErrorStatus } = useCheckError();
+    const { confirm, Confirm } = useConfirm("userDetailPage",componentConfig);
+    const { handleErrorOrSuccess, CheckErrorStatus } = useCheckError(componentConfig);
     const { register, handleSubmit, control } = useForm();
 
     const onSubmit = async (formData: any) => {
@@ -44,9 +47,9 @@ export function useUserDetailPage(
     const formId = "UserDetailPage" + id;
 
     async function handleDelete() {
-        confirm(config.deleteConfirmationMessage,config.deleteConfirmHeader, async () => {
+        confirm(pageConfig.deleteConfirmationMessage,pageConfig.deleteConfirmHeader, async () => {
             const { error } = await deleteUser(id!);
-            await handleErrorOrSuccess(error, config.deleteSuccessMessage, () => {
+            await handleErrorOrSuccess(error, pageConfig.deleteSuccessMessage, () => {
                 window.location.href = baseRouter + "/users";
             });
         });
@@ -60,6 +63,7 @@ export function useUserDetailPage(
                 <FetchingStatus
                     isLoading={loadingUser || loadingRoles || loadingEntity}
                     error={errorUser || errorRoles || errorEntities}
+                    componentConfig={componentConfig}
                 />
                 {userData && roles && (
                     <form onSubmit={handleSubmit(onSubmit)} id={formId}>
@@ -68,7 +72,7 @@ export function useUserDetailPage(
                             <MultiSelectInput
                                 column={{
                                     field: "roles",
-                                    header: config.rolesHeader, // Use configurable header
+                                    header: pageConfig.rolesHeader, // Use configurable header
                                 }}
                                 options={roles}
                                 register={register}

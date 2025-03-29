@@ -1,9 +1,9 @@
-import {XAttr, XEntity} from "../types/xEntity";
+import {XAttr, XEntity} from "../../types/xEntity";
 import {Tree, TreeCheckboxSelectionKeys, TreeSelectionEvent} from 'primereact/tree';
 import {useTree} from "./useTree";
 import {deleteJunctionItems, saveJunctionItems, useJunctionIds} from "../services/entity";
 import {useEffect, useState} from "react";
-import {IComponentConfig} from "../../componentConfig";
+import {ComponentConfig} from "../../componentConfig";
 
 function getSelectionKeys(nodes: any[], selectedKeys: any[]) {
     let ret: any = {};
@@ -50,7 +50,7 @@ export function TreeContainer(
         entity: XEntity,
         column: XAttr,
         data: any,
-        componentConfig: IComponentConfig
+        componentConfig: ComponentConfig
     }) {
 
     const [expandedKeys, setExpandedKeys] = useState<any>();

@@ -2,11 +2,11 @@ import {useForm} from "react-hook-form"
 import {DefaultAttributeNames} from "../types/defaultAttributeNames"
 import {Dialog} from "primereact/dialog";
 import {Button} from "primereact/button";
-import {useCheckError} from "../../components/useCheckError";
+import {useCheckError} from "../../hooks/useCheckError";
 import {PublicationStatus} from "../types/publicationStatus";
 import {savePublicationSettings} from "../services/entity";
-import {XEntity} from "../types/xEntity";
-import {IComponentConfig} from "../../componentConfig";
+import {XEntity} from "../../types/xEntity";
+import {ComponentConfig} from "../../componentConfig";
 import {utcStrToDatetime} from "../types/formatter";
 
 export function SetPublishStatusDialog(
@@ -29,7 +29,7 @@ export function SetPublishStatusDialog(
         newStatus: PublicationStatus,
         visible: boolean,
         setVisible: (visible: boolean) => void,
-        componentConfig:IComponentConfig
+        componentConfig:ComponentConfig
     }
 ) {
     const {
@@ -43,7 +43,7 @@ export function SetPublishStatusDialog(
     const formData = {[DefaultAttributeNames.PublishedAt]: publishedAt}
     const formId = "PublicationSettings" + newStatus;
 
-    const {handleErrorOrSuccess, CheckErrorStatus: CheckPublishErrorStatus} = useCheckError();
+    const {handleErrorOrSuccess, CheckErrorStatus: CheckPublishErrorStatus} = useCheckError(componentConfig);
     async function submit(formData: any) {
         formData[schema.primaryKey] = data[schema.primaryKey];
         formData[DefaultAttributeNames.PublicationStatus] = newStatus;

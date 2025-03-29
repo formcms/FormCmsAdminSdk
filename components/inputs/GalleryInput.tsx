@@ -44,6 +44,12 @@ export type GalleryInputProps = {
         show: boolean;
         setShow: (show: boolean) => void;
     }>
+    labels :{
+        upload : string
+        choose : string
+        edit : string
+        delete : string
+    }
 }
 
 export function GalleryInput(props: GalleryInputProps) {
@@ -98,13 +104,13 @@ export function GalleryInput(props: GalleryInputProps) {
                             url={props.uploadUrl}
                             onUpload={handleUploaded}
                             name={'files'}
-                            chooseLabel="Upload"
+                            chooseLabel={props.labels.upload}
                 />
                 {
                     FileSelectDialog && (
                     <Button type='button'
                             icon={'pi pi-database'}
-                            label="Choose"
+                            label={props.labels.choose}
                             onClick={()=>setShowChooseLib(true)}
                             className="p-button " // Match FileUpload styling
                     />)
@@ -113,7 +119,7 @@ export function GalleryInput(props: GalleryInputProps) {
                     MetadataEditor && paths.length > 0 &&(
                         <Button type='button'
                                 icon={'pi pi-pencil'}
-                                label="Edit"
+                                label={props.labels.edit}
                                 onClick={()=>setShowMetadataEdtior(true)}
                                 className="p-button " // Match FileUpload styling
                         />
@@ -121,7 +127,7 @@ export function GalleryInput(props: GalleryInputProps) {
                 }
                 <Button type='button'
                         icon={'pi pi-trash'}
-                        label="Delete"
+                        label={props.labels.delete}
                         onClick={handleRemoveActive}
                         className="p-button " // Match FileUpload styling
                 />

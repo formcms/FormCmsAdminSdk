@@ -1,4 +1,3 @@
-import { ListResponse } from "./listResponse"
 import {DataView} from 'primereact/dataview';
 
 export function GalleryView(
@@ -19,7 +18,10 @@ export function GalleryView(
     {
         state: any
         onPage: any,
-        data: ListResponse 
+        data: {
+            items: { [_: string]: any; }[];
+            totalRecords: number;
+        }
         
         getAssetUrl: (s: string) => string
         pathField:string

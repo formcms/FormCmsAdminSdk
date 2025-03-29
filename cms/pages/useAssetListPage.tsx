@@ -1,87 +1,91 @@
 import {Column} from "primereact/column";
 import {createColumn} from "../containers/createColumn";
-import {encodeDataTableState} from "../../components/data/dataTableStateUtil";
+import {encodeDataTableState} from "../../types/dataTableStateUtil";
 import {EditDataTable} from "../../components/data/EditDataTable";
-import {useDataTableStateManager} from "../../components/data/useDataTableStateManager";
-import {FetchingStatus} from "../../components/FetchingStatus";
+import {useDataTableStateManager} from "../../hooks/useDataTableStateManager";
+import {FetchingStatus} from "../../containers/FetchingStatus";
 import {deleteAsset, useAssets, useGetCmsAssetsUrl} from "../services/asset";
-import {XEntity} from "../types/xEntity";
-import {AssetField, AssetLabels} from "../types/assetUtils";
-import {useConfirm} from "../../components/useConfirm";
-import {useCheckError} from "../../components/useCheckError";
+import {XEntity} from "../../types/xEntity";
+import {AssetField} from "../types/assetUtils";
+import {useConfirm} from "../../hooks/useConfirm";
+import {useCheckError} from "../../hooks/useCheckError";
 import {useLocation, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {GalleryView} from "../../components/data/GalleryView";
 import {Button} from "primereact/button";
-import {getDefaultComponentConfig, IComponentConfig} from "../../componentConfig";
+import {CmsComponentConfig, getDefaultCmsComponentConfig} from "../types/cmsComponentConfig";
 
-export enum DisplayMode {
-    'List' = 'List',
-    'Gallery' = 'Gallery',
+const displayModeLabels = {
+    list: 'List',
+    gallery: 'gallery'
 }
 
-export type DisplayModeOption = {
-    label: string;
-    value: string;
-}
+displayModeLabels['list'] = 'list';
 
-export const displayModeOptions: DisplayModeOption[] = [
-    {
-        value: DisplayMode.List,
-        label: DisplayMode.List
-    },
-
-    {
-        value: DisplayMode.Gallery,
-        label: DisplayMode.Gallery
-    }
-];
-
-interface IAssetListPageConfig {
+export type AssetListPageConfig = {
     deleteConfirmHeader: string
-    deleteConfirm: (label?: string) => string;
-    deleteSuccess: (label?: string) => string;
-    assetLabels: () => AssetLabels | null;
+    deleteConfirm: (label: string) => string;
+    deleteSuccess: (label: string) => string;
+    displayModeLabels: {
+        list: string
+        gallery: string
+    }
 }
 
-export function getDefaultAssetListPageConfig(): IAssetListPageConfig {
+export function getDefaultAssetListPageConfig(): AssetListPageConfig {
     return ({
-        deleteConfirm: (label?: string) => `Do you want to delete this item${label ? ` [${label}]` : ''}?`,
-        deleteSuccess: (label?: string) => `Delete${label ? ` [${label}]` : ''} Succeed`,
+        deleteConfirm: (label?: string) => `Do you want to delete this item [${label}] ?`,
+        deleteSuccess: (label?: string) => `Delete [${label}] Succeed`,
         deleteConfirmHeader: "Confirm",
-        assetLabels: () => null
+        displayModeLabels: {
+            list: 'List',
+            gallery: 'gallery'
+        }
     });
 }
 
-export function useAssetList(
+export function useAssetListPage(
     baseRouter: string,
     schema: XEntity,
-    pageConfig: IAssetListPageConfig = getDefaultAssetListPageConfig(),
-    componentConfig: IComponentConfig = getDefaultComponentConfig()
+    pageConfig: AssetListPageConfig = getDefaultAssetListPageConfig(),
+    componentConfig: CmsComponentConfig = getDefaultCmsComponentConfig()
 ) {
     // Entrance
     const location = useLocation();
-    const initDisplayMode = new URLSearchParams(location.search).get("displayMode");
+    let initDisplayMode = new URLSearchParams(location.search).get("displayMode");
     const initQs = location.search.replace("?", "");
 
     // Data
     const columns = schema?.attributes
         ?.filter(column => column.inList && column.field !== AssetField('linkCount')) ?? [];
-
-    const assetLabels = pageConfig.assetLabels() as any;
-    if (assetLabels) {
-        columns.forEach(column => {
-            column.header = assetLabels[column.field];
-        })
-    }
-
-
     const stateManager = useDataTableStateManager(schema.primaryKey, schema.defaultPageSize, columns, initQs);
     const qs = encodeDataTableState(stateManager.state);
     const {data, error, isLoading, mutate} = useAssets(qs, true);
 
-    // State
-    const [displayMode, setDisplayMode] = useState<DisplayMode>(initDisplayMode as DisplayMode ?? displayModeOptions[0].value);
+    const assetLabels = componentConfig.assetLabels;
+    if (assetLabels) {
+        columns.forEach(column => {
+            column.header = assetLabels[column.field as keyof typeof assetLabels];
+        })
+    }
+
+    //apply config
+    const displayModeOptions: { label: string, value: 'List' | 'Gallery' }[] = [
+        {
+            value: 'List',
+            label: pageConfig.displayModeLabels.list,
+        },
+
+        {
+            value: 'Gallery',
+            label: pageConfig.displayModeLabels.gallery,
+        }
+    ];
+
+    if (initDisplayMode !== 'List' && initDisplayMode !== 'Gallery') {
+        initDisplayMode = displayModeOptions[0].value;
+    }
+    const [displayMode, setDisplayMode] = useState<'List' | 'Gallery'>(initDisplayMode as any);
 
     // Navigate
     useEffect(() => window.history.replaceState(null, "", `?displayMode=${displayMode}&${qs}`), [stateManager.state, displayMode]);
@@ -89,13 +93,13 @@ export function useAssetList(
     // Refs
     const getCmsAssetUrl = useGetCmsAssetsUrl();
     const navigate = useNavigate();
-    const {confirm, Confirm} = useConfirm("dataItemPage" + schema.name);
-    const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError();
+    const {confirm, Confirm} = useConfirm("dataItemPage" + schema.name, componentConfig);
+    const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError(componentConfig);
 
 
     const onEdit = (rowData: any) => {
         const id = rowData[schema.primaryKey];
-        const url = `${baseRouter}/${schema.name}/${id}?ref=${encodeURIComponent(window.location.href)}`;
+        const url = `${baseRouter}/${schema.name}/${id}?ref=${encodeURIComponent(`${baseRouter}/${schema.name}?displayMode=${displayMode}&${qs}`)}`;
         navigate(url);
     };
 
@@ -110,7 +114,7 @@ export function useAssetList(
         });
     };
 
-    return {displayMode, setDisplayMode, AssetListPageMain};
+    return {displayMode, displayModeOptions, setDisplayMode, AssetListPageMain};
 
     function AssetListPageMain() {
         const tableColumns = columns.map(x =>
@@ -143,9 +147,9 @@ export function useAssetList(
         return (
             <>
                 <CheckErrorStatus key={'AssetList'}/>
-                <FetchingStatus isLoading={isLoading} error={error}/>
+                <FetchingStatus isLoading={isLoading} error={error} componentConfig={componentConfig} />
                 <div className="card">
-                    {data && columns && displayMode === DisplayMode.List && (
+                    {data && columns && displayMode === 'List' && (
                         <EditDataTable
                             dataKey={schema.primaryKey}
                             columns={tableColumns}
@@ -153,7 +157,7 @@ export function useAssetList(
                             stateManager={stateManager}
                         />
                     )}
-                    {data && columns && displayMode === DisplayMode.Gallery && (
+                    {data && columns && displayMode === 'Gallery' && (
                         <GalleryView
                             onSelect={onEdit}
                             state={stateManager.state}

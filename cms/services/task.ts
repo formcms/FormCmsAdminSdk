@@ -1,9 +1,9 @@
 import useSWR from "swr";
-import { XEntity } from "../types/xEntity";
 import { fullCmsApiUrl } from "../configs";
 import {catchResponse, decodeError, fetcher, swrConfig } from "../../utils/apiUtils";
-import { ListResponse } from "../types/listResponse";
 import axios from "axios";
+import {XEntity} from "../../types/xEntity";
+import {ListResponse} from "../../types/listResponse";
 
 export  function useTaskEntity() {
     let res = useSWR<XEntity>(fullCmsApiUrl(`/tasks/entity`), fetcher,swrConfig);

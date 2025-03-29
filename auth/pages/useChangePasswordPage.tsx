@@ -1,13 +1,12 @@
 import { changePassword } from "../services/auth";
 import { useState } from "react";
 
-// Interface for configuration with no optional properties
-interface IUseChangePasswordPageConfig {
+export interface UseChangePasswordPageConfig {
     passwordMismatchError: string;
     changePasswordFailedError: string;
 }
 
-function getDefaultUseChangePasswordPageConfig(): IUseChangePasswordPageConfig {
+export function getDefaultUseChangePasswordPageConfig(): UseChangePasswordPageConfig {
     return {
         passwordMismatchError: "Passwords don't match",
         changePasswordFailedError: "Change password failed",
@@ -15,7 +14,7 @@ function getDefaultUseChangePasswordPageConfig(): IUseChangePasswordPageConfig {
 }
 
 export function useChangePasswordPage(
-    config: IUseChangePasswordPageConfig = getDefaultUseChangePasswordPageConfig()
+    config: UseChangePasswordPageConfig = getDefaultUseChangePasswordPageConfig()
 ) {
     const [oldPassword, setOldPassword] = useState<string>("");
     const [password, setPassword] = useState<string>("");

@@ -5,13 +5,12 @@ import "primeicons/primeicons.css";
 import { register } from "../services/auth";
 import { LoginRoute } from "../AccountRouter";
 
-// Interface for configuration with no optional properties
-interface IUseRegisterPageConfig {
+export interface UseRegisterPageConfig {
     passwordMismatchError: string;
     registerFailedError: string;
 }
 
-function getDefaultUseRegisterPageConfig(): IUseRegisterPageConfig {
+export function getDefaultUseRegisterPageConfig(): UseRegisterPageConfig {
     return {
         passwordMismatchError: "Passwords don't match",
         registerFailedError: "Register failed",
@@ -20,7 +19,7 @@ function getDefaultUseRegisterPageConfig(): IUseRegisterPageConfig {
 
 export const useRegisterPage = (
     baseRouter: string,
-    config: IUseRegisterPageConfig = getDefaultUseRegisterPageConfig()
+    config: UseRegisterPageConfig = getDefaultUseRegisterPageConfig()
 ) => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");

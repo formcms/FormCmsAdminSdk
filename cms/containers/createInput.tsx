@@ -1,11 +1,11 @@
 import {LookupContainer} from "./LookupContainer";
 import {TreeSelectContainer} from "./TreeSelectContainer";
-import {XAttr} from "../types/xEntity";
+import {XAttr} from "../../types/xEntity";
 import {AssetSelector, AssetSelectorProps} from "./AssetSelector";
 import {AssetMetadataEditor, AssetMetaDataEditorProps} from "./AssetMetaDataEditor";
 import React from "react";
 import {toDatetime, toZonelessStr, utcStrToDatetime} from "../types/formatter";
-import {CmsComponentConfig} from "../cmsComponentConfig";
+import {CmsComponentConfig} from "../types/cmsComponentConfig";
 
 export function createInput(
     props: {
@@ -22,7 +22,7 @@ export function createInput(
     config: CmsComponentConfig
 ) {
     const {field, displayType, options} = props.column
-    const ConfiguredMetadataEditor = (props: AssetMetaDataEditorProps) => <AssetMetadataEditor {...props} config={config}/>
+    const ConfiguredMetadataEditor = (props: AssetMetaDataEditorProps) => <AssetMetadataEditor {...props} componentConfig={config}/>
     const ConfiguredAssetSelector = (props: AssetSelectorProps) => <AssetSelector {...props} componentConfig={config}/>
 
 
@@ -94,6 +94,7 @@ export function createInput(
         case 'gallery':
             const GalleryInput = config.inputComponent.gallery;
             return <GalleryInput
+                labels={config.fileInputLabels}
                 fileSelector={ConfiguredAssetSelector}
                 metadataEditor={ConfiguredMetadataEditor}
                 className={props.partialRowClassName}

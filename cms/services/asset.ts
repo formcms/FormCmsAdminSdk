@@ -1,10 +1,10 @@
 import useSWR from "swr";
-import { XEntity } from "../types/xEntity";
-import { ListResponse } from "../types/listResponse";
 import { fullCmsApiUrl } from "../configs";
 import {catchResponse, decodeError, fetcher, swrConfig } from "../../utils/apiUtils";
 import axios from "axios";
 import { Asset } from "../types/asset";
+import {XEntity} from "../../types/xEntity";
+import {ListResponse} from "../../types/listResponse";
 
 export function useSingleAsset(id: any){
     let res = useSWR<Asset>(fullCmsApiUrl(`/assets/${id}`), fetcher,swrConfig);
@@ -12,7 +12,7 @@ export function useSingleAsset(id: any){
 }
 
 export function useSingleAssetByPath(path: any){
-    var url = path ? fullCmsApiUrl(`/assets/path?path=${path}`):null;
+    let url = path ? fullCmsApiUrl(`/assets/path?path=${path}`):null;
     let res = useSWR<Asset>(url, fetcher,swrConfig);
     return {...res, error:decodeError(res.error)}
 }

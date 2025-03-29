@@ -3,10 +3,11 @@ import {fullCmsApiUrl} from "../configs";
 import axios from "axios";
 import {catchResponse, decodeError, fetcher, swrConfig} from "../../utils/apiUtils";
 import { LookupListResponse } from "../types/lookupListResponse";
-import { ListResponse } from "../types/listResponse";
+import {ListResponse} from "../../types/listResponse";
 
 export function useListData(schemaName: string | undefined, qs: string) {
-    let res = useSWR<ListResponse>(fullCmsApiUrl(`/entities/${schemaName}?${qs}`), fetcher,swrConfig);
+    const url = fullCmsApiUrl(`/entities/${schemaName}?${qs}`);
+    let res = useSWR<ListResponse>(url, fetcher,swrConfig);
     return {...res, error:decodeError(res.error)}
 }
 

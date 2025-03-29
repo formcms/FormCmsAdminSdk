@@ -3,19 +3,19 @@ import { useUsers } from "../services/accounts";
 import { Column } from "primereact/column";
 import { Link } from "react-router-dom";
 
-interface IUseUserListPageConfig {
+export interface UseUserListPageConfig {
     emailHeader: string;
     roleHeader: string;
 }
 
-function getDefaultUseUserListPageConfig()  {
+export function getDefaultUseUserListPageConfig()  {
     return {
         emailHeader:  "Email",
         roleHeader:  "Role",
     };
 }
 
-export function useUserListPage(config: IUseUserListPageConfig = getDefaultUseUserListPageConfig()) {
+export function useUserListPage(config: UseUserListPageConfig = getDefaultUseUserListPageConfig()) {
     const { data, isLoading } = useUsers();
 
     const roleTemplate = (record: { roles: string[] }) => {

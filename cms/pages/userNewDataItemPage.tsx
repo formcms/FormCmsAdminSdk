@@ -1,19 +1,19 @@
 import {addItem, useItemData} from "../services/entity";
-import {useCheckError} from "../../components/useCheckError";
-import {DisplayType, XEntity} from "../types/xEntity";
+import {useCheckError} from "../../hooks/useCheckError";
+import {DisplayType, XEntity} from "../../types/xEntity";
 import {getFileUploadURL, useGetCmsAssetsUrl} from "../services/asset";
 import {createInput } from "../containers/createInput";
-import {getInputAttrs} from "../types/attrUtils";
+import {getInputAttrs} from "../../types/attrUtils";
 import {useForm} from "react-hook-form";
 import {ArrayToObject} from "../types/formatter";
-import {CmsComponentConfig, getDefaultCmsComponentConfig} from "../cmsComponentConfig";
+import {CmsComponentConfig, getDefaultCmsComponentConfig} from "../types/cmsComponentConfig";
 import {useNavigate} from "react-router-dom";
 
-interface INewDataItemPageConfig {
+export interface NewDataItemPageConfig {
     saveSuccess: (label?: string) => string; // Success message for saving
 }
 
-export function getDefaultNewDataItemPageConfig(): INewDataItemPageConfig{
+export function getDefaultNewDataItemPageConfig(): NewDataItemPageConfig{
     return {
         saveSuccess: (label?: string) => `Save${label ? ` [${label}]` : ''} Succeed`
     };
@@ -22,7 +22,7 @@ export function getDefaultNewDataItemPageConfig(): INewDataItemPageConfig{
 export function userNewDataItemPage(
     schema: XEntity,
     baseRouter: string,
-    pageConfig: INewDataItemPageConfig = getDefaultNewDataItemPageConfig(),
+    pageConfig: NewDataItemPageConfig = getDefaultNewDataItemPageConfig(),
     componentConfig: CmsComponentConfig = getDefaultCmsComponentConfig(),
 ) {
     const formId = "newDataItemForm" + schema.name;
@@ -41,7 +41,7 @@ export function userNewDataItemPage(
 
         const getFullAssetsURL = useGetCmsAssetsUrl();
         const uploadUrl = getFileUploadURL();
-        const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError();
+        const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError(componentConfig);
 
         const inputAttrs = getInputAttrs(schema.attributes);
 

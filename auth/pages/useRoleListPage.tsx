@@ -6,11 +6,11 @@ import { Column } from "primereact/column";
 export const New = "__new";
 
 // Interface for configuration with no optional properties
-interface IUseRoleListPageConfig {
+export interface UseRoleListPageConfig {
     nameHeader: string;
 }
 
-function getDefaultUseRoleListPageConfig(): IUseRoleListPageConfig {
+export function getDefaultUseRoleListPageConfig(): UseRoleListPageConfig {
     return {
         nameHeader: "Name",
     };
@@ -18,7 +18,7 @@ function getDefaultUseRoleListPageConfig(): IUseRoleListPageConfig {
 
 export function useRoleListPage(
     baseRouter: string,
-    config: IUseRoleListPageConfig = getDefaultUseRoleListPageConfig()
+    config: UseRoleListPageConfig = getDefaultUseRoleListPageConfig()
 ) {
     const navigate = useNavigate();
     const { data: roles, isLoading } = useRoles();

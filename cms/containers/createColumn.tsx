@@ -1,6 +1,6 @@
-import {DisplayType, XAttr} from "../../components/xEntity";
+import {DisplayType, XAttr} from "../../types/xEntity";
 import {toDateStr, toDatetimeStr, utcStrToDatetimeStr} from "../types/formatter";
-import {IComponentConfig} from "../../componentConfig";
+import {ComponentConfig} from "../../componentConfig";
 
 const formater :any = {
     [DisplayType.Datetime]: toDatetimeStr,
@@ -12,7 +12,7 @@ const formater :any = {
 
 export function createColumn(
     column: XAttr,
-    componentConfig:IComponentConfig,
+    componentConfig:ComponentConfig,
     getFullAssetsURL?: (arg: string) => string | undefined,
     onClick?: (rowData: any) => void,
 
@@ -30,24 +30,24 @@ export function createColumn(
     switch (column.displayType) {
         case 'image':
         case 'gallery':
-            return componentConfig.dataTableColumns.image({
+            return componentConfig.dataTableColumns.image(
                 field,
-                header:column.header,
-                getFullAssetsURL:getFullAssetsURL
-            });
+                column.header,
+                getFullAssetsURL
+            );
         case 'file':
-            return componentConfig.dataTableColumns.file({
-                field:field,
-                header:column.header,
-                getFullAssetsURL:getFullAssetsURL,
-            })
-        default:
-            return componentConfig.dataTableColumns.text({
+            return componentConfig.dataTableColumns.file(
                 field,
-                colType,
+                column.header,
+                getFullAssetsURL,
+            )
+        default:
+            return componentConfig.dataTableColumns.text(
+                field,
+                column.header,
                 onClick,
-                header:column.header,
-                formater:formater[column.displayType],
-            });
+                colType,
+                formater[column.displayType],
+            );
     }
 }

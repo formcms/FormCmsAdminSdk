@@ -2,12 +2,11 @@ import {useNavigate, useParams} from "react-router-dom";
 import {deleteItem, updateItem, useItemData, savePublicationSettings} from "../services/entity";
 import {Divider} from "primereact/divider";
 import {Picklist} from "../containers/Picklist";
-import {useCheckError} from "../../components/useCheckError";
-import {useConfirm} from "../../components/useConfirm";
-import {FetchingStatus} from "../../components/FetchingStatus";
+import {useCheckError} from "../../hooks/useCheckError";
+import {useConfirm} from "../../hooks/useConfirm";
+import {FetchingStatus} from "../../containers/FetchingStatus";
 import {EditTable} from "../containers/EditTable";
 import {TreeContainer} from "../containers/TreeContainer";
-import {DisplayType, XEntity} from "../types/xEntity";
 import {SetPublishStatusDialog} from "../containers/PublishDialog";
 import {DefaultAttributeNames} from "../types/defaultAttributeNames";
 import {PublicationStatus} from "../types/publicationStatus";
@@ -15,39 +14,40 @@ import {SpecialQueryKeys} from "../types/specialQueryKeys";
 import {getFileUploadURL, useGetCmsAssetsUrl} from "../services/asset";
 import {DefaultColumnNames} from "../types/defaultColumnNames";
 import {useState} from "react";
-import {getInputAttrs} from "../types/attrUtils";
+import {getInputAttrs} from "../../types/attrUtils";
 import {createInput} from "../containers/createInput";
 import {useForm} from "react-hook-form";
 import {ArrayToObject} from "../types/formatter";
-import {CmsComponentConfig, getDefaultCmsComponentConfig} from "../cmsComponentConfig";
+import {CmsComponentConfig, getDefaultCmsComponentConfig} from "../types/cmsComponentConfig";
+import {XEntity} from "../../types/xEntity";
 
-export interface IDataItemPageConfig {
-    saveSuccess:  string;
-    deleteConfirmHeader :string
-    deleteConfirm: (s:string)=>string;
-    deleteSuccess:  string;
+export interface DataItemPageConfig {
+    saveSuccess: string;
+    deleteConfirmHeader: string
+    deleteConfirm: (s: string) => string;
+    deleteSuccess: string;
     unPublishSuccess: string;
 
     publishSuccess: string;
-    publishDialogHeader:  string;
+    publishDialogHeader: string;
 
-    scheduleSuccess:  string;
-    scheduleDialogHeader:  string;
+    scheduleSuccess: string;
+    scheduleDialogHeader: string;
 
     cancelButtonText: string,
     submitButtonText: string,
     publishAtHeader: string,
 }
 
-export function getDefaultDataItemPageConfig():IDataItemPageConfig{
+export function getDefaultDataItemPageConfig(): DataItemPageConfig {
     return {
-        saveSuccess:  "Save Succeed",
-        deleteConfirmHeader:"Confirm",
-        deleteConfirm: (s)=>`Do you want to delete this item [${s}]?`,
+        saveSuccess: "Save Succeed",
+        deleteConfirmHeader: "Confirm",
+        deleteConfirm: (s) => `Do you want to delete this item [${s}]?`,
         deleteSuccess: "Delete Succeed",
         unPublishSuccess: "Unpublish Succeed",
         publishSuccess: "Unpublish Succeed",
-        publishDialogHeader:  "Publish",
+        publishDialogHeader: "Publish",
         scheduleSuccess: "Schedule Succeed",
         scheduleDialogHeader: "Schedule",
 
@@ -60,8 +60,8 @@ export function getDefaultDataItemPageConfig():IDataItemPageConfig{
 export function useDataItemPage(
     schema: XEntity,
     baseRouter: string,
-    pageConfig: IDataItemPageConfig = getDefaultDataItemPageConfig(),
-    componentConfig :CmsComponentConfig = getDefaultCmsComponentConfig()
+    pageConfig: DataItemPageConfig = getDefaultDataItemPageConfig(),
+    componentConfig: CmsComponentConfig = getDefaultCmsComponentConfig()
 ) {
     const {id} = useParams()
     const {data, error, isLoading, mutate} = useItemData(schema.name, id)
@@ -89,7 +89,7 @@ export function useDataItemPage(
 
     function handleGoBack() {
         const refUrl = new URLSearchParams(location.search).get("ref");
-        navigate(refUrl??`${baseRouter}/${schema.name}`);
+        navigate(refUrl ?? `${baseRouter}/${schema.name}`);
     }
 
     function getPreviewUrl() {
@@ -99,17 +99,17 @@ export function useDataItemPage(
     }
 
     function DataItemPageMain() {
-        const trees = schema.attributes.filter(x => x.displayType == DisplayType.Tree);
+        const trees = schema.attributes.filter(x => x.displayType == 'tree');
         const inputAttrs = getInputAttrs(schema.attributes);
         const getCmsAssetUrl = useGetCmsAssetsUrl();
-        const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError();
+        const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError(componentConfig);
         const {register, handleSubmit, control} = useForm();
 
         async function onSubmit(formData: any) {
             formData[schema.primaryKey] = id
             formData[DefaultColumnNames.UpdatedAt] = data[DefaultColumnNames.UpdatedAt];
 
-            schema.attributes.filter(x => x.displayType == DisplayType.Dictionary).forEach(a => {
+            schema.attributes.filter(x => x.displayType == 'dictionary').forEach(a => {
                 formData[a.field] = ArrayToObject(formData[a.field]);
             });
 
@@ -118,7 +118,7 @@ export function useDataItemPage(
         }
 
         return <>
-            <FetchingStatus isLoading={isLoading} error={error}/>
+            <FetchingStatus isLoading={isLoading} error={error} componentConfig={componentConfig} />
             <div><CheckErrorStatus/></div>
             {data && <div className="grid">
                 <div className={`col-12 md:col-12 lg:${trees.length > 0 ? "col-9" : "col-12"}`}>
@@ -132,23 +132,33 @@ export function useDataItemPage(
                                     control,
                                     id,
                                     uploadUrl: getFileUploadURL(),
-                                    getFullAssetsURL:getCmsAssetUrl,
-                                    fullRowClassName:'field col-12',
-                                    partialRowClassName:'field col-12 md:col-4'
+                                    getFullAssetsURL: getCmsAssetUrl,
+                                    fullRowClassName: 'field col-12',
+                                    partialRowClassName: 'field col-12 md:col-4'
                                 }, componentConfig))
                             }
                         </div>
                     </form>
                     {
                         (schema?.attributes?.filter(attr =>
-                            attr.displayType === DisplayType.Picklist
-                            || attr.displayType == DisplayType.EditTable) ?? []).map((column) => {
-                            const props = {schema, data, column, getFullAssetsURL: getCmsAssetUrl, baseRouter, inputConfig: componentConfig}
-                            if (column.displayType === 'picklist') {}
+                            attr.displayType ==='picklist'
+                            || attr.displayType == 'editTable') ?? []).map((column) => {
+                            const props = {
+                                schema,
+                                data,
+                                column,
+                                getFullAssetsURL: getCmsAssetUrl,
+                                baseRouter,
+                                inputConfig: componentConfig
+                            }
+                            if (column.displayType === 'picklist') {
+                            }
                             return <div key={column.field}>
                                 <Divider/>
-                                {column.displayType === 'picklist' && <Picklist key={column.field} {...props} componentConfig={componentConfig}/>}
-                                {column.displayType === 'editTable' && <EditTable key={column.field} {...props} componentConfig={componentConfig}/>}
+                                {column.displayType === 'picklist' &&
+                                    <Picklist key={column.field} {...props} componentConfig={componentConfig}/>}
+                                {column.displayType === 'editTable' &&
+                                    <EditTable key={column.field} {...props} componentConfig={componentConfig}/>}
                             </div>
                         })
                     }
@@ -158,7 +168,8 @@ export function useDataItemPage(
                         {
                             trees.map((column) => {
                                 return <div key={column.field}>
-                                    <TreeContainer key={column.field} entity={schema} data={data} componentConfig={componentConfig} column={column}></TreeContainer>
+                                    <TreeContainer key={column.field} entity={schema} data={data}
+                                                   componentConfig={componentConfig} column={column}></TreeContainer>
                                     <Divider/>
                                 </div>
                             })
@@ -216,7 +227,7 @@ export function useDataItemPage(
     }
 
     function useUnpublish(data: any, schema: XEntity, mutate: any) {
-        const {handleErrorOrSuccess, CheckErrorStatus: CheckUnpublishStatus} = useCheckError();
+        const {handleErrorOrSuccess, CheckErrorStatus: CheckUnpublishStatus} = useCheckError(componentConfig);
 
         async function onUnpublish() {
             const formData: any = {}
@@ -232,9 +243,8 @@ export function useDataItemPage(
 
     function useDelete(baseRouter: string, schema: XEntity, data: any) {
         const refUrl = new URLSearchParams(location.search).get("ref");
-        const confirmId =  `dataItemPage${schema.name}`;
-        const {confirm, Confirm: ConfirmDelete} = useConfirm(confirmId);
-        const {handleErrorOrSuccess, CheckErrorStatus: CheckDeleteStatus} = useCheckError();
+        const {confirm, Confirm: ConfirmDelete} = useConfirm(`dataItemPage${schema.name}`, componentConfig);
+        const {handleErrorOrSuccess, CheckErrorStatus: CheckDeleteStatus} = useCheckError(componentConfig);
 
         async function handleDelete() {
             const label = data ? data[schema.labelAttributeName] : "";

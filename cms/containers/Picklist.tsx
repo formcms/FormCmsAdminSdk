@@ -1,16 +1,16 @@
 import {deleteJunctionItems, saveJunctionItems, useJunctionData} from "../services/entity";
 import {Button} from "primereact/button";
-import {useCheckError} from "../../components/useCheckError";
-import {useConfirm} from "../../components/useConfirm";
+import {useCheckError} from "../../hooks/useCheckError";
+import {useConfirm} from "../../hooks/useConfirm";
 import {SelectDataTable} from "../../components/data/SelectDataTable";
-import { XAttr, XEntity } from "../types/xEntity";
-import { useDataTableStateManager } from "../../components/data/useDataTableStateManager";
-import { encodeDataTableState } from "../../components/data/dataTableStateUtil";
+import { XAttr, XEntity } from "../../types/xEntity";
+import { useDataTableStateManager } from "../../hooks/useDataTableStateManager";
+import { encodeDataTableState } from "../../types/dataTableStateUtil";
 import { createColumn } from "./createColumn";
 import {useState} from "react";
 import {Dialog} from "primereact/dialog";
-import {getListAttrs} from "../types/attrUtils";
-import {CmsComponentConfig} from "../cmsComponentConfig";
+import {getListAttrs} from "../../types/attrUtils";
+import {CmsComponentConfig} from "../types/cmsComponentConfig";
 
 export function Picklist({column, data, schema, getFullAssetsURL,componentConfig}: {
     data: any,
@@ -36,8 +36,8 @@ export function Picklist({column, data, schema, getFullAssetsURL,componentConfig
     const {data: excludedSubgridData, mutate: execMutate} = useJunctionData(schema.name, id, column.field, true,
         encodeDataTableState(excludedStateManager.state));
     
-    const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError();
-    const {confirm,Confirm} = useConfirm("picklist" +column.field);
+    const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError(componentConfig);
+    const {confirm,Confirm} = useConfirm("picklist" +column.field, componentConfig);
     
     const mutateDate = () => {
         setExistingItems(null);

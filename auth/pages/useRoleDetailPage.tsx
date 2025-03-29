@@ -6,15 +6,15 @@ import {
 } from "../services/accounts";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
-import { useConfirm } from "../../components/useConfirm";
+import { useConfirm } from "../../hooks/useConfirm";
 import { New } from "./useRoleListPage";
 import { MultiSelectInput } from "../../components/inputs/MultiSelectInput";
-import { FetchingStatus } from "../../components/FetchingStatus";
+import { FetchingStatus } from "../../containers/FetchingStatus";
 import { getEntityPermissionInputs } from "../types/entityPermissionInputs";
-import { useCheckError } from "../../components/useCheckError";
+import { useCheckError } from "../../hooks/useCheckError";
+import {getDefaultComponentConfig} from "../../componentConfig";
 
-// Interface for configuration with no optional properties
-interface IUseRoleDetailPageConfig {
+export interface UseRoleDetailPageConfig {
     deleteConfirmHeader:string
     deleteConfirmationMessage: string;
     deleteSuccessMessage: string;
@@ -22,7 +22,7 @@ interface IUseRoleDetailPageConfig {
     nameIsRequiredMessage:string
 }
 
-function getDefaultUseRoleDetailPageConfig(): IUseRoleDetailPageConfig {
+export function getDefaultUseRoleDetailPageConfig(): UseRoleDetailPageConfig {
     return {
         deleteConfirmHeader:"Confirm",
         deleteConfirmationMessage: "Do you want to delete this role?",
@@ -34,24 +34,25 @@ function getDefaultUseRoleDetailPageConfig(): IUseRoleDetailPageConfig {
 
 export function useRoleDetailPage(
     baseRouter: string,
-    config: IUseRoleDetailPageConfig = getDefaultUseRoleDetailPageConfig()
+    pageConfig: UseRoleDetailPageConfig = getDefaultUseRoleDetailPageConfig(),
+    componentConfig = getDefaultComponentConfig()
 ) {
     const { name } = useParams();
     const { data: roleData, isLoading: loadingRole, error: errorRole, mutate: mutateRole } = useSingleRole(
         name === New ? "" : name!
     );
     const { data: entities, isLoading: loadingEntity, error: errorEntities } = useEntities();
-    const { confirm, Confirm } = useConfirm("roleDetailPage");
-    const { handleErrorOrSuccess, CheckErrorStatus } = useCheckError();
+    const { confirm, Confirm } = useConfirm("roleDetailPage",componentConfig);
+    const { handleErrorOrSuccess, CheckErrorStatus } = useCheckError(componentConfig);
     const { register, handleSubmit, control } = useForm();
     const isNewRole = name === New;
 
     return { isNewRole, roleData, handleDelete, RoleDetailPageMain };
 
     async function handleDelete() {
-        confirm(config.deleteConfirmationMessage, config.deleteConfirmHeader,async () => {
+        confirm(pageConfig.deleteConfirmationMessage, pageConfig.deleteConfirmHeader,async () => {
             const { error } = await deleteRole(name!);
-            await handleErrorOrSuccess(error, config.deleteSuccessMessage, () => {
+            await handleErrorOrSuccess(error, pageConfig.deleteSuccessMessage, () => {
                 window.location.href = baseRouter + "/roles/";
             });
         });
@@ -62,7 +63,7 @@ export function useRoleDetailPage(
             formData.name = name;
         }
         const { error } = await saveRole(formData);
-        await handleErrorOrSuccess(error,  config.saveSuccessMessage, () => {
+        await handleErrorOrSuccess(error,  pageConfig.saveSuccessMessage, () => {
             if (name === New) {
                 window.location.href = baseRouter + "/roles/" + formData.name;
             } else {
@@ -75,7 +76,7 @@ export function useRoleDetailPage(
         const entityPermissionInputs = getEntityPermissionInputs();
         return (
             <>
-                <FetchingStatus isLoading={loadingRole || loadingEntity} error={errorRole || errorEntities} />
+                <FetchingStatus isLoading={loadingRole || loadingEntity} error={errorRole || errorEntities} componentConfig={componentConfig} />
                 <Confirm />
                 <CheckErrorStatus />
                 <form onSubmit={handleSubmit(onSubmit)} id="form">
@@ -87,7 +88,7 @@ export function useRoleDetailPage(
                                     type={"text"}
                                     className="w-full p-inputtext p-component"
                                     id={"name"}
-                                    {...register("name", { required: config.nameIsRequiredMessage })}
+                                    {...register("name", { required: pageConfig.nameIsRequiredMessage })}
                                 />
                             </div>
                         )}

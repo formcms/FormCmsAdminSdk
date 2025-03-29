@@ -1,21 +1,21 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {getAssetReplaceUrl, updateAssetMeta, useGetCmsAssetsUrl, useSingleAsset, deleteAsset} from "../services/asset";
-import {XEntity} from "../types/xEntity";
+import {XEntity} from "../../types/xEntity";
 import {useForm} from "react-hook-form";
 import {createInput} from "../containers/createInput";
 import {Button} from "primereact/button";
-import {FetchingStatus} from "../../components/FetchingStatus";
+import {FetchingStatus} from "../../containers/FetchingStatus";
 import {Image} from 'primereact/image';
 import {AssetField, AssetLinkField} from "../types/assetUtils";
 import {useState} from "react";
-import {useCheckError} from "../../components/useCheckError";
+import {useCheckError} from "../../hooks/useCheckError";
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
 import {AssetLink} from "../types/asset";
-import {useConfirm} from "../../components/useConfirm";
+import {useConfirm} from "../../hooks/useConfirm";
 import {ArrayToObject, formatFileSize} from "../types/formatter";
-import {getInputAttrs} from "../types/attrUtils";
-import {CmsComponentConfig, getDefaultCmsComponentConfig} from "../cmsComponentConfig";
+import {getInputAttrs} from "../../types/attrUtils";
+import {CmsComponentConfig, getDefaultCmsComponentConfig} from "../types/cmsComponentConfig";
 
 interface IAssetEditPageConfig {
     deleteConfirmHeader: string;
@@ -62,8 +62,8 @@ export function useAssetEditPage(
     const navigate = useNavigate();
     const getCmsAssetUrl = useGetCmsAssetsUrl();
     const {register, handleSubmit, control} = useForm();
-    const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError();
-    const {confirm, Confirm} = useConfirm("dataItemPage" + schema.name);
+    const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError(componentConfig);
+    const {confirm, Confirm} = useConfirm("dataItemPage" + schema.name, componentConfig);
 
     const formId = "AssetEdit" + schema.name;
 
@@ -136,7 +136,7 @@ export function useAssetEditPage(
     function MetaDataForm() {
         return (
             <>
-                <FetchingStatus isLoading={isLoading} error={error}/>
+                <FetchingStatus isLoading={isLoading} error={error} componentConfig={componentConfig} />
                 <CheckErrorStatus/>
                 <Confirm/>
                 {

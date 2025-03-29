@@ -1,10 +1,10 @@
-import {XAttr} from "../types/xEntity";
+import {XAttr} from "../../types/xEntity";
 import {useTree} from "./useTree";
-import {IComponentConfig} from "../../componentConfig";
+import {ComponentConfig} from "../../componentConfig";
 
 type TreeSelectContainerProps = {
     data: any, column: XAttr, id: any, control: any, register: any, className: string
-    componentConfig: IComponentConfig
+    componentConfig: ComponentConfig
 }
 
 export function TreeSelectContainer(

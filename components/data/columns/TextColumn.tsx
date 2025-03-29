@@ -1,14 +1,12 @@
 import {Column} from "primereact/column";
-export type TextColumnProps = {
-    field: string,
-    header: string,
-    formater?: (arg: any) => any,
-    colType?: 'numeric'|'date'|'text',
-    onClick?: (rowData:any) => void,
-}
 
 //have to return a <Column>, can not be Function Component
-export function textColumn({field, header, formater, colType, onClick}: TextColumnProps ) {
+export function textColumn(field: string,
+                           header: string,
+                           formater?: (arg: any) => any,
+                           colType?: 'numeric'|'date'|'text',
+                           onClick?: (rowData:any) => void
+) {
     const bodyTemplate = (item: any) => {
         let val = item;
         for(const f of field.split('.')){

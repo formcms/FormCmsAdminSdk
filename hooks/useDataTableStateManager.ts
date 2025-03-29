@@ -1,7 +1,7 @@
 import {useReducer} from "react";
 import {FilterMatchMode} from "primereact/api";
-import { XAttr } from "../xEntity";
-import { decodeDataTableState } from "./dataTableStateUtil";
+import { XAttr } from "../types/xEntity";
+import { decodeDataTableState } from "../types/dataTableStateUtil";
 
 export function useDataTableStateManager(primaryKey :string,rowCount:number, cols: XAttr[], qs?: string|undefined) {
     const defaultState:any = createDefaultState(primaryKey,rowCount,cols,qs);

@@ -1,20 +1,20 @@
-import {FetchingStatus} from "../../components/FetchingStatus"
+import {FetchingStatus} from "../../containers/FetchingStatus"
 import {EditDataTable} from "../../components/data/EditDataTable";
-import {encodeDataTableState} from "../../components/data/dataTableStateUtil";
+import {encodeDataTableState} from "../../types/dataTableStateUtil";
 import {createColumn} from "../../cms/containers/createColumn";
-import {useDataTableStateManager} from "../../components/data/useDataTableStateManager";
+import {useDataTableStateManager} from "../../hooks/useDataTableStateManager";
 
 import {useAuditLogs} from "../services/auditLog"
-import {XEntity} from "../types/xEntity";
+import {XEntity} from "../../types/xEntity";
 
 
 import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
 import {Button} from "primereact/button";
 import {Column} from "primereact/column";
-import {getDefaultComponentConfig, IComponentConfig} from "../../componentConfig";
+import {getDefaultComponentConfig, ComponentConfig} from "../../componentConfig";
 
-export function useAuditLogListPage(baseRouter: string, schema: XEntity, componentConfig:IComponentConfig = getDefaultComponentConfig()) {
+export function useAuditLogListPage(baseRouter: string, schema: XEntity, componentConfig:ComponentConfig = getDefaultComponentConfig()) {
     //entrance
     const initQs = location.search.replace("?", "");
 
@@ -46,7 +46,7 @@ export function useAuditLogListPage(baseRouter: string, schema: XEntity, compone
 
     function AuditLogListPageMain() {
         return <>
-            <FetchingStatus isLoading={isLoading} error={error}/>
+            <FetchingStatus isLoading={isLoading} error={error} componentConfig={componentConfig} />
             {data && columns && (
                 <div className="card">
                     <EditDataTable

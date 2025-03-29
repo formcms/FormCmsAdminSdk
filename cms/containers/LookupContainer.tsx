@@ -1,7 +1,6 @@
 import {useLookupData, getLookupData} from "../services/entity";
-import {LookupInput} from "../../components/inputs/LookupInput";
-import {XAttr} from "../types/xEntity";
-import {IComponentConfig} from "../../componentConfig";
+import {XAttr} from "../../types/xEntity";
+import {ComponentConfig} from "../../componentConfig";
 
 type LookupContainerProps = {
     data: any,
@@ -10,7 +9,7 @@ type LookupContainerProps = {
     control: any,
     register: any,
     className: string
-    componentConfig: IComponentConfig
+    componentConfig: ComponentConfig
 }
 
 export function LookupContainer(

@@ -1,22 +1,22 @@
-import {XEntity} from "../types/xEntity";
 import {useLocation, useNavigate} from "react-router-dom";
 import {useGetCmsAssetsUrl} from "../services/asset";
 import {createColumn} from "../containers/createColumn";
-import {useDataTableStateManager} from "../../components/data/useDataTableStateManager";
-import {encodeDataTableState} from "../../components/data/dataTableStateUtil";
+import {useDataTableStateManager} from "../../hooks/useDataTableStateManager";
+import {encodeDataTableState} from "../../types/dataTableStateUtil";
 import {deleteItem, useListData} from "../services/entity";
 import {useEffect} from "react";
-import {useCheckError} from "../../components/useCheckError";
-import {useConfirm} from "../../components/useConfirm";
-import {FetchingStatus} from "../../components/FetchingStatus";
+import {useCheckError} from "../../hooks/useCheckError";
+import {useConfirm} from "../../hooks/useConfirm";
+import {FetchingStatus} from "../../containers/FetchingStatus";
 import {EditDataTable} from "../../components/data/EditDataTable";
 import {NewItemRoute} from "../EntityRouter";
-import {getListAttrs} from "../types/attrUtils";
+import {getListAttrs} from "../../types/attrUtils";
 import {Column} from "primereact/column";
 import {Button} from "primereact/button";
-import {getDefaultComponentConfig, IComponentConfig} from "../../componentConfig";
+import {getDefaultComponentConfig, ComponentConfig} from "../../componentConfig";
+import {XEntity} from "../../types/xEntity";
 
-interface IDataListPageConfig {
+export interface DataListPageConfig {
     confirmHeader:string
     deleteConfirm: (label: string) => string;        // Prompt for delete confirmation
     deleteSuccess: (label: string) => string;       // Success message after deletion
@@ -33,11 +33,12 @@ export function getDefaultDataListPageConfig(){
 export function useDataListPage(
     schema: XEntity,
     baseRouter: string,
-    pageConfig: IDataListPageConfig = getDefaultDataListPageConfig(),
-    componentConfig: IComponentConfig = getDefaultComponentConfig()
+    pageConfig: DataListPageConfig = getDefaultDataListPageConfig(),
+    componentConfig: ComponentConfig = getDefaultComponentConfig()
 ) {
     //entrance
-    const initQs = useLocation().search.replace("?", "");
+    const location = useLocation();
+    const initQs = location.search.replace("?", "");
 
     //data
     const getCmsAssetUrl = useGetCmsAssetsUrl();
@@ -76,8 +77,8 @@ export function useDataListPage(
         useEffect(() => window.history.replaceState(null, "", `?${qs}`), [stateManager.state]);
 
         //components
-        const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError();
-        const {confirm, Confirm} = useConfirm("dataItemPage" + schema.name);
+        const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError(componentConfig);
+        const {confirm, Confirm} = useConfirm("dataItemPage" + schema.name, componentConfig);
 
         function onDuplicate(rowData: any) {
             const id = rowData[schema.primaryKey];
@@ -105,7 +106,7 @@ export function useDataListPage(
         return <>
             <CheckErrorStatus/>
             <Confirm/>
-            <FetchingStatus isLoading={isLoading} error={error}/>
+            <FetchingStatus isLoading={isLoading} error={error} componentConfig={componentConfig} />
             <div className="card">
                 {data &&
                     <EditDataTable

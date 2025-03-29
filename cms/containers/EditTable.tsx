@@ -1,19 +1,19 @@
 import {Button} from "primereact/button";
 import {addCollectionItem, useCollectionData} from "../services/entity";
 import {EditDataTable} from "../../components/data/EditDataTable";
-import {XAttr, XEntity} from "../types/xEntity";
-import {useDataTableStateManager} from "../../components/data/useDataTableStateManager";
-import {encodeDataTableState} from "../../components/data/dataTableStateUtil";
+import {XAttr, XEntity} from "../../types/xEntity";
+import {useDataTableStateManager} from "../../hooks/useDataTableStateManager";
+import {encodeDataTableState} from "../../types/dataTableStateUtil";
 import {createColumn} from "./createColumn";
 import {getFileUploadURL} from "../services/asset";
-import {useCheckError} from "../../components/useCheckError";
+import {useCheckError} from "../../hooks/useCheckError";
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
 import {Dialog} from "primereact/dialog";
-import {getInputAttrs, getListAttrs} from "../types/attrUtils";
+import {getInputAttrs, getListAttrs} from "../../types/attrUtils";
 import {createInput} from "./createInput";
 import {useForm} from "react-hook-form";
-import {CmsComponentConfig} from "../cmsComponentConfig";
+import {CmsComponentConfig} from "../types/cmsComponentConfig";
 
 export function EditTable(
     {
@@ -53,7 +53,7 @@ export function EditTable(
 
     //ref
     const navigate = useNavigate();
-    const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError();
+    const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError(componentConfig);
     const { register, handleSubmit, control } = useForm()
 
     function onEdit(rowData: any) {

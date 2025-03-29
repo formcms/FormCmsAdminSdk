@@ -1,6 +1,7 @@
 import {confirmDialog, ConfirmDialog} from "primereact/confirmdialog";
+import {ComponentConfig} from "../componentConfig";
 
-export function useConfirm(id:any){
+export function useConfirm(id:any, componentConfig:ComponentConfig){
     return {
         confirm:(message :any, header:any, accept:any) =>{
             confirmDialog({
@@ -13,7 +14,7 @@ export function useConfirm(id:any){
         },
         Confirm: ()=>{
             return <>
-                <ConfirmDialog key={id} id={id} tagKey={id}/>
+                <ConfirmDialog rejectLabel={componentConfig.confirmLabels.reject} acceptLabel={componentConfig.confirmLabels.accept} key={id} id={id} tagKey={id}></ConfirmDialog>
             </>
         }
     }
