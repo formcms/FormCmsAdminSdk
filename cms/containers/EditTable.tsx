@@ -1,19 +1,16 @@
-import {Button} from "primereact/button";
 import {addCollectionItem, useCollectionData} from "../services/entity";
-import {EditDataTable} from "../../components/data/EditDataTable";
 import {XAttr, XEntity} from "../../types/xEntity";
 import {useDataTableStateManager} from "../../hooks/useDataTableStateManager";
 import {encodeDataTableState} from "../../types/dataTableStateUtil";
-import {createColumn} from "./createColumn";
 import {getFileUploadURL} from "../services/asset";
 import {useCheckError} from "../../hooks/useCheckError";
 import {useNavigate} from "react-router-dom";
 import {useState} from "react";
-import {Dialog} from "primereact/dialog";
-import {getInputAttrs, getListAttrs} from "../../types/attrUtils";
+import {toDataTableColumns, getInputAttrs, getListAttrs} from "../../types/attrUtils";
 import {createInput} from "./createInput";
 import {useForm} from "react-hook-form";
-import {CmsComponentConfig} from "../types/cmsComponentConfig";
+import {CmsComponentConfig} from "../cmsComponentConfig";
+import {formater} from "../../types/formatter";
 
 export function EditTable(
     {
@@ -47,14 +44,17 @@ export function EditTable(
     //ui variables
     const inputAttrs = getInputAttrs(targetSchema?.attributes);
     const dataTableCols = listAttrs.map(x =>
-        createColumn(x,componentConfig, getFullAssetsURL, x.field == schema.labelAttributeName ? onEdit : undefined));
+        toDataTableColumns(x, x.field == schema.labelAttributeName ? onEdit : undefined));
 
     const formId = "edit-table" + column.field;
+    const LazyDataTable = componentConfig.dataComponents.lazyTable;
 
     //ref
     const navigate = useNavigate();
     const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError(componentConfig);
     const { register, handleSubmit, control } = useForm()
+    const Button = componentConfig.etc.button;
+    const Dialog = componentConfig.etc.dialog;
 
     function onEdit(rowData: any) {
         const id = rowData[targetSchema!.primaryKey];
@@ -77,6 +77,7 @@ export function EditTable(
                 label={componentConfig.editTable.cancelButtonLabel}
                 icon="pi pi-times"
                 outlined
+                type="button"
                 onClick={() => setVisible(false)}
             />
             <Button
@@ -94,17 +95,20 @@ export function EditTable(
                 {column.header}
             </label><br/>
             <Button
+                type="button"
                 outlined
                 label={componentConfig.editTable.addButtonLabel(column.header)}
                 onClick={() => setVisible(true)}
                 size="small"
             />
             {' '}
-            <EditDataTable
+            <LazyDataTable
                 dataKey={schema.primaryKey}
                 columns={dataTableCols}
                 data={collectionData}
                 stateManager={stateManager}
+                formater={formater}
+                getFullAssetsURL={getFullAssetsURL}
             />
             <Dialog
                 maximizable

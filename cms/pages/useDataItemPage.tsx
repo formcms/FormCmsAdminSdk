@@ -1,9 +1,8 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {deleteItem, updateItem, useItemData, savePublicationSettings} from "../services/entity";
-import {Divider} from "primereact/divider";
 import {Picklist} from "../containers/Picklist";
 import {useCheckError} from "../../hooks/useCheckError";
-import {useConfirm} from "../../hooks/useConfirm";
+import {createConfirm} from "../../hooks/createConfirm";
 import {FetchingStatus} from "../../containers/FetchingStatus";
 import {EditTable} from "../containers/EditTable";
 import {TreeContainer} from "../containers/TreeContainer";
@@ -17,8 +16,8 @@ import {useState} from "react";
 import {getInputAttrs} from "../../types/attrUtils";
 import {createInput} from "../containers/createInput";
 import {useForm} from "react-hook-form";
-import {ArrayToObject} from "../types/formatter";
-import {CmsComponentConfig, getDefaultCmsComponentConfig} from "../types/cmsComponentConfig";
+import {ArrayToObject} from "../../types/formatter";
+import {CmsComponentConfig} from "../cmsComponentConfig";
 import {XEntity} from "../../types/xEntity";
 
 export interface DataItemPageConfig {
@@ -58,10 +57,10 @@ export function getDefaultDataItemPageConfig(): DataItemPageConfig {
 }
 
 export function useDataItemPage(
+    componentConfig: CmsComponentConfig,
     schema: XEntity,
     baseRouter: string,
     pageConfig: DataItemPageConfig = getDefaultDataItemPageConfig(),
-    componentConfig: CmsComponentConfig = getDefaultCmsComponentConfig()
 ) {
     const {id} = useParams()
     const {data, error, isLoading, mutate} = useItemData(schema.name, id)
@@ -154,7 +153,7 @@ export function useDataItemPage(
                             if (column.displayType === 'picklist') {
                             }
                             return <div key={column.field}>
-                                <Divider/>
+                                <hr/>
                                 {column.displayType === 'picklist' &&
                                     <Picklist key={column.field} {...props} componentConfig={componentConfig}/>}
                                 {column.displayType === 'editTable' &&
@@ -170,7 +169,7 @@ export function useDataItemPage(
                                 return <div key={column.field}>
                                     <TreeContainer key={column.field} entity={schema} data={data}
                                                    componentConfig={componentConfig} column={column}></TreeContainer>
-                                    <Divider/>
+                                    <hr/>
                                 </div>
                             })
                         }
@@ -243,7 +242,7 @@ export function useDataItemPage(
 
     function useDelete(baseRouter: string, schema: XEntity, data: any) {
         const refUrl = new URLSearchParams(location.search).get("ref");
-        const {confirm, Confirm: ConfirmDelete} = useConfirm(`dataItemPage${schema.name}`, componentConfig);
+        const {confirm, Confirm: ConfirmDelete} = createConfirm(`dataItemPage${schema.name}`, componentConfig);
         const {handleErrorOrSuccess, CheckErrorStatus: CheckDeleteStatus} = useCheckError(componentConfig);
 
         async function handleDelete() {

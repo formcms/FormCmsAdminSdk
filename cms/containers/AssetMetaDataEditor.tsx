@@ -1,15 +1,12 @@
-import {Dialog} from "primereact/dialog";
 import {AssetField} from "../types/assetUtils";
 import {updateAssetMeta, useAssetEntity, useGetCmsAssetsUrl, useSingleAssetByPath} from "../services/asset";
 import {FetchingStatus} from "../../containers/FetchingStatus";
 import {useCheckError} from "../../hooks/useCheckError";
 import {useForm} from "react-hook-form";
 import {createInput} from "./createInput";
-import {Button} from "primereact/button";
-import {Image} from 'primereact/image';
-import {ArrayToObject, formatFileSize} from "../types/formatter";
+import {ArrayToObject, formatFileSize} from "../../types/formatter";
 import {getInputAttrs} from "../../types/attrUtils";
-import {CmsComponentConfig} from "../types/cmsComponentConfig";
+import {CmsComponentConfig} from "../cmsComponentConfig";
 
 export type AssetMetaDataEditorProps = {
     path: string,
@@ -54,22 +51,18 @@ export function AssetMetadataEditor(
             setShow(false);
         })
     }
+    const Dialog = componentConfig.etc.dialog;
+    const Button = componentConfig.etc.button;
+    const Image = componentConfig.etc.image;
 
-    return <Dialog maximizable
-                   header={componentConfig.assetEditor.dialogHeader}
+    return <Dialog header={componentConfig.assetEditor.dialogHeader}
                    visible={show}
-                   style={{width: '700px'}}
-                   modal className="p-fluid"
                    onHide={handleClose}>
         <FetchingStatus isLoading={isLoading} error={error} componentConfig={componentConfig} />
         <CheckErrorStatus/>
         {data?.type?.startsWith("image") &&
             <div className="card flex justify-content-start">
-                <Image src={getCmsAssetUrl(data.path)}
-                       indicatorIcon={<i className="pi pi-search"></i>}
-                       alt="Image"
-                       preview
-                       width="650"></Image>
+                <Image src={getCmsAssetUrl(data.path)} width={'700px'}/>
             </div>
         }
         <br/>
@@ -85,12 +78,7 @@ export function AssetMetadataEditor(
 
         </div>}
         {data && <form onSubmit={handleSubmit(handleSubmitAssetMeta)} id={formId}>
-            <Button
-                label={componentConfig.assetEditor.saveButtonLabel}
-                type="submit"
-                form={formId}
-                style={{width: '100px'}}
-                icon="pi pi-check"/>
+            <Button label={componentConfig.assetEditor.saveButtonLabel} icon={'pi pi-check'} type={"submit"} form={formId}/>
             <div className="formgrid grid">
                 {
                     inputAttrs.map((column: any) => createInput({

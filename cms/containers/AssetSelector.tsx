@@ -1,18 +1,14 @@
-import {Dialog} from "primereact/dialog";
-import {createColumn} from "./createColumn";
 import {encodeDataTableState} from "../../types/dataTableStateUtil";
 import {useDataTableStateManager} from "../../hooks/useDataTableStateManager";
 import {FetchingStatus} from "../../containers/FetchingStatus";
 import {useAssetEntity, useAssets, useGetCmsAssetsUrl} from "../services/asset";
-import {SelectButton, SelectButtonChangeEvent} from "primereact/selectbutton";
 import {useState} from "react";
 import {Asset} from "../types/asset";
-import {SelectDataTable} from "../../components/data/SelectDataTable";
-import {GalleryView} from "../../components/data/GalleryView";
 import {AssetField} from "../types/assetUtils";
-import {Button} from "primereact/button";
-import {GallerySelector} from "../../components/data/GallerySelector";
-import {CmsComponentConfig} from "../types/cmsComponentConfig";
+import {CmsComponentConfig} from "../cmsComponentConfig";
+import {formater} from "../../types/formatter";
+import {toDataTableColumns} from "../../types/attrUtils";
+
 
 export type AssetSelectorProps = {
     show: boolean;
@@ -45,7 +41,7 @@ export function AssetSelector(
         const {data, error, isLoading} = useAssets(encodeDataTableState(stateManager.state), false);
         const getCmsAssetUrl = useGetCmsAssetsUrl();
 
-        const tableColumns = columns.map(x => createColumn(x, componentConfig, getCmsAssetUrl, undefined));
+        const tableColumns = columns.map(x => toDataTableColumns(x));
 
 
         const handleSetSelectItems = (item: any) => {
@@ -65,23 +61,25 @@ export function AssetSelector(
             {value: 'List', label: componentConfig.assetSelector.listLabel, icon: 'pi pi-list'},
             {value: 'Gallery', label: componentConfig.assetSelector.galleryLabel, icon: 'pi pi-image'}
         ];
+        const LazyDataTable = componentConfig.dataComponents.lazyTable;
+        const Dialog = componentConfig.etc.dialog;
+        const Button = componentConfig.etc.button;
+        const GalleryView = componentConfig.dataComponents.galleryView;
+        const GallerySelector =componentConfig.dataComponents.gallerySelector;
+        const SelectButton = componentConfig.etc.selectButton;
 
         return <Dialog maximizable
                        header={dialogHeader}
                        visible={show}
-                       style={{width: '80%'}}
-                       modal className="p-fluid"
+                       width={'80%'}
+                       modal
+                       className="p-fluid"
                        onHide={() => setShow(false)}>
             <div className="flex gap-5 justify-between">
-                <Button
-                    icon={'pi pi-check'}
-                    onClick={() => setShow(false)}
-                    style={{width: '100px'}}
-                    label={okButtonLabel}
-                />
+                <Button label={okButtonLabel} icon={'pi pi-check'} type={'button'} onClick={() => setShow(false)}/>
                 <SelectButton
                     value={displayMode}
-                    onChange={(e: SelectButtonChangeEvent) => setDisplayMode(e.value)}
+                    onChange={(value) => setDisplayMode(value)}
                     options={displayModes}
                 />
             </div>
@@ -90,14 +88,15 @@ export function AssetSelector(
             <div className="card">
                 {
                     data && columns && displayMode === 'List' &&
-                    <SelectDataTable
+                    <LazyDataTable
+                        getFullAssetsURL={getCmsAssetUrl}
                         selectionMode={setPath ? 'single' : 'multiple'}
                         dataKey={AssetField('path')}
                         columns={tableColumns}
                         data={data}
                         stateManager={stateManager}
                         selectedItems={path ? {path} : paths?.map(path => ({path}))}
-                        setSelectedItems={handleSetSelectItems}
+                        setSelectedItems={handleSetSelectItems} formater={formater}
                     />
                 }
                 {

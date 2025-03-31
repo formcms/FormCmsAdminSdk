@@ -1,6 +1,6 @@
 import {useLookupData, getLookupData} from "../services/entity";
 import {XAttr} from "../../types/xEntity";
-import {ComponentConfig} from "../../componentConfig";
+import {ComponentConfig} from "../../ComponentConfig";
 
 type LookupContainerProps = {
     data: any,
@@ -28,7 +28,7 @@ export function LookupContainer(
         return data?.items;
     };
 
-    const LookupInput = componentConfig.inputComponent.lookup;
+    const LookupInput = componentConfig.inputComponents.lookup;
     return <LookupInput
         idField={column.lookup!.primaryKey}
         labelField={column.lookup!.labelAttributeName}

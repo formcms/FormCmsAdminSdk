@@ -3,19 +3,16 @@ import {getAssetReplaceUrl, updateAssetMeta, useGetCmsAssetsUrl, useSingleAsset,
 import {XEntity} from "../../types/xEntity";
 import {useForm} from "react-hook-form";
 import {createInput} from "../containers/createInput";
-import {Button} from "primereact/button";
 import {FetchingStatus} from "../../containers/FetchingStatus";
-import {Image} from 'primereact/image';
 import {AssetField, AssetLinkField} from "../types/assetUtils";
 import {useState} from "react";
 import {useCheckError} from "../../hooks/useCheckError";
-import {DataTable} from "primereact/datatable";
-import {Column} from "primereact/column";
 import {AssetLink} from "../types/asset";
-import {useConfirm} from "../../hooks/useConfirm";
-import {ArrayToObject, formatFileSize} from "../types/formatter";
+import {createConfirm} from "../../hooks/createConfirm";
+import {ArrayToObject, formatFileSize} from "../../types/formatter";
 import {getInputAttrs} from "../../types/attrUtils";
-import {CmsComponentConfig, getDefaultCmsComponentConfig} from "../types/cmsComponentConfig";
+import {CmsComponentConfig} from "../cmsComponentConfig";
+import {BasicDataTableProps} from "../../components/data";
 
 interface IAssetEditPageConfig {
     deleteConfirmHeader: string;
@@ -43,10 +40,10 @@ export function getDefaultAssetEditPageConfig(): IAssetEditPageConfig {
 
 // Main hook for AssetEditPage with unified config
 export function useAssetEditPage(
+    componentConfig: CmsComponentConfig,
     baseRouter: string,
     schema: XEntity,
     pageConfig: IAssetEditPageConfig = getDefaultAssetEditPageConfig(),
-    componentConfig: CmsComponentConfig = getDefaultCmsComponentConfig(),
 ) {
     // Entrance
     const {id} = useParams();
@@ -63,17 +60,17 @@ export function useAssetEditPage(
     const getCmsAssetUrl = useGetCmsAssetsUrl();
     const {register, handleSubmit, control} = useForm();
     const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError(componentConfig);
-    const {confirm, Confirm} = useConfirm("dataItemPage" + schema.name, componentConfig);
+    const {confirm, Confirm} = createConfirm("dataItemPage" + schema.name, componentConfig);
+    const Icon = componentConfig.etc.icon;
+    const Image = componentConfig.etc.image;
 
     const formId = "AssetEdit" + schema.name;
+    const BasicDataTable = componentConfig.dataComponents.basicTable;
 
     function actionBodyTemplate(rowData: AssetLink) {
         return (
-            <Button
+            <Icon
                 icon="pi pi-eye"
-                rounded
-                outlined
-                className="mr-2"
                 onClick={() => navigate(`${baseRouter}/${rowData.entityName}/${rowData.recordId}`)}
             />
         );
@@ -115,13 +112,7 @@ export function useAssetEditPage(
     function FeaturedImage() {
         return data?.type?.startsWith("image") && (
             <div className="card flex justify-content-start">
-                <Image
-                    src={getCmsAssetUrl(data.path + `?version=${version}`)}
-                    indicatorIcon={<i className="pi pi-search"></i>}
-                    alt="Image"
-                    preview
-                    width="400"
-                />
+                <Image src={getCmsAssetUrl(data.path + `?version=${version}`)} width="400" />
             </div>
         );
     }
@@ -164,20 +155,16 @@ export function useAssetEditPage(
     }
 
     function AssetLinks() {
+        const columns  : BasicDataTableProps['tableColumns'] = [
+            {field:AssetLinkField('entityName'),header:pageConfig.assetLinksTableHeaderEntityName},
+            {field:AssetLinkField('recordId'),header:pageConfig.assetLinksTableHeaderRecordId},
+            {field:AssetLinkField('createdAt'),header:pageConfig.assetLinksTableHeaderCreatedAt}
+        ];
+
         return data && (
             <>
                 {data.links && <h3>{pageConfig.assetLinksTitle}</h3>}
-                {data.links && (
-                    <DataTable value={data.links} tableStyle={{minWidth: '50rem'}}>
-                        <Column field={AssetLinkField('entityName')}
-                                header={pageConfig.assetLinksTableHeaderEntityName}></Column>
-                        <Column field={AssetLinkField('recordId')}
-                                header={pageConfig.assetLinksTableHeaderRecordId}></Column>
-                        <Column field={AssetLinkField('createdAt')}
-                                header={pageConfig.assetLinksTableHeaderCreatedAt}></Column>
-                        <Column body={actionBodyTemplate} style={{minWidth: '12rem'}}></Column>
-                    </DataTable>
-                )}
+                {data.links && <BasicDataTable pageSize={10} data={data.links} dataKey={''} tableColumns={columns} actionBodyTemplate={actionBodyTemplate}/>}
             </>
         );
     }

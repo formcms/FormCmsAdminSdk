@@ -1,6 +1,5 @@
 import {useSchema} from "../services/schema";
 import React from "react";
-import {Message} from "primereact/message";
 import {useParams} from "react-router-dom";
 import {XEntity} from "../../types/xEntity";
 
@@ -13,7 +12,7 @@ export function EntityPageWrapper({baseRouter, page: Page}: EntitySchemaContaine
     const {schemaName} = useParams()
     let {data: schema, error} = useSchema(schemaName)
     return <>
-        {error && <Message severity={'error'} text={error}/>}
+        {error && <div>{error}</div>}
         {schema && <Page baseRouter={baseRouter} schema={schema}/>}
     </>
 }

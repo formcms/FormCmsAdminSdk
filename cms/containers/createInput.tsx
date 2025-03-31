@@ -4,8 +4,8 @@ import {XAttr} from "../../types/xEntity";
 import {AssetSelector, AssetSelectorProps} from "./AssetSelector";
 import {AssetMetadataEditor, AssetMetaDataEditorProps} from "./AssetMetaDataEditor";
 import React from "react";
-import {toDatetime, toZonelessStr, utcStrToDatetime} from "../types/formatter";
-import {CmsComponentConfig} from "../types/cmsComponentConfig";
+import {toDatetime, toZonelessStr, utcStrToDatetime} from "../../types/formatter";
+import {CmsComponentConfig} from "../cmsComponentConfig";
 
 export function createInput(
     props: {
@@ -28,31 +28,31 @@ export function createInput(
 
     switch (displayType) {
         case 'dictionary':
-            const DictionaryInput = config.inputComponent.dictionary;
+            const DictionaryInput = config.inputComponents.dictionary;
             return <DictionaryInput
                 className={props.fullRowClassName}
                 {...props}
                 key={field}/>
         case 'editor':
-            const EditorInput = config.inputComponent.editor;
+            const EditorInput = config.inputComponents.editor;
             return <EditorInput
                 className={props.fullRowClassName}
                 key={field}
                 {...props}/>
         case 'textarea':
-            const TextAreaInput = config.inputComponent.textarea;
+            const TextAreaInput = config.inputComponents.textarea;
             return <TextAreaInput
                 className={props.partialRowClassName}
                 key={field}
                 {...props}/>
         case 'number':
-            const NumberInput = config.inputComponent.number;
+            const NumberInput = config.inputComponents.number;
             return <NumberInput
                 className={props.partialRowClassName}
                 key={field}
                 {...props}/>
         case 'localDatetime':
-            const LocalDatetimeInput = config.inputComponent.datetime;
+            const LocalDatetimeInput = config.inputComponents.datetime;
             return <LocalDatetimeInput
                 showTime={true}
                 parseDate={utcStrToDatetime}
@@ -62,7 +62,7 @@ export function createInput(
                 key={field}
                 {...props}/>
         case 'datetime':
-            const DatetimeInput = config.inputComponent.datetime;
+            const DatetimeInput = config.inputComponents.datetime;
             return <DatetimeInput
                 className={props.partialRowClassName}
                 parseDate={toDatetime}
@@ -72,7 +72,7 @@ export function createInput(
                 key={field}
                 {...props}/>
         case 'date':
-            const DateInput = config.inputComponent.datetime;
+            const DateInput = config.inputComponents.datetime;
             return <DateInput
                 parseDate={toDatetime}
                 formatDate={toZonelessStr}
@@ -82,7 +82,7 @@ export function createInput(
                 key={field}
                 {...props}/>
         case 'image':
-            const Image = config.inputComponent.file;
+            const Image = config.inputComponents.file;
             return <Image
                 labels={config.fileInputLabels}
                 fileSelector={ConfiguredAssetSelector}
@@ -92,7 +92,7 @@ export function createInput(
                 key={field}
                 {...props} />
         case 'gallery':
-            const GalleryInput = config.inputComponent.gallery;
+            const GalleryInput = config.inputComponents.gallery;
             return <GalleryInput
                 labels={config.fileInputLabels}
                 fileSelector={ConfiguredAssetSelector}
@@ -101,7 +101,7 @@ export function createInput(
                 key={field}
                 {...props} />
         case 'file':
-            const FileInput = config.inputComponent.file;
+            const FileInput = config.inputComponents.file;
             return <FileInput
                 labels={config.fileInputLabels}
                 fileSelector={ConfiguredAssetSelector}
@@ -111,7 +111,7 @@ export function createInput(
                 key={field}
                 {...props} />
         case 'dropdown':
-            const DropDownInput = config.inputComponent.dropdown;
+            const DropDownInput = config.inputComponents.dropdown;
             return <DropDownInput
                 options={props.column.options.split(',')}
                 className={props.partialRowClassName}
@@ -121,7 +121,7 @@ export function createInput(
             return <LookupContainer
                 className={props.partialRowClassName} key={field}{...props} componentConfig={config}/>
         case 'multiselect':
-            const MultiSelectInput = config.inputComponent.multiSelect;
+            const MultiSelectInput = config.inputComponents.multiSelect;
             return <MultiSelectInput
                 options={(options ?? '').split(',')}
                 className={props.partialRowClassName}
@@ -133,7 +133,7 @@ export function createInput(
                 key={field}
                 {...props}/>
         default:
-            const TextInput = config.inputComponent.text;
+            const TextInput = config.inputComponents.text;
             return <TextInput
                 className={props.partialRowClassName}
                 key={field}

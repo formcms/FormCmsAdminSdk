@@ -1,19 +1,16 @@
-import {Column} from "primereact/column";
-import {createColumn} from "../containers/createColumn";
 import {encodeDataTableState} from "../../types/dataTableStateUtil";
-import {EditDataTable} from "../../components/data/EditDataTable";
 import {useDataTableStateManager} from "../../hooks/useDataTableStateManager";
 import {FetchingStatus} from "../../containers/FetchingStatus";
 import {deleteAsset, useAssets, useGetCmsAssetsUrl} from "../services/asset";
 import {XEntity} from "../../types/xEntity";
 import {AssetField} from "../types/assetUtils";
-import {useConfirm} from "../../hooks/useConfirm";
+import {createConfirm} from "../../hooks/createConfirm";
 import {useCheckError} from "../../hooks/useCheckError";
 import {useLocation, useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {GalleryView} from "../../components/data/GalleryView";
-import {Button} from "primereact/button";
-import {CmsComponentConfig, getDefaultCmsComponentConfig} from "../types/cmsComponentConfig";
+import {CmsComponentConfig} from "../cmsComponentConfig";
+import {toDataTableColumns} from "../../types/attrUtils";
+import {formater} from "../../types/formatter";
 
 const displayModeLabels = {
     list: 'List',
@@ -45,10 +42,10 @@ export function getDefaultAssetListPageConfig(): AssetListPageConfig {
 }
 
 export function useAssetListPage(
+    componentConfig: CmsComponentConfig,
     baseRouter: string,
     schema: XEntity,
-    pageConfig: AssetListPageConfig = getDefaultAssetListPageConfig(),
-    componentConfig: CmsComponentConfig = getDefaultCmsComponentConfig()
+    pageConfig: AssetListPageConfig = getDefaultAssetListPageConfig()
 ) {
     // Entrance
     const location = useLocation();
@@ -93,8 +90,11 @@ export function useAssetListPage(
     // Refs
     const getCmsAssetUrl = useGetCmsAssetsUrl();
     const navigate = useNavigate();
-    const {confirm, Confirm} = useConfirm("dataItemPage" + schema.name, componentConfig);
+    const {confirm, Confirm} = createConfirm("dataItemPage" + schema.name, componentConfig);
     const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError(componentConfig);
+    const LazyDataTable = componentConfig.dataComponents.lazyTable;
+    const Icon = componentConfig.etc.icon;
+    const GalleryView = componentConfig.dataComponents.galleryView;
 
 
     const onEdit = (rowData: any) => {
@@ -118,43 +118,27 @@ export function useAssetListPage(
 
     function AssetListPageMain() {
         const tableColumns = columns.map(x =>
-            createColumn(
-                x,
-                componentConfig,
-                getCmsAssetUrl,
-                x.field === AssetField("title") ? onEdit : undefined,
-            )
-        );
-        tableColumns.push(
-            <Column
-                key={AssetField("linkCount")}
-                field={AssetField("linkCount")}
-                header={assetLabels ? assetLabels.linkCount : 'Link Count'} // Configurable header
-            />
+            toDataTableColumns(x, x.field === AssetField("title") ? onEdit : undefined, x.field === AssetField("linkCount"))
         );
 
-        tableColumns.push(<Column
-            body={
-                (rowData) => <>
-                    <Button icon="pi pi-pencil" rounded outlined className="mr-2" onClick={() => onEdit(rowData)}/>
-                    {canDelete(rowData) && <Button icon="pi pi-trash" rounded outlined severity="danger"
-                                                   onClick={() => onDelete(rowData)}/>}
-                </>
-            }
-            exportable={false}
-            style={{minWidth: '12rem'}}/>)
-
+        const actionTemplate = (rowData: any) => <>
+            <Icon icon={'pi pi-pencil'} onClick={()=>onEdit(rowData)}/>
+            {canDelete(rowData) &&<Icon icon={'pi pi-trash'} onClick={()=>onDelete(rowData)}/>}
+        </>
         return (
             <>
                 <CheckErrorStatus key={'AssetList'}/>
-                <FetchingStatus isLoading={isLoading} error={error} componentConfig={componentConfig} />
+                <FetchingStatus isLoading={isLoading} error={error} componentConfig={componentConfig}/>
                 <div className="card">
                     {data && columns && displayMode === 'List' && (
-                        <EditDataTable
+                        <LazyDataTable
                             dataKey={schema.primaryKey}
                             columns={tableColumns}
                             data={data}
                             stateManager={stateManager}
+                            formater={formater}
+                            actionTemplate={actionTemplate}
+                            getFullAssetsURL={getCmsAssetUrl}
                         />
                     )}
                     {data && columns && displayMode === 'Gallery' && (

@@ -1,13 +1,11 @@
 import {useForm} from "react-hook-form"
 import {DefaultAttributeNames} from "../types/defaultAttributeNames"
-import {Dialog} from "primereact/dialog";
-import {Button} from "primereact/button";
 import {useCheckError} from "../../hooks/useCheckError";
 import {PublicationStatus} from "../types/publicationStatus";
 import {savePublicationSettings} from "../services/entity";
 import {XEntity} from "../../types/xEntity";
-import {ComponentConfig} from "../../componentConfig";
-import {utcStrToDatetime} from "../types/formatter";
+import {ComponentConfig} from "../../ComponentConfig";
+import {utcStrToDatetime} from "../../types/formatter";
 
 export function SetPublishStatusDialog(
     {
@@ -42,6 +40,8 @@ export function SetPublishStatusDialog(
     const publishedAt = data[DefaultAttributeNames.PublishedAt] ?? new Date();
     const formData = {[DefaultAttributeNames.PublishedAt]: publishedAt}
     const formId = "PublicationSettings" + newStatus;
+    const Dialog = componentConfig.etc.dialog;
+    const Button = componentConfig.etc.button;
 
     const {handleErrorOrSuccess, CheckErrorStatus: CheckPublishErrorStatus} = useCheckError(componentConfig);
     async function submit(formData: any) {
@@ -53,16 +53,16 @@ export function SetPublishStatusDialog(
         })
     }
     const footer =   <>
-        <Button label={cancelButtonText} icon="pi pi-times" outlined onClick={()=>setVisible(false)}/>
+        <Button type={'button'} label={cancelButtonText} icon="pi pi-times" outlined onClick={()=>setVisible(false)}/>
         <Button type={'submit'} label={submitButtonText} icon="pi pi-check" form={formId}/>
     </>
-    const DateInput = componentConfig.inputComponent.datetime;
+    const DateInput = componentConfig.inputComponents.datetime;
 
     return <Dialog header={header}
                    footer={footer}
                    visible={visible}
                    onHide={()=>setVisible(false)}
-                   style={{width: '300px'}}
+                   width={'300px'}
                    modal
                    className="p-fluid">
         <form onSubmit={handleSubmit(submit)} id={formId}>

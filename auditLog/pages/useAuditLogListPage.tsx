@@ -1,20 +1,15 @@
 import {FetchingStatus} from "../../containers/FetchingStatus"
-import {EditDataTable} from "../../components/data/EditDataTable";
 import {encodeDataTableState} from "../../types/dataTableStateUtil";
-import {createColumn} from "../../cms/containers/createColumn";
 import {useDataTableStateManager} from "../../hooks/useDataTableStateManager";
-
 import {useAuditLogs} from "../services/auditLog"
 import {XEntity} from "../../types/xEntity";
-
-
 import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
-import {Button} from "primereact/button";
-import {Column} from "primereact/column";
-import {getDefaultComponentConfig, ComponentConfig} from "../../componentConfig";
+import {ComponentConfig} from "../../ComponentConfig";
+import {toDataTableColumns} from "../../types/attrUtils";
+import {formater} from "../../types/formatter";
 
-export function useAuditLogListPage(baseRouter: string, schema: XEntity, componentConfig:ComponentConfig = getDefaultComponentConfig()) {
+export function useAuditLogListPage(componentConfig:ComponentConfig,baseRouter: string, schema: XEntity) {
     //entrance
     const initQs = location.search.replace("?", "");
 
@@ -23,20 +18,14 @@ export function useAuditLogListPage(baseRouter: string, schema: XEntity, compone
     const stateManager = useDataTableStateManager(schema.primaryKey, schema.defaultPageSize, columns, initQs)
     const qs = encodeDataTableState(stateManager.state);
     const {data, error, isLoading} = useAuditLogs(qs)
-    const tableColumns = columns.map(x => createColumn(x,componentConfig, undefined, x.field == schema.labelAttributeName ? onEdit : undefined));
-    tableColumns.push(<Column
-        body={
-            (rowData) => <Button icon="pi pi-search" rounded outlined className="mr-2" onClick={() => onEdit(rowData)}/>
-        }
-        exportable={false}
-        style={{minWidth: '12rem'}}/>)
 
-    //nav
+    const tableColumns = columns.map(x => toDataTableColumns(x, x.field == schema.labelAttributeName ? onEdit : undefined));
+    const Icon = componentConfig.etc.icon;
+    const actionTemplate = (rowData: any) => <Icon icon={'pi pi-search'} onClick={()=>onEdit(rowData)}/>;
     useEffect(() => window.history.replaceState(null, "", `?${qs}`), [stateManager.state]);
 
     //referencing
     const navigate = useNavigate();
-
     return {AuditLogListPageMain}
 
     function onEdit(rowData: any) {
@@ -45,15 +34,18 @@ export function useAuditLogListPage(baseRouter: string, schema: XEntity, compone
     }
 
     function AuditLogListPageMain() {
+        const LazyDataTable = componentConfig.dataComponents.lazyTable;
         return <>
             <FetchingStatus isLoading={isLoading} error={error} componentConfig={componentConfig} />
             {data && columns && (
                 <div className="card">
-                    <EditDataTable
+                    <LazyDataTable
                         dataKey={schema.primaryKey}
                         columns={tableColumns}
                         data={data}
                         stateManager={stateManager}
+                        actionTemplate={ actionTemplate}
+                        formater={formater}
                     />
                 </div>
             )}

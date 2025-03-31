@@ -1,7 +1,9 @@
 import {useReducer} from "react";
-import {FilterMatchMode} from "primereact/api";
 import { XAttr } from "../types/xEntity";
 import { decodeDataTableState } from "../types/dataTableStateUtil";
+
+
+export type DataTableStateManager = ReturnType<typeof useDataTableStateManager>;
 
 export function useDataTableStateManager(primaryKey :string,rowCount:number, cols: XAttr[], qs?: string|undefined) {
     const defaultState:any = createDefaultState(primaryKey,rowCount,cols,qs);
@@ -21,6 +23,7 @@ export function useDataTableStateManager(primaryKey :string,rowCount:number, col
         }
     }
 }
+
 
 function createDefaultState(primaryKey:string,rows:number, cols:XAttr[],qs: string|undefined) {
     
@@ -51,9 +54,9 @@ function createDefaultState(primaryKey:string,rows:number, cols:XAttr[],qs: stri
 function createDefaultFilter(cols:XAttr[]) {
     const getMathMode = (col:XAttr) =>{
         switch (col.displayType){
-            case 'number': return FilterMatchMode.EQUALS
-            case 'datetime': return FilterMatchMode.DATE_IS
-            default: return FilterMatchMode.STARTS_WITH
+            case 'number': return 'equals';
+            case 'datetime': return 'dateIs';
+            default: return 'startsWidth';
         }
     }
     const filters:any = {}

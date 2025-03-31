@@ -6,13 +6,13 @@ import {
 } from "../services/accounts";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
-import { useConfirm } from "../../hooks/useConfirm";
+import { createConfirm } from "../../hooks/createConfirm";
 import { New } from "./useRoleListPage";
-import { MultiSelectInput } from "../../components/inputs/MultiSelectInput";
+import { MultiSelectInput } from "../../../../src/components/inputs/MultiSelectInput";
 import { FetchingStatus } from "../../containers/FetchingStatus";
 import { getEntityPermissionInputs } from "../types/entityPermissionInputs";
 import { useCheckError } from "../../hooks/useCheckError";
-import {getDefaultComponentConfig} from "../../componentConfig";
+import {ComponentConfig} from "../../ComponentConfig";
 
 export interface UseRoleDetailPageConfig {
     deleteConfirmHeader:string
@@ -33,16 +33,16 @@ export function getDefaultUseRoleDetailPageConfig(): UseRoleDetailPageConfig {
 }
 
 export function useRoleDetailPage(
+    componentConfig :ComponentConfig,
     baseRouter: string,
     pageConfig: UseRoleDetailPageConfig = getDefaultUseRoleDetailPageConfig(),
-    componentConfig = getDefaultComponentConfig()
 ) {
     const { name } = useParams();
     const { data: roleData, isLoading: loadingRole, error: errorRole, mutate: mutateRole } = useSingleRole(
         name === New ? "" : name!
     );
     const { data: entities, isLoading: loadingEntity, error: errorEntities } = useEntities();
-    const { confirm, Confirm } = useConfirm("roleDetailPage",componentConfig);
+    const { confirm, Confirm } = createConfirm("roleDetailPage",componentConfig);
     const { handleErrorOrSuccess, CheckErrorStatus } = useCheckError(componentConfig);
     const { register, handleSubmit, control } = useForm();
     const isNewRole = name === New;

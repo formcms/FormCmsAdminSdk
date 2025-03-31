@@ -1,7 +1,6 @@
-import { DataTable } from "primereact/datatable";
 import { useUsers } from "../services/accounts";
-import { Column } from "primereact/column";
 import { Link } from "react-router-dom";
+import {ComponentConfig} from "../../ComponentConfig";
 
 export interface UseUserListPageConfig {
     emailHeader: string;
@@ -15,8 +14,11 @@ export function getDefaultUseUserListPageConfig()  {
     };
 }
 
-export function useUserListPage(config: UseUserListPageConfig = getDefaultUseUserListPageConfig()) {
-    const { data, isLoading } = useUsers();
+export function useUserListPage(
+    componentConfig : ComponentConfig,
+    pageConfig: UseUserListPageConfig = getDefaultUseUserListPageConfig(),
+) {
+    const { data } = useUsers();
 
     const roleTemplate = (record: { roles: string[] }) => {
         return record.roles.join(",");
@@ -26,30 +28,23 @@ export function useUserListPage(config: UseUserListPageConfig = getDefaultUseUse
         return <Link to={record.id.toString()}>{record.email}</Link>;
     };
 
+    const tableColumns = [
+        {
+            header: pageConfig.emailHeader,
+            field: "email",
+            body: emailTemplate,
+        },
+        {
+            header:pageConfig.roleHeader,
+            field: "roles",
+            body: roleTemplate,
+        }
+    ]
+    const BasicDataTable = componentConfig.dataComponents.basicTable
+
     return { UserListPageMain };
 
     function UserListPageMain() {
-        return (
-            <DataTable
-                loading={isLoading}
-                dataKey={"id"}
-                value={data}
-                paginator
-                rows={100}
-            >
-                <Column
-                    header={config.emailHeader}
-                    field={"email"}
-                    sortable
-                    filter
-                    body={emailTemplate}
-                />
-                <Column
-                    header={config.roleHeader}
-                    field={"role"}
-                    body={roleTemplate}
-                />
-            </DataTable>
-        );
+        return data && <BasicDataTable pageSize={10} data={data} dataKey={'id'} tableColumns={tableColumns}/>
     }
 }

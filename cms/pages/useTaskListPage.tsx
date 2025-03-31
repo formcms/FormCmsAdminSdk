@@ -1,7 +1,4 @@
-import {Button} from "primereact/button";
-import {createColumn} from "../containers/createColumn";
 import {encodeDataTableState} from "../../types/dataTableStateUtil";
-import {EditDataTable} from "../../components/data/EditDataTable";
 import {useDataTableStateManager} from "../../hooks/useDataTableStateManager";
 import {FetchingStatus} from "../../containers/FetchingStatus";
 import {
@@ -13,14 +10,13 @@ import {
     useTasks
 } from "../services/task";
 import {useCheckError} from "../../hooks/useCheckError";
-import {Column} from "primereact/column";
 import {SystemTask} from "../types/systemTask";
-import {FileUpload} from "primereact/fileupload";
-import {Dialog} from "primereact/dialog";
 import {useState} from "react";
-import {CmsComponentConfig, getDefaultCmsComponentConfig} from "../types/cmsComponentConfig";
+import {CmsComponentConfig} from "../cmsComponentConfig";
 import {SystemTaskLabels} from "../types/systemTaskUtil";
 import {XEntity} from "../../types/xEntity";
+import {formater} from "../../types/formatter";
+import {toDataTableColumns} from "../../types/attrUtils";
 
 export interface TaskListPageConfig {
     exportSuccess: string;
@@ -41,9 +37,9 @@ export function getDefaultTaskListPageConfig(): TaskListPageConfig {
 }
 
 export function useTaskListPage(
-    {schema}: { schema: XEntity },
+    componentConfig: CmsComponentConfig ,
+    schema:  XEntity ,
     pageConfig: TaskListPageConfig = getDefaultTaskListPageConfig(),
-    componentConfig: CmsComponentConfig = getDefaultCmsComponentConfig()
 ) {
     // Data
     const columns = schema?.attributes?.filter(column => column.inList) ?? [];
@@ -53,8 +49,12 @@ export function useTaskListPage(
     // State
     const [visible, setVisible] = useState(false);
 
-    // Error handling
     const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError(componentConfig);
+    const LazyDataTable = componentConfig.dataComponents.lazyTable;
+    const Dialog = componentConfig.etc.dialog;
+    const Button = componentConfig.etc.button;
+    const Upload = componentConfig.etc.upload;
+
 
     async function handleAddExportTask() {
         const {error} = await addExportTask();
@@ -85,9 +85,9 @@ export function useTaskListPage(
             return (
                 <>
                     <a href={getExportTaskDownloadFileLink(item.id)}>
-                        <Button>Download</Button>
+                        <Button label={'Download'} icon={""} type={"button"}/>
                     </a>{' '}
-                    <Button onClick={() => handleArchiveExportTask(item.id)}>Delete File</Button>
+                    <Button label={'Delete File'} onClick={() => handleArchiveExportTask(item.id)} icon={""} type={"button"}/>
                 </>
             );
         }
@@ -103,27 +103,20 @@ export function useTaskListPage(
         })
     }
 
-    const tableColumns = columns.map(x => createColumn(x, componentConfig, undefined, undefined));
-    tableColumns.push(
-        <Column
-            key={'action'}
-            body={actionBodyTemplate}
-            exportable={false}
-            style={{minWidth: '12rem'}}
-        />
-    );
-
+    const tableColumns = columns.map(x => toDataTableColumns(x));
     function TaskListMain() {
         return (
             <>
                 <FetchingStatus isLoading={isLoading} error={error} componentConfig={componentConfig} />
                 <div className="card">
                     {data && columns && (
-                        <EditDataTable
+                        <LazyDataTable
+                            formater={formater}
                             dataKey={schema.primaryKey}
                             columns={tableColumns}
                             data={data}
                             stateManager={stateManager}
+                            actionTemplate={actionBodyTemplate}
                         />
                     )}
                 </div>
@@ -134,14 +127,7 @@ export function useTaskListPage(
                     className="p-fluid"
                     onHide={() => setVisible(false)}
                 >
-                    <FileUpload
-                        withCredentials
-                        mode={"basic"}
-                        auto
-                        url={getAddImportTaskUploadUrl()}
-                        name={'files'}
-                        onUpload={onAddImportTaskUpload}
-                    />
+                    <Upload url={getAddImportTaskUploadUrl()} onUpload={onAddImportTaskUpload} />
                 </Dialog>
             </>
         );

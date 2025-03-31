@@ -1,12 +1,12 @@
 import { deleteUser, saveUser, useEntities, useSingleUser, useRoles } from "../services/accounts";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
-import { useConfirm } from "../../hooks/useConfirm";
+import { createConfirm } from "../../hooks/createConfirm";
 import { FetchingStatus } from "../../containers/FetchingStatus";
-import { MultiSelectInput } from "../../components/inputs/MultiSelectInput";
+import { MultiSelectInput } from "../../../../src/components/inputs/MultiSelectInput";
 import { useCheckError } from "../../hooks/useCheckError";
 import {getEntityPermissionInputs} from "../types/entityPermissionInputs";
-import {ComponentConfig, getDefaultComponentConfig} from "../../componentConfig";
+import {ComponentConfig} from "../../ComponentConfig";
 
 export interface UseUserDetailPageConfig {
     rolesHeader: string;
@@ -25,16 +25,16 @@ export function getDefaultUseUserDetailPageConfig(): UseUserDetailPageConfig {
 }
 
 export function useUserDetailPage(
+    componentConfig : ComponentConfig ,
     baseRouter: string,
     pageConfig: UseUserDetailPageConfig = getDefaultUseUserDetailPageConfig(),
-    componentConfig : ComponentConfig = getDefaultComponentConfig()
 
 ) {
     const { id } = useParams();
     const { data: userData, isLoading: loadingUser, error: errorUser, mutate: mutateUser } = useSingleUser(id!);
     const { data: roles, isLoading: loadingRoles, error: errorRoles } = useRoles();
     const { data: entities, isLoading: loadingEntity, error: errorEntities } = useEntities();
-    const { confirm, Confirm } = useConfirm("userDetailPage",componentConfig);
+    const { confirm, Confirm } = createConfirm("userDetailPage",componentConfig);
     const { handleErrorOrSuccess, CheckErrorStatus } = useCheckError(componentConfig);
     const { register, handleSubmit, control } = useForm();
 

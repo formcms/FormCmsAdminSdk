@@ -9,12 +9,10 @@ export {useDataListPage,getDefaultDataListPageConfig} from "./cms/pages/useDataL
 export type {NewDataItemPageConfig} from "./cms/pages/userNewDataItemPage";
 export {userNewDataItemPage,getDefaultNewDataItemPageConfig} from "./cms/pages/userNewDataItemPage";
 
-
 // asset management
 export  type { AssetListPageConfig } from "./cms/pages/useAssetListPage";
 export  { useAssetListPage,getDefaultAssetListPageConfig } from "./cms/pages/useAssetListPage";
 export {useAssetEditPage} from "./cms/pages/useAssetEditPage";
-
 
 //auth and account management pages
 export {useUserInfo} from "./auth/services/auth";
@@ -31,8 +29,7 @@ export {useRegisterPage,getDefaultUseRegisterPageConfig} from "./auth/pages/useR
 export type {UseRoleDetailPageConfig} from "./auth/pages/useRoleDetailPage";
 export {useRoleDetailPage,getDefaultUseRoleDetailPageConfig} from "./auth/pages/useRoleDetailPage";
 
-export type {UseRoleListPageConfig} from "./auth/pages/useRoleListPage";
-export {useRoleListPage,getDefaultUseRoleListPageConfig} from "./auth/pages/useRoleListPage";
+export {useRoleListPage} from "./auth/pages/useRoleListPage";
 
 export type {UseUserDetailPageConfig} from "./auth/pages/useUserDetailPage";
 export {useUserDetailPage,getDefaultUseUserDetailPageConfig} from "./auth/pages/useUserDetailPage";
@@ -48,9 +45,6 @@ export {useTaskListPage,getDefaultTaskListPageConfig} from "./cms/pages/useTaskL
 export {useAuditLogListPage} from "./auditLog/pages/useAuditLogListPage";
 export {useAuditLogDetailPage} from "./auditLog/pages/useAuditLogDetailPage";
 
-//global component config
-export type {CmsComponentConfig} from "./cms/types/cmsComponentConfig";
-export {getDefaultCmsComponentConfig} from "./cms/types/cmsComponentConfig";
 
 //configuration
 export {setCmsApiBaseUrl} from "./cms/configs";
@@ -65,3 +59,35 @@ export {AccountRouter} from "./auth/AccountRouter";
 export {AuditLogRouter} from "./auditLog/AuditLogRouter";
 export {AuthRouter} from "./auth/AuthRouter";
 
+//global component config
+export type {CmsComponentConfig} from "./cms/cmsComponentConfig";
+
+//component props
+export type {
+    BasicDataTableProps,
+    LazyDataTableProps,
+    GallerySelectorProps,
+    GalleryViewProps} from './components/data'
+export type {
+    ButtonProps,
+    DialogProps,
+    IconProps,
+    ImageProps,
+    MessageProps,
+    ToastProps,
+    UploadProps,
+    SelectButtonProps,
+    ConfirmDialogProps} from './components/etc'
+export type {
+    DatetimeInputProps,
+    DictionaryInputProps,
+    DropDownInputProps,
+    EditorInputProps,
+    FileInputProps,
+    GalleryInputProps,
+    LookupInputProps,
+    MultiSelectInputProps,
+    NumberInputProps,
+    TextAreaInputProps,
+    TextInputProps, TreeInputProps, TreeSelectInputProps
+} from './components/inputs'

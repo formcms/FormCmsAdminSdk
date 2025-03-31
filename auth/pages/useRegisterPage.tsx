@@ -1,7 +1,4 @@
 import { useState } from "react";
-import "primereact/resources/themes/saga-blue/theme.css";
-import "primereact/resources/primereact.min.css";
-import "primeicons/primeicons.css";
 import { register } from "../services/auth";
 import { LoginRoute } from "../AccountRouter";
 

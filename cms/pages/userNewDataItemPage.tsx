@@ -5,8 +5,8 @@ import {getFileUploadURL, useGetCmsAssetsUrl} from "../services/asset";
 import {createInput } from "../containers/createInput";
 import {getInputAttrs} from "../../types/attrUtils";
 import {useForm} from "react-hook-form";
-import {ArrayToObject} from "../types/formatter";
-import {CmsComponentConfig, getDefaultCmsComponentConfig} from "../types/cmsComponentConfig";
+import {ArrayToObject} from "../../types/formatter";
+import {CmsComponentConfig} from "../cmsComponentConfig";
 import {useNavigate} from "react-router-dom";
 
 export interface NewDataItemPageConfig {
@@ -20,10 +20,10 @@ export function getDefaultNewDataItemPageConfig(): NewDataItemPageConfig{
 }
 
 export function userNewDataItemPage(
+    componentConfig: CmsComponentConfig,
     schema: XEntity,
     baseRouter: string,
     pageConfig: NewDataItemPageConfig = getDefaultNewDataItemPageConfig(),
-    componentConfig: CmsComponentConfig = getDefaultCmsComponentConfig(),
 ) {
     const formId = "newDataItemForm" + schema.name;
     const {register, handleSubmit, control} = useForm()

@@ -1,5 +1,5 @@
 import {useRef, useState} from "react";
-import {ComponentConfig} from "../componentConfig";
+import {ComponentConfig} from "../ComponentConfig";
 
 export function useCheckError(componentConfig: ComponentConfig) {
     const toast = useRef<any>(null);
@@ -17,9 +17,11 @@ export function useCheckError(componentConfig: ComponentConfig) {
             }
         },
         CheckErrorStatus: ()=>{
+            const Message = componentConfig.etc.message;
+            const Toast = componentConfig.etc.toast;
             return <>
-                <>{componentConfig.etc.toast(toast.current)}</>
-                {error&& error.split('\n').map(e =>(<>{componentConfig.etc.errorMessage(e)}&nbsp;&nbsp;</>))}
+                <Toast ref={toast}/>
+                {error&& error.split('\n').map(e =>(<><Message text={e} severity={'error'}/>&nbsp;&nbsp;</>))}
             </>
         }
     }

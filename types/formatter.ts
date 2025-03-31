@@ -1,5 +1,23 @@
 
-export const formatFileSize = (bytes?: number) => {
+export type Formater = {
+    datetime: (v: any) => any
+    localDatetime: (v: any) => any
+    date: (v: any) => any
+    csv: (v: any) => any
+    dictionary: (v: any) => any
+    default: (v: any) => any
+}
+
+export const formater :Formater = {
+    datetime: toDatetimeStr,
+    localDatetime: utcStrToDatetimeStr,
+    date: toDateStr,
+    csv: (x:any)=>x.join(','),
+    dictionary: (x:any)=> Object.entries(x).map(([k,v])=>(`${k}:${v}`)).join(', '),
+    default : x =>x
+}
+
+export function formatFileSize  (bytes?: number)  {
     if (!bytes || bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
@@ -19,12 +37,12 @@ export const toDatetime = (s:string) => {
     return new Date(s.replaceAll(' ', 'T'));
 }
 
-export const toDateStr = (s:string) => {
+export function toDateStr  (s:string)  {
     const d = toDatetime(s);
     return d.toLocaleDateString();
 }
 
-export const toDatetimeStr = (s:string) => {
+export function toDatetimeStr  (s:string)  {
     const d = toDatetime(s);
     return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
 }
@@ -38,7 +56,7 @@ export const utcStrToDatetime = (s:string) => {
     return new Date(s);
 }
 
-export const utcStrToDatetimeStr = (s:string) => {
+export function utcStrToDatetimeStr  (s:string)  {
     const d = utcStrToDatetime(s);
     return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
 }
