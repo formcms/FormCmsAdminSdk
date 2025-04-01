@@ -12,7 +12,9 @@ export {userNewDataItemPage,getDefaultNewDataItemPageConfig} from "./cms/pages/u
 // asset management
 export  type { AssetListPageConfig } from "./cms/pages/useAssetListPage";
 export  { useAssetListPage,getDefaultAssetListPageConfig } from "./cms/pages/useAssetListPage";
-export {useAssetEditPage} from "./cms/pages/useAssetEditPage";
+
+export type {AssetEditPageConfig} from "./cms/pages/useAssetEditPage";
+export {useAssetEditPage,getDefaultAssetEditPageConfig} from "./cms/pages/useAssetEditPage";
 
 //auth and account management pages
 export {useUserInfo} from "./auth/services/auth";

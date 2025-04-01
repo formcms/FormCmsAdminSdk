@@ -12,3 +12,7 @@ export function AssetLinkField(key: keyof AssetLink) {
 export type AssetLabels = {
     [K in keyof Asset]: string;
 };
+
+export type AssetLinkLabels = {
+    [K in keyof AssetLink]: string;
+}

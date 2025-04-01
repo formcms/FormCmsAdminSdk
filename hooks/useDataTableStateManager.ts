@@ -1,5 +1,5 @@
 import {useReducer} from "react";
-import { XAttr } from "../types/xEntity";
+import {DisplayType, XAttr} from "../types/xEntity";
 import { decodeDataTableState } from "../types/dataTableStateUtil";
 
 
@@ -51,13 +51,31 @@ function createDefaultState(primaryKey:string,rows:number, cols:XAttr[],qs: stri
     return defaultState
 }
 
+const displayTypeToMatch :{ [key in DisplayType]: string; } = {
+    textarea: "startsWith",
+    text: 'startsWith',
+    number: 'equals',
+    datetime: 'dateIs',
+    localDatetime: 'dateIs',
+    date: 'dateIs',
+
+    dictionary: '',
+    dropdown: '',
+    editTable: '',
+    editor: "",
+    file: "",
+    gallery: "",
+    image: "",
+    lookup: "",
+    multiselect: "",
+    picklist: "",
+    tree: "",
+    treeSelect: "",
+}
+
 function createDefaultFilter(cols:XAttr[]) {
     const getMathMode = (col:XAttr) =>{
-        switch (col.displayType){
-            case 'number': return 'equals';
-            case 'datetime': return 'dateIs';
-            default: return 'startsWidth';
-        }
+        return displayTypeToMatch[col.displayType]
     }
     const filters:any = {}
 

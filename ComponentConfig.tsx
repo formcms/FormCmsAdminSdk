@@ -76,4 +76,5 @@ export interface ComponentConfig {
         accept: string
         reject: string
     },
+    addPairLabel:string
 }

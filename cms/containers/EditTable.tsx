@@ -26,7 +26,7 @@ export function EditTable(
         column: XAttr,
         data: any,
         getFullAssetsURL: (arg: string) => string
-        componentConfig:CmsComponentConfig
+        componentConfig: CmsComponentConfig
     }
 ) {
 
@@ -36,15 +36,19 @@ export function EditTable(
     const stateManager = useDataTableStateManager(schema.primaryKey, 8, listAttrs, "");
 
     const id = (data ?? {})[schema.primaryKey ?? '']
-    const { data: collectionData, mutate } = useCollectionData(schema.name, id, column.field, encodeDataTableState(stateManager.state));
+    const {
+        data: collectionData,
+        mutate
+    } = useCollectionData(schema.name, id, column.field, encodeDataTableState(stateManager.state));
 
     //state
     const [visible, setVisible] = useState(false);
 
     //ui variables
-    const inputAttrs = getInputAttrs(targetSchema?.attributes);
     const dataTableCols = listAttrs.map(x =>
-        toDataTableColumns(x, x.field == schema.labelAttributeName ? onEdit : undefined));
+        toDataTableColumns(x, x.field == schema.labelAttributeName ? onEdit : undefined)
+    );
+    const inputAttrs = getInputAttrs(targetSchema?.attributes);
 
     const formId = "edit-table" + column.field;
     const LazyDataTable = componentConfig.dataComponents.lazyTable;
@@ -52,7 +56,7 @@ export function EditTable(
     //ref
     const navigate = useNavigate();
     const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError(componentConfig);
-    const { register, handleSubmit, control } = useForm()
+    const {register, handleSubmit, control} = useForm()
     const Button = componentConfig.etc.button;
     const Dialog = componentConfig.etc.dialog;
 
@@ -111,6 +115,7 @@ export function EditTable(
                 getFullAssetsURL={getFullAssetsURL}
             />
             <Dialog
+                width={'95%'}
                 maximizable
                 visible={visible}
                 onHide={() => setVisible(false)}
@@ -119,26 +124,26 @@ export function EditTable(
                 footer={footer}
                 header={componentConfig.editTable.dialogHeader(column.header)}
             >
-                <>
-                    <CheckErrorStatus/>
-                    <form onSubmit={handleSubmit(onSubmit)} id={formId}>
+                <CheckErrorStatus/>
+                {
+                    inputAttrs.length > 0 && <form onSubmit={handleSubmit(onSubmit)} id={formId}>
                         <div className="formgrid grid">
                             {
                                 inputAttrs.map((column: any) => createInput({
-                                    data:{},
+                                    data: {},
                                     column,
                                     register,
                                     control,
-                                    id,
-                                    uploadUrl:getFileUploadURL(),
+                                    id: undefined,
+                                    uploadUrl: getFileUploadURL(),
                                     getFullAssetsURL,
-                                    fullRowClassName:'field col-12',
-                                    partialRowClassName:'field col-12 md:col-4'
+                                    fullRowClassName: 'field col-12',
+                                    partialRowClassName: 'field col-12 md:col-4'
                                 }, componentConfig))
                             }
                         </div>
                     </form>
-                </>
+                }
             </Dialog>
         </div>
     );

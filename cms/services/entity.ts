@@ -74,4 +74,3 @@ export function useLookupData(schemaName: string, query: string) {
     let res = useSWR<LookupListResponse>(fullCmsApiUrl(`/entities/lookup/${schemaName}?query=${encodeURIComponent(query)}`), fetcher, swrConfig);
     return {...res, error: decodeError(res.error)}
 }
-

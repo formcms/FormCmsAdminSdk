@@ -56,9 +56,9 @@ export function AssetMetadataEditor(
     const Image = componentConfig.etc.image;
 
     return <Dialog header={componentConfig.assetEditor.dialogHeader}
-                   visible={show}
+                   visible={show} width={'750px'}
                    onHide={handleClose}>
-        <FetchingStatus isLoading={isLoading} error={error} componentConfig={componentConfig} />
+        <FetchingStatus isLoading={isLoading} error={error} componentConfig={componentConfig}/>
         <CheckErrorStatus/>
         {data?.type?.startsWith("image") &&
             <div className="card flex justify-content-start">
@@ -77,8 +77,13 @@ export function AssetMetadataEditor(
             <label>{formatFileSize(data.size)}</label>
 
         </div>}
-        {data && <form onSubmit={handleSubmit(handleSubmitAssetMeta)} id={formId}>
+        <br/>
+        <div style={{width:'100px'}}>
             <Button label={componentConfig.assetEditor.saveButtonLabel} icon={'pi pi-check'} type={"submit"} form={formId}/>
+        </div>
+        <br/>
+        <br/>
+        {data && <form onSubmit={handleSubmit(handleSubmitAssetMeta)} id={formId}>
             <div className="formgrid grid">
                 {
                     inputAttrs.map((column: any) => createInput({
@@ -89,8 +94,8 @@ export function AssetMetadataEditor(
                         id: column.field,
                         getFullAssetsURL: getCmsAssetUrl,
                         uploadUrl: '',
-                        fullRowClassName:'field col-12',
-                        partialRowClassName:'field col-12'
+                        fullRowClassName: 'field col-12',
+                        partialRowClassName: 'field col-12'
                     }, componentConfig))
                 }
             </div>

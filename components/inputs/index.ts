@@ -20,6 +20,7 @@ export type DictionaryInputProps = {
     control: any;
     className: any;
     id: any;
+    addPairLabel:string
 }
 
 export type DropDownInputProps = {

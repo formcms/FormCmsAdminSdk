@@ -21,7 +21,7 @@ export function createInput(
     },
     config: CmsComponentConfig
 ) {
-    const {field, displayType, options} = props.column
+    const {field, displayType, options} = props.column;
     const ConfiguredMetadataEditor = (props: AssetMetaDataEditorProps) => <AssetMetadataEditor {...props} componentConfig={config}/>
     const ConfiguredAssetSelector = (props: AssetSelectorProps) => <AssetSelector {...props} componentConfig={config}/>
 
@@ -31,6 +31,7 @@ export function createInput(
             const DictionaryInput = config.inputComponents.dictionary;
             return <DictionaryInput
                 className={props.fullRowClassName}
+                addPairLabel={config.addPairLabel}
                 {...props}
                 key={field}/>
         case 'editor':

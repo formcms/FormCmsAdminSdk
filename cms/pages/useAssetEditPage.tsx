@@ -4,7 +4,7 @@ import {XEntity} from "../../types/xEntity";
 import {useForm} from "react-hook-form";
 import {createInput} from "../containers/createInput";
 import {FetchingStatus} from "../../containers/FetchingStatus";
-import {AssetField, AssetLinkField} from "../types/assetUtils";
+import {AssetField, AssetLabels, AssetLinkField} from "../types/assetUtils";
 import {useState} from "react";
 import {useCheckError} from "../../hooks/useCheckError";
 import {AssetLink} from "../types/asset";
@@ -14,27 +14,21 @@ import {getInputAttrs} from "../../types/attrUtils";
 import {CmsComponentConfig} from "../cmsComponentConfig";
 import {BasicDataTableProps} from "../../components/data";
 
-interface IAssetEditPageConfig {
+export interface AssetEditPageConfig {
     deleteConfirmHeader: string;
     deleteConfirm: (label?: string) => string;
     deleteSuccess: (label?: string) => string;
     saveSuccess: (label?: string) => string;
-    assetLinksTitle: string
-    assetLinksTableHeaderEntityName: string;
-    assetLinksTableHeaderRecordId: string;
-    assetLinksTableHeaderCreatedAt: string;
+    usedByLabel :string;
 }
 
-export function getDefaultAssetEditPageConfig(): IAssetEditPageConfig {
+export function getDefaultAssetEditPageConfig(): AssetEditPageConfig {
     return {
         deleteConfirmHeader: "Confirm",
         deleteConfirm: (label?: string) => `Do you want to delete this item${label ? ` [${label}]` : ''}?`,
         deleteSuccess: (label?: string) => `Delete${label ? ` [${label}]` : ''} Succeed`,
         saveSuccess: (label?: string) => `Save ${label ? ` [${label}]` : ''} Succeed`,
-        assetLinksTitle: 'Used By:',
-        assetLinksTableHeaderEntityName: 'Entity Name',
-        assetLinksTableHeaderRecordId: 'Record Id',
-        assetLinksTableHeaderCreatedAt: 'Created At'
+        usedByLabel: 'Used By',
     };
 }
 
@@ -43,7 +37,7 @@ export function useAssetEditPage(
     componentConfig: CmsComponentConfig,
     baseRouter: string,
     schema: XEntity,
-    pageConfig: IAssetEditPageConfig = getDefaultAssetEditPageConfig(),
+    pageConfig: AssetEditPageConfig = getDefaultAssetEditPageConfig(),
 ) {
     // Entrance
     const {id} = useParams();
@@ -76,7 +70,13 @@ export function useAssetEditPage(
         );
     }
 
-    const inputs = getInputAttrs(schema.attributes);
+    let inputs = getInputAttrs(schema.attributes);
+    const assetLabels = componentConfig.assetLabels;
+    if (assetLabels) {
+        inputs = inputs.map(input => {
+            return {...input, header: assetLabels[input.field as keyof AssetLabels]};
+        })
+    }
 
     async function onSubmit(formData: any) {
         const payload = {
@@ -133,13 +133,13 @@ export function useAssetEditPage(
                 {
                     data && <form onSubmit={handleSubmit(onSubmit)} id={formId}>
                         <div className="formgrid grid">
-                            {inputs.map(column => createInput(
+                            {inputs.map(input => createInput(
                                 {
                                     data,
-                                    column,
+                                    column: input,
                                     register,
                                     control,
-                                    id: column.field,
+                                    id: input.field,
                                     getFullAssetsURL: getCmsAssetUrl,
                                     uploadUrl: '',
                                     fullRowClassName: 'field col-12',
@@ -156,14 +156,14 @@ export function useAssetEditPage(
 
     function AssetLinks() {
         const columns  : BasicDataTableProps['tableColumns'] = [
-            {field:AssetLinkField('entityName'),header:pageConfig.assetLinksTableHeaderEntityName},
-            {field:AssetLinkField('recordId'),header:pageConfig.assetLinksTableHeaderRecordId},
-            {field:AssetLinkField('createdAt'),header:pageConfig.assetLinksTableHeaderCreatedAt}
+            {field:AssetLinkField('entityName'),header:componentConfig.assetLinkLabels.entityName,},
+            {field:AssetLinkField('recordId'),header:componentConfig.assetLinkLabels.recordId,},
+            {field:AssetLinkField('createdAt'),header:componentConfig.assetLinkLabels.createdAt,},
         ];
 
         return data && (
             <>
-                {data.links && <h3>{pageConfig.assetLinksTitle}</h3>}
+                {data.links && <h3>{pageConfig.usedByLabel}</h3>}
                 {data.links && <BasicDataTable pageSize={10} data={data.links} dataKey={''} tableColumns={columns} actionBodyTemplate={actionBodyTemplate}/>}
             </>
         );

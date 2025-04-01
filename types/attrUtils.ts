@@ -45,6 +45,17 @@ export function toDataTableColumns(attr: XAttr, onClick?: DateTableColumn['onCli
     }
 
     let format: DateTableColumn['format'] = 'default';
+    if (attr.displayType == 'date') {
+        format = 'date';
+    }else if (attr.displayType == 'datetime') {
+        format = 'datetime';
+    }else if (attr.displayType == 'localDatetime') {
+        format = 'localDatetime';
+    }else if (attr.displayType == 'multiselect') {
+        format = 'csv'
+    }else if (attr.displayType == 'dictionary') {
+        format = 'dictionary';
+    }
 
     return {
         contentType,

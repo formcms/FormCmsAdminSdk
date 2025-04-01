@@ -32,4 +32,3 @@ export  function getExportTaskDownloadFileLink(id:number) {
 export  function getAddImportTaskUploadUrl() {
     return fullCmsApiUrl(`/tasks/import`);
 }
-

@@ -77,10 +77,10 @@ export function Picklist({column, data, schema, getFullAssetsURL, componentConfi
         </label><br/>
         <CheckErrorStatus/>
         <Confirm/>
-        <Button label={componentConfig.picklist.selectButtonLabel(column.header)}
+        <Button outlined label={componentConfig.picklist.selectButtonLabel(column.header)}
                 onClick={() => setVisible(true)} type={"button"} icon={''}/>
         {' '}
-        <Button type={'button'} label={componentConfig.picklist.deleteButtonLabel}  onClick={onDelete} icon={''} />
+        <Button outlined type={'button'} label={componentConfig.picklist.deleteButtonLabel}  onClick={onDelete} icon={''} />
         {targetSchema && subgridData && <LazyDataTable
             dataKey={targetSchema.primaryKey}
             formater={formater}

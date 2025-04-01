@@ -1,5 +1,5 @@
 import {ComponentConfig} from "../ComponentConfig";
-import {AssetLabels} from "./types/assetUtils";
+import {AssetLabels, AssetLinkLabels} from "./types/assetUtils";
 
 export type CmsComponentConfig ={
     assetEditor: {
@@ -17,6 +17,7 @@ export type CmsComponentConfig ={
         okButtonLabel: string
     }
     assetLabels:AssetLabels|null
+    assetLinkLabels:AssetLinkLabels
     editTable: {
         submitSuccess: (field: string) => string;
         dialogHeader: (header: string) => string;
