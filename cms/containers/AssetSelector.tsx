@@ -8,6 +8,7 @@ import {AssetField} from "../types/assetUtils";
 import {CmsComponentConfig} from "../cmsComponentConfig";
 import {formater} from "../../types/formatter";
 import {toDataTableColumns} from "../../types/attrUtils";
+import {GeneralComponentConfig} from "../../ComponentConfig";
 
 
 export type AssetSelectorProps = {
@@ -25,7 +26,7 @@ export function AssetSelector(
         path, setPath,
         paths, setPaths,
         componentConfig,
-    }: AssetSelectorProps & { componentConfig: CmsComponentConfig}
+    }: AssetSelectorProps & { componentConfig: CmsComponentConfig & GeneralComponentConfig },
 ) {
 
     const {data: assetSchema} = useAssetEntity();

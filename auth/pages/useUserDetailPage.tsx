@@ -8,14 +8,14 @@ import { useCheckError } from "../../hooks/useCheckError";
 import {getEntityPermissionInputs} from "../types/entityPermissionInputs";
 import {ComponentConfig} from "../../ComponentConfig";
 
-export interface UseUserDetailPageConfig {
+export interface UserDetailPageConfig {
     rolesHeader: string;
     deleteConfirmHeader:string
     deleteConfirmationMessage: string;
     deleteSuccessMessage: string;
 }
 
-export function getDefaultUseUserDetailPageConfig(): UseUserDetailPageConfig {
+export function getDefaultUseUserDetailPageConfig(): UserDetailPageConfig {
     return {
         rolesHeader: "Roles",
         deleteConfirmHeader:"Confirm",
@@ -27,7 +27,7 @@ export function getDefaultUseUserDetailPageConfig(): UseUserDetailPageConfig {
 export function useUserDetailPage(
     componentConfig : ComponentConfig ,
     baseRouter: string,
-    pageConfig: UseUserDetailPageConfig = getDefaultUseUserDetailPageConfig(),
+    pageConfig: UserDetailPageConfig = getDefaultUseUserDetailPageConfig(),
 
 ) {
     const { id } = useParams();

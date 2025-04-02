@@ -13,6 +13,7 @@ import {ArrayToObject, formatFileSize} from "../../types/formatter";
 import {getInputAttrs} from "../../types/attrUtils";
 import {CmsComponentConfig} from "../cmsComponentConfig";
 import {BasicDataTableProps} from "../../components/data";
+import {GeneralComponentConfig} from "../../ComponentConfig";
 
 export interface AssetEditPageConfig {
     deleteConfirmHeader: string;
@@ -34,7 +35,7 @@ export function getDefaultAssetEditPageConfig(): AssetEditPageConfig {
 
 // Main hook for AssetEditPage with unified config
 export function useAssetEditPage(
-    componentConfig: CmsComponentConfig,
+    componentConfig: GeneralComponentConfig & CmsComponentConfig,
     baseRouter: string,
     schema: XEntity,
     pageConfig: AssetEditPageConfig = getDefaultAssetEditPageConfig(),

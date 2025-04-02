@@ -2,7 +2,7 @@ import { useUsers } from "../services/accounts";
 import { Link } from "react-router-dom";
 import {ComponentConfig} from "../../ComponentConfig";
 
-export interface UseUserListPageConfig {
+export interface UserListPageConfig {
     emailHeader: string;
     roleHeader: string;
 }
@@ -16,7 +16,7 @@ export function getDefaultUseUserListPageConfig()  {
 
 export function useUserListPage(
     componentConfig : ComponentConfig,
-    pageConfig: UseUserListPageConfig = getDefaultUseUserListPageConfig(),
+    pageConfig: UserListPageConfig = getDefaultUseUserListPageConfig(),
 ) {
     const { data } = useUsers();
 

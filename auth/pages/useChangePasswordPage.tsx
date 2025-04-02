@@ -1,12 +1,12 @@
 import { changePassword } from "../services/auth";
 import { useState } from "react";
 
-export interface UseChangePasswordPageConfig {
+export interface ChangePasswordPageConfig {
     passwordMismatchError: string;
     changePasswordFailedError: string;
 }
 
-export function getDefaultUseChangePasswordPageConfig(): UseChangePasswordPageConfig {
+export function getDefaultUseChangePasswordPageConfig(): ChangePasswordPageConfig {
     return {
         passwordMismatchError: "Passwords don't match",
         changePasswordFailedError: "Change password failed",
@@ -14,7 +14,7 @@ export function getDefaultUseChangePasswordPageConfig(): UseChangePasswordPageCo
 }
 
 export function useChangePasswordPage(
-    config: UseChangePasswordPageConfig = getDefaultUseChangePasswordPageConfig()
+    config: ChangePasswordPageConfig = getDefaultUseChangePasswordPageConfig()
 ) {
     const [oldPassword, setOldPassword] = useState<string>("");
     const [password, setPassword] = useState<string>("");

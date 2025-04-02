@@ -1,4 +1,3 @@
-import {ComponentConfig} from "../ComponentConfig";
 import {AssetLabels, AssetLinkLabels} from "./types/assetUtils";
 
 export type CmsComponentConfig ={
@@ -38,4 +37,4 @@ export type CmsComponentConfig ={
         dialogHeader: (lbl: string) => string;
         selectButtonLabel:(lbl :string)=> string;
     }
-}& ComponentConfig
+}

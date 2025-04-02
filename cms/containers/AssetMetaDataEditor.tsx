@@ -7,6 +7,7 @@ import {createInput} from "./createInput";
 import {ArrayToObject, formatFileSize} from "../../types/formatter";
 import {getInputAttrs} from "../../types/attrUtils";
 import {CmsComponentConfig} from "../cmsComponentConfig";
+import {GeneralComponentConfig} from "../../ComponentConfig";
 
 export type AssetMetaDataEditorProps = {
     path: string,
@@ -20,7 +21,7 @@ export function AssetMetadataEditor(
         show,
         setShow,
         componentConfig,
-    }: AssetMetaDataEditorProps & { componentConfig: CmsComponentConfig }
+    }: AssetMetaDataEditorProps & { componentConfig: CmsComponentConfig & GeneralComponentConfig },
 ) {
     //data
     const {data: assetSchema} = useAssetEntity();

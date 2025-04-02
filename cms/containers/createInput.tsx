@@ -6,6 +6,7 @@ import {AssetMetadataEditor, AssetMetaDataEditorProps} from "./AssetMetaDataEdit
 import React from "react";
 import {toDatetime, toZonelessStr, utcStrToDatetime} from "../../types/formatter";
 import {CmsComponentConfig} from "../cmsComponentConfig";
+import {GeneralComponentConfig} from "../../ComponentConfig";
 
 export function createInput(
     props: {
@@ -19,7 +20,7 @@ export function createInput(
         fullRowClassName:string,
         partialRowClassName:string
     },
-    config: CmsComponentConfig
+    config: CmsComponentConfig & GeneralComponentConfig
 ) {
     const {field, displayType, options} = props.column;
     const ConfiguredMetadataEditor = (props: AssetMetaDataEditorProps) => <AssetMetadataEditor {...props} componentConfig={config}/>

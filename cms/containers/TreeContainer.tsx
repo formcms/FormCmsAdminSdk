@@ -1,7 +1,7 @@
 import {XAttr, XEntity} from "../../types/xEntity";
 import {useTree} from "./useTree";
 import {deleteJunctionItems, saveJunctionItems, useJunctionIds} from "../services/entity";
-import {ComponentConfig} from "../../ComponentConfig";
+import {GeneralComponentConfig} from "../../ComponentConfig";
 
 export function TreeContainer(
     {
@@ -10,7 +10,7 @@ export function TreeContainer(
         entity: XEntity,
         column: XAttr,
         data: any,
-        componentConfig: ComponentConfig
+        componentConfig: GeneralComponentConfig,
     }) {
 
 

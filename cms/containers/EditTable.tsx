@@ -11,6 +11,7 @@ import {createInput} from "./createInput";
 import {useForm} from "react-hook-form";
 import {CmsComponentConfig} from "../cmsComponentConfig";
 import {formater} from "../../types/formatter";
+import {GeneralComponentConfig} from "../../ComponentConfig";
 
 export function EditTable(
     {
@@ -26,7 +27,7 @@ export function EditTable(
         column: XAttr,
         data: any,
         getFullAssetsURL: (arg: string) => string
-        componentConfig: CmsComponentConfig
+        componentConfig: CmsComponentConfig & GeneralComponentConfig
     }
 ) {
 
@@ -56,7 +57,7 @@ export function EditTable(
     //ref
     const navigate = useNavigate();
     const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError(componentConfig);
-    const {register, handleSubmit, control} = useForm()
+    const {register, handleSubmit, control, reset} = useForm()
     const Button = componentConfig.etc.button;
     const Dialog = componentConfig.etc.dialog;
 
@@ -70,8 +71,13 @@ export function EditTable(
         const {error} = await addCollectionItem(schema.name, id, column.field, formData);
         await handleErrorOrSuccess(error, componentConfig.editTable.submitSuccess(column.header), () => {
             mutate();
-            setVisible(false);
+            handleClose();
         });
+    }
+
+    function handleClose(){
+        reset();
+        setVisible(false);
     }
 
 
@@ -82,7 +88,7 @@ export function EditTable(
                 icon="pi pi-times"
                 outlined
                 type="button"
-                onClick={() => setVisible(false)}
+                onClick={handleClose}
             />
             <Button
                 label={componentConfig.editTable.saveButtonLabel}

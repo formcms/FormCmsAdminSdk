@@ -10,32 +10,35 @@ import { createConfirm } from "../../hooks/createConfirm";
 import { New } from "./useRoleListPage";
 import { MultiSelectInput } from "../../../../src/components/inputs/MultiSelectInput";
 import { FetchingStatus } from "../../containers/FetchingStatus";
-import { getEntityPermissionInputs } from "../types/entityPermissionInputs";
+import {getEntityPermissionInputs} from "../types/entityPermissionInputs";
 import { useCheckError } from "../../hooks/useCheckError";
 import {ComponentConfig} from "../../ComponentConfig";
+import {AuthComponentConfig} from "../authComponentConfig";
 
-export interface UseRoleDetailPageConfig {
+export interface RoleDetailPageConfig {
     deleteConfirmHeader:string
     deleteConfirmationMessage: string;
     deleteSuccessMessage: string;
     saveSuccessMessage: string;
+    nameLabel: string;
     nameIsRequiredMessage:string
 }
 
-export function getDefaultUseRoleDetailPageConfig(): UseRoleDetailPageConfig {
+export function getDefaultUseRoleDetailPageConfig(): RoleDetailPageConfig {
     return {
         deleteConfirmHeader:"Confirm",
         deleteConfirmationMessage: "Do you want to delete this role?",
         deleteSuccessMessage: "Delete Succeed",
         saveSuccessMessage: "Save Succeed",
-        nameIsRequiredMessage: "Name is required"
+        nameLabel: "Name",
+        nameIsRequiredMessage: "Name is required",
     };
 }
 
 export function useRoleDetailPage(
-    componentConfig :ComponentConfig,
+    componentConfig :ComponentConfig & AuthComponentConfig,
     baseRouter: string,
-    pageConfig: UseRoleDetailPageConfig = getDefaultUseRoleDetailPageConfig(),
+    pageConfig: RoleDetailPageConfig = getDefaultUseRoleDetailPageConfig(),
 ) {
     const { name } = useParams();
     const { data: roleData, isLoading: loadingRole, error: errorRole, mutate: mutateRole } = useSingleRole(
@@ -46,8 +49,9 @@ export function useRoleDetailPage(
     const { handleErrorOrSuccess, CheckErrorStatus } = useCheckError(componentConfig);
     const { register, handleSubmit, control } = useForm();
     const isNewRole = name === New;
+    const formId = "roleDetailPage";
 
-    return { isNewRole, roleData, handleDelete, RoleDetailPageMain };
+    return { isNewRole, roleData, formId, handleDelete, RoleDetailPageMain };
 
     async function handleDelete() {
         confirm(pageConfig.deleteConfirmationMessage, pageConfig.deleteConfirmHeader,async () => {
@@ -73,17 +77,17 @@ export function useRoleDetailPage(
     }
 
     function RoleDetailPageMain() {
-        const entityPermissionInputs = getEntityPermissionInputs();
+        const entityPermissionInputs = getEntityPermissionInputs(componentConfig.entityPermissionLabels);
         return (
             <>
                 <FetchingStatus isLoading={loadingRole || loadingEntity} error={errorRole || errorEntities} componentConfig={componentConfig} />
                 <Confirm />
                 <CheckErrorStatus />
-                <form onSubmit={handleSubmit(onSubmit)} id="form">
+                <form onSubmit={handleSubmit(onSubmit)} id={formId}>
                     <div className="formgrid grid">
                         {isNewRole && (
                             <div className={"field col-12 md:col-4"}>
-                                <label>Name</label>
+                                <label>{pageConfig.nameLabel}</label>
                                 <input
                                     type={"text"}
                                     className="w-full p-inputtext p-component"

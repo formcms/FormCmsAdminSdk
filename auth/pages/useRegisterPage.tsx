@@ -2,12 +2,12 @@ import { useState } from "react";
 import { register } from "../services/auth";
 import { LoginRoute } from "../AccountRouter";
 
-export interface UseRegisterPageConfig {
+export interface RegisterPageConfig {
     passwordMismatchError: string;
     registerFailedError: string;
 }
 
-export function getDefaultUseRegisterPageConfig(): UseRegisterPageConfig {
+export function getDefaultUseRegisterPageConfig(): RegisterPageConfig {
     return {
         passwordMismatchError: "Passwords don't match",
         registerFailedError: "Register failed",
@@ -16,7 +16,7 @@ export function getDefaultUseRegisterPageConfig(): UseRegisterPageConfig {
 
 export const useRegisterPage = (
     baseRouter: string,
-    config: UseRegisterPageConfig = getDefaultUseRegisterPageConfig()
+    config: RegisterPageConfig = getDefaultUseRegisterPageConfig()
 ) => {
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");

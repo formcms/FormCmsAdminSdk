@@ -1,6 +1,6 @@
-import {ComponentConfig} from "../ComponentConfig";
+import {GeneralComponentConfig} from "../ComponentConfig";
 
-export function createConfirm(id: any, componentConfig: ComponentConfig) {
+export function createConfirm(id: any, componentConfig: GeneralComponentConfig) {
     const ConfirmDialog = componentConfig.etc.confirmDialog;
     return {
         confirm: (message: any, header: any, accept: any) => {

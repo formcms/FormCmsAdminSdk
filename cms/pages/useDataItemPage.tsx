@@ -19,6 +19,7 @@ import {useForm} from "react-hook-form";
 import {ArrayToObject} from "../../types/formatter";
 import {CmsComponentConfig} from "../cmsComponentConfig";
 import {XEntity} from "../../types/xEntity";
+import {GeneralComponentConfig} from "../../ComponentConfig";
 
 export interface DataItemPageConfig {
     saveSuccess: string;
@@ -57,7 +58,7 @@ export function getDefaultDataItemPageConfig(): DataItemPageConfig {
 }
 
 export function useDataItemPage(
-    componentConfig: CmsComponentConfig,
+    componentConfig: CmsComponentConfig & GeneralComponentConfig,
     schema: XEntity,
     baseRouter: string,
     pageConfig: DataItemPageConfig = getDefaultDataItemPageConfig(),

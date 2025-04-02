@@ -11,6 +11,7 @@ import {useEffect, useState} from "react";
 import {CmsComponentConfig} from "../cmsComponentConfig";
 import {toDataTableColumns} from "../../types/attrUtils";
 import {formater} from "../../types/formatter";
+import {GeneralComponentConfig} from "../../ComponentConfig";
 
 const displayModeLabels = {
     list: 'List',
@@ -42,7 +43,7 @@ export function getDefaultAssetListPageConfig(): AssetListPageConfig {
 }
 
 export function useAssetListPage(
-    componentConfig: CmsComponentConfig,
+    componentConfig: CmsComponentConfig & GeneralComponentConfig,
     baseRouter: string,
     schema: XEntity,
     pageConfig: AssetListPageConfig = getDefaultAssetListPageConfig()

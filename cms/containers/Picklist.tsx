@@ -8,13 +8,14 @@ import {useState} from "react";
 import {getListAttrs, toDataTableColumns} from "../../types/attrUtils";
 import {CmsComponentConfig} from "../cmsComponentConfig";
 import {formater} from "../../types/formatter";
+import {GeneralComponentConfig} from "../../ComponentConfig";
 
 export function Picklist({column, data, schema, getFullAssetsURL, componentConfig}: {
     data: any,
     column: XAttr,
     schema: XEntity,
     getFullAssetsURL: (arg: string) => string
-    componentConfig: CmsComponentConfig
+    componentConfig: GeneralComponentConfig & CmsComponentConfig
 }) {
     const [visible, setVisible] = useState(false);
     const id = (data ?? {})[schema?.primaryKey ?? '']

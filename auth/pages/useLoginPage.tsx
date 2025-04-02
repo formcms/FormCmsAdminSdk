@@ -4,11 +4,11 @@ import { login, useUserInfo } from "../services/auth";
 import { RegisterRoute } from "../AccountRouter";
 
 // Interface for configuration with no optional properties
-export interface UseLoginPageConfig {
+export interface LoginPageConfig {
     loginFailedError: string;
 }
 
-export function getDefaultUseLoginPageConfig(): UseLoginPageConfig {
+export function getDefaultUseLoginPageConfig(): LoginPageConfig {
     return {
         loginFailedError: "Login failed",
     };
@@ -16,7 +16,7 @@ export function getDefaultUseLoginPageConfig(): UseLoginPageConfig {
 
 export const useLoginPage = (
     baseRouter: string,
-    config: UseLoginPageConfig = getDefaultUseLoginPageConfig()
+    config: LoginPageConfig = getDefaultUseLoginPageConfig()
 ) => {
     const location = useLocation();
     const ref = new URLSearchParams(location.search).get("ref");

@@ -19,24 +19,24 @@ export {useAssetEditPage,getDefaultAssetEditPageConfig} from "./cms/pages/useAss
 //auth and account management pages
 export {useUserInfo} from "./auth/services/auth";
 
-export type {UseChangePasswordPageConfig} from "./auth/pages/useChangePasswordPage";
+export type {ChangePasswordPageConfig} from "./auth/pages/useChangePasswordPage";
 export {useChangePasswordPage,getDefaultUseChangePasswordPageConfig} from "./auth/pages/useChangePasswordPage";
 
-export type {UseLoginPageConfig} from "./auth/pages/useLoginPage";
+export type {LoginPageConfig} from "./auth/pages/useLoginPage";
 export {useLoginPage,getDefaultUseLoginPageConfig} from "./auth/pages/useLoginPage";
 
-export type {UseRegisterPageConfig} from "./auth/pages/useRegisterPage";
+export type {RegisterPageConfig} from "./auth/pages/useRegisterPage";
 export {useRegisterPage,getDefaultUseRegisterPageConfig} from "./auth/pages/useRegisterPage";
 
-export type {UseRoleDetailPageConfig} from "./auth/pages/useRoleDetailPage";
+export type {RoleDetailPageConfig} from "./auth/pages/useRoleDetailPage";
 export {useRoleDetailPage,getDefaultUseRoleDetailPageConfig} from "./auth/pages/useRoleDetailPage";
 
 export {useRoleListPage} from "./auth/pages/useRoleListPage";
 
-export type {UseUserDetailPageConfig} from "./auth/pages/useUserDetailPage";
+export type {UserDetailPageConfig} from "./auth/pages/useUserDetailPage";
 export {useUserDetailPage,getDefaultUseUserDetailPageConfig} from "./auth/pages/useUserDetailPage";
 
-export type {UseUserListPageConfig} from "./auth/pages/useUserListPage";
+export type {UserListPageConfig} from "./auth/pages/useUserListPage";
 export {useUserListPage,getDefaultUseUserListPageConfig} from "./auth/pages/useUserListPage";
 
 //system task
@@ -44,7 +44,8 @@ export type {TaskListPageConfig} from "./cms/pages/useTaskListPage"
 export {useTaskListPage,getDefaultTaskListPageConfig} from "./cms/pages/useTaskListPage";
 
 //audit log
-export {useAuditLogListPage} from "./auditLog/pages/useAuditLogListPage";
+export type {AuditLogListPageConfig}from "./auditLog/pages/useAuditLogListPage";
+export {useAuditLogListPage,getDefaultAuditLogPageConfig} from "./auditLog/pages/useAuditLogListPage";
 export {useAuditLogDetailPage} from "./auditLog/pages/useAuditLogDetailPage";
 
 
@@ -62,7 +63,7 @@ export {AuditLogRouter} from "./auditLog/AuditLogRouter";
 export {AuthRouter} from "./auth/AuthRouter";
 
 //global component config
-export type {CmsComponentConfig} from "./cms/cmsComponentConfig";
+export type {ComponentConfig} from "./ComponentConfig";
 
 //component props
 export type {

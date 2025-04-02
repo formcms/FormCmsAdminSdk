@@ -4,7 +4,7 @@ import {useCheckError} from "../../hooks/useCheckError";
 import {PublicationStatus} from "../types/publicationStatus";
 import {savePublicationSettings} from "../services/entity";
 import {XEntity} from "../../types/xEntity";
-import {ComponentConfig} from "../../ComponentConfig";
+import {GeneralComponentConfig} from "../../ComponentConfig";
 import {utcStrToDatetime} from "../../types/formatter";
 
 export function SetPublishStatusDialog(
@@ -27,7 +27,7 @@ export function SetPublishStatusDialog(
         newStatus: PublicationStatus,
         visible: boolean,
         setVisible: (visible: boolean) => void,
-        componentConfig:ComponentConfig
+        componentConfig:GeneralComponentConfig
     }
 ) {
     const {

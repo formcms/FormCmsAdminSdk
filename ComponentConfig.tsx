@@ -30,7 +30,12 @@ import {
     GalleryViewProps
 } from './components/data'
 
-export interface ComponentConfig {
+import {CmsComponentConfig} from "./cms/cmsComponentConfig";
+import {AuthComponentConfig} from "./auth/authComponentConfig";
+
+export type ComponentConfig = CmsComponentConfig & GeneralComponentConfig & AuthComponentConfig;
+
+export type  GeneralComponentConfig = {
     etc: {
         confirm: (message:string, header: string, tagKey:string, accept:any)=> void
         confirmDialog: React.ComponentType<ConfirmDialogProps>;

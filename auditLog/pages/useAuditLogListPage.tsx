@@ -5,16 +5,35 @@ import {useAuditLogs} from "../services/auditLog"
 import {XEntity} from "../../types/xEntity";
 import {useNavigate} from "react-router-dom";
 import {useEffect} from "react";
-import {ComponentConfig} from "../../ComponentConfig";
+import {GeneralComponentConfig} from "../../ComponentConfig";
 import {toDataTableColumns} from "../../types/attrUtils";
 import {formater} from "../../types/formatter";
+import {AuditLogLabels} from "../types/auditLogUtil";
 
-export function useAuditLogListPage(componentConfig:ComponentConfig,baseRouter: string, schema: XEntity) {
+export type AuditLogListPageConfig = {
+    auditLogLabels :AuditLogLabels | undefined;
+}
+
+export function getDefaultAuditLogPageConfig(){
+    return {
+        auditLogLabels : undefined
+    }
+}
+
+export function useAuditLogListPage(componentConfig:GeneralComponentConfig,baseRouter: string, schema: XEntity,
+                                    pageConfig:AuditLogListPageConfig = getDefaultAuditLogPageConfig()) {
     //entrance
     const initQs = location.search.replace("?", "");
 
     //data
     const columns = schema?.attributes?.filter(column => column.inList) ?? [];
+    const auditLogLabels = pageConfig.auditLogLabels;
+    if (auditLogLabels) {
+        columns.forEach(column => {
+            column.header = auditLogLabels[column.field as keyof typeof auditLogLabels];
+        })
+    }
+
     const stateManager = useDataTableStateManager(schema.primaryKey, schema.defaultPageSize, columns, initQs)
     const qs = encodeDataTableState(stateManager.state);
     const {data, error, isLoading} = useAuditLogs(qs)

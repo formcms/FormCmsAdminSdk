@@ -1,6 +1,7 @@
 import { useRoles } from "../services/accounts";
 import { Link, useNavigate } from "react-router-dom";
 import {ComponentConfig} from "../../ComponentConfig";
+import {RoleRoute} from "../AccountRouter";
 
 export const New = "__new";
 
@@ -27,7 +28,7 @@ export function useRoleListPage(
     }
 
     function handleNavigateToNewRolePage() {
-        navigate(`${baseRouter}/${New}`);
+        navigate(`${baseRouter}${RoleRoute}/${New}`);
     }
 
     return { RoleListPageMain, handleNavigateToNewRolePage };

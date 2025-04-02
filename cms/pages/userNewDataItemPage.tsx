@@ -8,6 +8,7 @@ import {useForm} from "react-hook-form";
 import {ArrayToObject} from "../../types/formatter";
 import {CmsComponentConfig} from "../cmsComponentConfig";
 import {useNavigate} from "react-router-dom";
+import {GeneralComponentConfig} from "../../ComponentConfig";
 
 export interface NewDataItemPageConfig {
     saveSuccess: (label?: string) => string; // Success message for saving
@@ -20,7 +21,7 @@ export function getDefaultNewDataItemPageConfig(): NewDataItemPageConfig{
 }
 
 export function userNewDataItemPage(
-    componentConfig: CmsComponentConfig,
+    componentConfig: CmsComponentConfig & GeneralComponentConfig,
     schema: XEntity,
     baseRouter: string,
     pageConfig: NewDataItemPageConfig = getDefaultNewDataItemPageConfig(),

@@ -17,6 +17,7 @@ import {SystemTaskLabels} from "../types/systemTaskUtil";
 import {XEntity} from "../../types/xEntity";
 import {formater} from "../../types/formatter";
 import {toDataTableColumns} from "../../types/attrUtils";
+import {GeneralComponentConfig} from "../../ComponentConfig";
 
 export interface TaskListPageConfig {
     exportSuccess: string;
@@ -37,7 +38,7 @@ export function getDefaultTaskListPageConfig(): TaskListPageConfig {
 }
 
 export function useTaskListPage(
-    componentConfig: CmsComponentConfig ,
+    componentConfig: CmsComponentConfig & GeneralComponentConfig,
     schema:  XEntity ,
     pageConfig: TaskListPageConfig = getDefaultTaskListPageConfig(),
 ) {
