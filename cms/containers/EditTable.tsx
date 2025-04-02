@@ -1,7 +1,6 @@
 import {addCollectionItem, useCollectionData} from "../services/entity";
 import {XAttr, XEntity} from "../../types/xEntity";
-import {useDataTableStateManager} from "../../hooks/useDataTableStateManager";
-import {encodeDataTableState} from "../../types/dataTableStateUtil";
+import {encodeDataTableState, useDataTableStateManager} from "../../hooks/useDataTableStateManager";
 import {getFileUploadURL} from "../services/asset";
 import {useCheckError} from "../../hooks/useCheckError";
 import {useNavigate} from "react-router-dom";
@@ -15,6 +14,7 @@ import {GeneralComponentConfig} from "../../ComponentConfig";
 
 export function EditTable(
     {
+        currentUrl,
         baseRouter,
         column,
         data,
@@ -23,6 +23,7 @@ export function EditTable(
         componentConfig
     }: {
         baseRouter: string,
+        currentUrl: string,
         schema: XEntity,
         column: XAttr,
         data: any,
@@ -34,7 +35,7 @@ export function EditTable(
     //data
     const targetSchema = column.collection;
     const listAttrs = getListAttrs(targetSchema?.attributes);
-    const stateManager = useDataTableStateManager(schema.primaryKey, 8, listAttrs, "");
+    const stateManager = useDataTableStateManager(schema.name,schema.primaryKey, 8, listAttrs, "");
 
     const id = (data ?? {})[schema.primaryKey ?? '']
     const {
@@ -63,7 +64,7 @@ export function EditTable(
 
     function onEdit(rowData: any) {
         const id = rowData[targetSchema!.primaryKey];
-        const url = `${baseRouter}/${targetSchema!.name}/${id}?ref=${encodeURIComponent(window.location.href)}`;
+        const url = `${baseRouter}/${targetSchema!.name}/${id}?ref=${encodeURIComponent(currentUrl)}`;
         navigate(url);
     }
 

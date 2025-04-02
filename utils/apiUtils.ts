@@ -1,7 +1,10 @@
 import axios, {AxiosResponse} from "axios";
-export const swrConfig = {
-    revalidateOnFocus:false
+import {SWRConfiguration} from "swr";
+export const swrConfig:SWRConfiguration = {
+    revalidateOnFocus:false,
+    shouldRetryOnError:false
 }
+
 export const fetcher = async (url: string) => {
     const res = await axios.get(url)
     return res.data;

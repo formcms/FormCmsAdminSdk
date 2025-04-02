@@ -1,7 +1,6 @@
 import {useLocation, useNavigate} from "react-router-dom";
 import {useGetCmsAssetsUrl} from "../services/asset";
-import {useDataTableStateManager} from "../../hooks/useDataTableStateManager";
-import {encodeDataTableState} from "../../types/dataTableStateUtil";
+import {encodeDataTableState, useDataTableStateManager} from "../../hooks/useDataTableStateManager";
 import {deleteItem, useListData} from "../services/entity";
 import {useEffect} from "react";
 import {useCheckError} from "../../hooks/useCheckError";
@@ -36,15 +35,16 @@ export function useDataListPage(
     //entrance
     const location = useLocation();
     const initQs = location.search.replace("?", "");
+    console.log("initQs", schema.name, initQs);
 
     //data
-    const getCmsAssetUrl = useGetCmsAssetsUrl();
     const columns = getListAttrs(schema.attributes);
-    const stateManager = useDataTableStateManager(schema.primaryKey, schema.defaultPageSize, columns, initQs);
+    const stateManager = useDataTableStateManager(schema.name, schema.primaryKey, schema.defaultPageSize, columns, initQs);
     const qs = encodeDataTableState(stateManager.state);
-    const currUrl = `${baseRouter}/${schema.name}?qs=${qs}`;
+    const currUrl = `${baseRouter}/${schema.name}?${qs}`;
     const {data, error, isLoading, mutate} = useListData(schema.name, qs);
 
+    const getCmsAssetUrl = useGetCmsAssetsUrl();
     const navigate = useNavigate();
     const LazyDataTable = componentConfig.dataComponents.lazyTable;
 

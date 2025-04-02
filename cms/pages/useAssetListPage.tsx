@@ -1,5 +1,4 @@
-import {encodeDataTableState} from "../../types/dataTableStateUtil";
-import {useDataTableStateManager} from "../../hooks/useDataTableStateManager";
+import {encodeDataTableState, useDataTableStateManager} from "../../hooks/useDataTableStateManager";
 import {FetchingStatus} from "../../containers/FetchingStatus";
 import {deleteAsset, useAssets, useGetCmsAssetsUrl} from "../services/asset";
 import {XEntity} from "../../types/xEntity";
@@ -56,7 +55,7 @@ export function useAssetListPage(
     // Data
     const columns = schema?.attributes
         ?.filter(column => column.inList && column.field !== AssetField('linkCount')) ?? [];
-    const stateManager = useDataTableStateManager(schema.primaryKey, schema.defaultPageSize, columns, initQs);
+    const stateManager = useDataTableStateManager(schema.name,schema.primaryKey, schema.defaultPageSize, columns, initQs);
     const qs = encodeDataTableState(stateManager.state);
     const {data, error, isLoading, mutate} = useAssets(qs, true);
 

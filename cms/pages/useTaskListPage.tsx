@@ -1,5 +1,4 @@
-import {encodeDataTableState} from "../../types/dataTableStateUtil";
-import {useDataTableStateManager} from "../../hooks/useDataTableStateManager";
+import {encodeDataTableState, useDataTableStateManager} from "../../hooks/useDataTableStateManager";
 import {FetchingStatus} from "../../containers/FetchingStatus";
 import {
     addExportTask,
@@ -44,7 +43,7 @@ export function useTaskListPage(
 ) {
     // Data
     const columns = schema?.attributes?.filter(column => column.inList) ?? [];
-    const stateManager = useDataTableStateManager(schema.primaryKey, schema.defaultPageSize, columns, undefined);
+    const stateManager = useDataTableStateManager(schema.name,schema.primaryKey, schema.defaultPageSize, columns, undefined);
     const {data, error, isLoading, mutate} = useTasks(encodeDataTableState(stateManager.state));
 
     // State

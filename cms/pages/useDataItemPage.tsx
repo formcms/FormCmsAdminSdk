@@ -67,6 +67,7 @@ export function useDataItemPage(
     const {data, error, isLoading, mutate} = useItemData(schema.name, id)
     const previewUrl = getPreviewUrl();
     const navigate = useNavigate();
+    const currentUrl = `${baseRouter}/${schema.name}/${id}`;
 
     const formId = "dateItemEditForm" + schema.name;
     const showUnpublish = data && data[DefaultAttributeNames.PublicationStatus] === PublicationStatus.Published ||
@@ -158,7 +159,7 @@ export function useDataItemPage(
                                 {column.displayType === 'picklist' &&
                                     <Picklist key={column.field} {...props} componentConfig={componentConfig}/>}
                                 {column.displayType === 'editTable' &&
-                                    <EditTable key={column.field} {...props} componentConfig={componentConfig}/>}
+                                    <EditTable key={column.field} {...props} componentConfig={componentConfig} currentUrl={currentUrl}/>}
                             </div>
                         })
                     }

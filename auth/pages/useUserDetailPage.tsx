@@ -56,7 +56,7 @@ export function useUserDetailPage(
     }
 
     function UserDetailPageMain() {
-        const entityPermissionInputs = getEntityPermissionInputs();
+        const entityPermissionInputs = getEntityPermissionInputs(componentConfig.entityPermissionLabels);
         return (
             <>
                 <Confirm />

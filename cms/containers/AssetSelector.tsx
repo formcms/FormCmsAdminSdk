@@ -1,5 +1,4 @@
-import {encodeDataTableState} from "../../types/dataTableStateUtil";
-import {useDataTableStateManager} from "../../hooks/useDataTableStateManager";
+import {encodeDataTableState, useDataTableStateManager} from "../../hooks/useDataTableStateManager";
 import {FetchingStatus} from "../../containers/FetchingStatus";
 import {useAssetEntity, useAssets, useGetCmsAssetsUrl} from "../services/asset";
 import {useState} from "react";
@@ -39,7 +38,7 @@ export function AssetSelector(
         })
     }
 
-    const stateManager = useDataTableStateManager(AssetField('id'), assetSchema!.defaultPageSize, columns, undefined);
+    const stateManager = useDataTableStateManager(assetSchema!.name,AssetField('id'), assetSchema!.defaultPageSize, columns, undefined);
     const {data, error, isLoading} = useAssets(encodeDataTableState(stateManager.state), false);
     const getCmsAssetUrl = useGetCmsAssetsUrl();
 

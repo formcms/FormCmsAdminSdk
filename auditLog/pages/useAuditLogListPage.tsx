@@ -1,6 +1,5 @@
 import {FetchingStatus} from "../../containers/FetchingStatus"
-import {encodeDataTableState} from "../../types/dataTableStateUtil";
-import {useDataTableStateManager} from "../../hooks/useDataTableStateManager";
+import {encodeDataTableState, useDataTableStateManager} from "../../hooks/useDataTableStateManager";
 import {useAuditLogs} from "../services/auditLog"
 import {XEntity} from "../../types/xEntity";
 import {useNavigate} from "react-router-dom";
@@ -27,6 +26,14 @@ export function useAuditLogListPage(componentConfig:GeneralComponentConfig,baseR
 
     //data
     const columns = schema?.attributes?.filter(column => column.inList) ?? [];
+    const stateManager = useDataTableStateManager(schema.name,schema.primaryKey, schema.defaultPageSize, columns, initQs)
+    const qs = encodeDataTableState(stateManager.state);
+    const {data, error, isLoading} = useAuditLogs(qs)
+    const currentUrl = `${baseRouter}/${schema.name}/?${qs}`
+    useEffect(() => window.history.replaceState(null, "", `?${qs}`), [stateManager.state]);
+
+    //ui
+    const tableColumns = columns.map(x => toDataTableColumns(x, x.field == schema.labelAttributeName ? onEdit : undefined));
     const auditLogLabels = pageConfig.auditLogLabels;
     if (auditLogLabels) {
         columns.forEach(column => {
@@ -34,21 +41,18 @@ export function useAuditLogListPage(componentConfig:GeneralComponentConfig,baseR
         })
     }
 
-    const stateManager = useDataTableStateManager(schema.primaryKey, schema.defaultPageSize, columns, initQs)
-    const qs = encodeDataTableState(stateManager.state);
-    const {data, error, isLoading} = useAuditLogs(qs)
-
-    const tableColumns = columns.map(x => toDataTableColumns(x, x.field == schema.labelAttributeName ? onEdit : undefined));
-    const Icon = componentConfig.etc.icon;
-    const actionTemplate = (rowData: any) => <Icon icon={'pi pi-search'} onClick={()=>onEdit(rowData)}/>;
-    useEffect(() => window.history.replaceState(null, "", `?${qs}`), [stateManager.state]);
-
     //referencing
     const navigate = useNavigate();
+    const Icon = componentConfig.etc.icon;
+
     return {AuditLogListPageMain}
 
+    function actionTemplate  (rowData: any) {
+        return <Icon icon={'pi pi-search'} onClick={()=>onEdit(rowData)}/>;
+    }
+
     function onEdit(rowData: any) {
-        const url = `${baseRouter}/${schema.name}/${rowData[schema.primaryKey]}?ref=${encodeURIComponent(window.location.href)}`;
+        const url = `${baseRouter}/${schema.name}/${rowData[schema.primaryKey]}?ref=${encodeURIComponent(currentUrl)}`;
         navigate(url);
     }
 

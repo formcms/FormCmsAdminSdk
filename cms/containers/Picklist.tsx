@@ -2,8 +2,7 @@ import {deleteJunctionItems, saveJunctionItems, useJunctionData} from "../servic
 import {useCheckError} from "../../hooks/useCheckError";
 import {createConfirm} from "../../hooks/createConfirm";
 import {XAttr, XEntity} from "../../types/xEntity";
-import {useDataTableStateManager} from "../../hooks/useDataTableStateManager";
-import {encodeDataTableState} from "../../types/dataTableStateUtil";
+import {encodeDataTableState, useDataTableStateManager} from "../../hooks/useDataTableStateManager";
 import {useState} from "react";
 import {getListAttrs, toDataTableColumns} from "../../types/attrUtils";
 import {CmsComponentConfig} from "../cmsComponentConfig";
@@ -26,11 +25,11 @@ export function Picklist({column, data, schema, getFullAssetsURL, componentConfi
 
     const tableColumns = listColumns.map(x => toDataTableColumns(x));
 
-    const existingStateManager = useDataTableStateManager(schema.primaryKey, 10, listColumns, "");
+    const existingStateManager = useDataTableStateManager(schema.name + "existing", schema.primaryKey, 8, listColumns, "");
     const {data: subgridData, mutate: subgridMutate} = useJunctionData(schema.name, id, column.field, false,
         encodeDataTableState(existingStateManager.state));
 
-    const excludedStateManager = useDataTableStateManager(schema.primaryKey, 10, listColumns, "");
+    const excludedStateManager = useDataTableStateManager(schema.name + "excluding", schema.primaryKey, 8, listColumns, "");
     const {data: excludedSubgridData, mutate: execMutate} = useJunctionData(schema.name, id, column.field, true,
         encodeDataTableState(excludedStateManager.state));
 
@@ -67,8 +66,10 @@ export function Picklist({column, data, schema, getFullAssetsURL, componentConfi
 
     const footer = (
         <>
-            <Button label={componentConfig.picklist.cancelButtonLabel} icon="pi pi-times" onClick={() => setVisible(false)} type={'button'}/>
-            <Button label={componentConfig.picklist.saveButtonLabel} icon="pi pi-check" onClick={handleSave} type={"button"}/>
+            <Button label={componentConfig.picklist.cancelButtonLabel} icon="pi pi-times"
+                    onClick={() => setVisible(false)} type={'button'}/>
+            <Button label={componentConfig.picklist.saveButtonLabel} icon="pi pi-check" onClick={handleSave}
+                    type={"button"}/>
         </>
     );
 
@@ -76,12 +77,15 @@ export function Picklist({column, data, schema, getFullAssetsURL, componentConfi
         <label id={column.field} className="font-bold">
             {column.header}
         </label><br/>
-        <CheckErrorStatus/>
         <Confirm/>
         <Button outlined label={componentConfig.picklist.selectButtonLabel(column.header)}
-                onClick={() => setVisible(true)} type={"button"} icon={''}/>
+                onClick={() => setVisible(true)}
+                type={"button"}
+                icon={''}
+        />
         {' '}
-        <Button outlined type={'button'} label={componentConfig.picklist.deleteButtonLabel}  onClick={onDelete} icon={''} />
+        <Button severity={'danger'} outlined type={'button'} label={componentConfig.picklist.deleteButtonLabel}
+                onClick={onDelete} icon={''}/>
         {targetSchema && subgridData && <LazyDataTable
             dataKey={targetSchema.primaryKey}
             formater={formater}
@@ -94,21 +98,25 @@ export function Picklist({column, data, schema, getFullAssetsURL, componentConfi
             stateManager={existingStateManager}
         />}
         <Dialog
+            width={'90%'}
             modal className="p-fluid"
             visible={visible}
             onHide={() => setVisible(false)}
             footer={footer}
             header={componentConfig.picklist.dialogHeader(column.header)}>
-            {targetSchema && excludedSubgridData && <LazyDataTable
-                dataKey={targetSchema.primaryKey}
-                formater={formater}
-                selectionMode={'multiple'}
-                columns={tableColumns}
-                data={excludedSubgridData}
-                stateManager={excludedStateManager}
-                selectedItems={toAddItems}
-                setSelectedItems={setToAddItems}
-            />
+            <CheckErrorStatus/>
+            {
+                targetSchema && excludedSubgridData && <LazyDataTable
+                    dataKey={targetSchema.primaryKey}
+                    formater={formater}
+                    selectionMode={'multiple'}
+                    columns={tableColumns}
+                    data={excludedSubgridData}
+                    stateManager={excludedStateManager}
+                    selectedItems={toAddItems}
+                    setSelectedItems={setToAddItems}
+                    getFullAssetsURL={getFullAssetsURL}
+                />
             }
         </Dialog>
     </div>
