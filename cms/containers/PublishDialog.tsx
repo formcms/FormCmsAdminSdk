@@ -10,8 +10,15 @@ import {utcStrToDatetime} from "../../types/formatter";
 export function SetPublishStatusDialog(
     {
         header,successMessage,
-        cancelButtonText,submitButtonText, publishAtHeader,
-        data, mutate, newStatus,  schema,visible,setVisible,
+        cancelButtonText,
+        submitButtonText,
+        publishAtHeader,
+        data,
+        mutate,
+        newStatus,
+        schema,
+        visible,
+        setVisible,
         componentConfig
     }:
     {
@@ -50,19 +57,20 @@ export function SetPublishStatusDialog(
         const {error} = await savePublicationSettings(schema.name, formData)
         await handleErrorOrSuccess(error,successMessage, () => {
             mutate();
+            setVisible(false);
         })
     }
-    const footer =   <>
+    const footer =   <div>
         <Button type={'button'} label={cancelButtonText} icon="pi pi-times" outlined onClick={()=>setVisible(false)}/>
         <Button type={'submit'} label={submitButtonText} icon="pi pi-check" form={formId}/>
-    </>
+    </div>
     const DateInput = componentConfig.inputComponents.datetime;
 
     return <Dialog header={header}
                    footer={footer}
                    visible={visible}
                    onHide={()=>setVisible(false)}
-                   width={'300px'}
+                   width={'500px'}
                    modal
                    className="p-fluid">
         <form onSubmit={handleSubmit(submit)} id={formId}>
@@ -70,7 +78,7 @@ export function SetPublishStatusDialog(
                 showTime={true}
                 formatDate={x=>x}
                 parseDate={utcStrToDatetime}
-                inline className="col-10" data={formData} column={{
+                inline className="" data={formData} column={{
                 field: DefaultAttributeNames.PublishedAt,
                 header: publishAtHeader,
             }} register={register} control={control} id={'publishedAt'}/>
