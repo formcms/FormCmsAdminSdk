@@ -1,16 +1,202 @@
-import { useReducer } from "react";
+import {useEffect, useReducer} from "react";
 import { DisplayType, XAttr } from "../types/xEntity";
 import qs from 'qs';
 
-type Match = 'startsWith' | 'contains' | 'notContains' | 'endsWith' | 'equals' | 'notEquals' | 'in' | 'notIn' | 'lt' | 'lte' | 'gt' | 'gte' | 'between' | 'dateIs' | 'dateIsNot' | 'dateBefore' | 'dateAfter' | 'custom' | undefined;
+export function encodeDataTableState(state: DataTableState | null): string {
+    if (!state) return '';
+    return qs.stringify(sanitizeState(deepClone(state)), {
+        encodeValuesOnly: true,
+        skipNulls: true,
+        arrayFormat: 'repeat',
+    });
 
-interface FilterConstraint {
-    matchMode: Match
-    value: unknown;
+    function sanitizeState(payload: DataTableState): SanitizedState {
+        const filters = { ...payload.filters };
+        sanitizeFilters(filters);
+        flattenFilters(filters);
+        const state: SanitizedState = {
+            offset: payload.first,
+            limit: payload.rows,
+            ...filters,
+            sort: toSortRecord(payload.multiSortMeta),
+        };
+        cleanEmptyProperties(state);
+        return state;
+
+        function sanitizeFilters(filters: Filters): void {
+            Object.entries(filters).forEach(([k, item]) => {
+                if (item.constraints && item.constraints.length && item.constraints[0].value === null) {
+                    delete filters[k];
+                } else if (item.constraints && item.constraints.length === 1 || item.operator === 'and') {
+                    // @ts-ignore
+                    delete item.operator;
+                }
+            });
+        }
+        function cleanEmptyProperties(obj: SanitizedState): void {
+            Object.keys(obj).forEach((key) => {
+                if (obj[key] === null || obj[key] === undefined) delete obj[key];
+            });
+        }
+    }
+
+    function toSortRecord(sorts: SortMeta[] = []): Record<string, 1 | -1> {
+        return sorts.reduce((acc, sort) => {
+            acc[sort.field] = sort.order;
+            return acc;
+        }, {} as Record<string, 1 | -1>);
+    }
+
+
+    function deepClone<T>(obj: T): T {
+        if (obj === null || typeof obj !== 'object') return obj;
+        if (Array.isArray(obj)) return obj.map(deepClone) as T;
+        return Object.fromEntries(
+            Object.entries(obj as object).map(([k, v]) => [k, deepClone(v)])
+        ) as T;
+    }
 }
 
+//extraKey prevent got wrong state between switch router
+export function useDataTableStateManager(
+    extraKey:string,
+    primaryKey: string,
+    rowCount: number,
+    cols: XAttr[],
+    queryString?: string
+): DataTableStateManager {
+    const defaultState = createDefaultState(primaryKey, rowCount, cols, queryString);
+    const [state, dispatch] = useReducer(reducer, defaultState);
+
+    useEffect(() => {
+        const newState = createDefaultState(primaryKey, rowCount, cols, queryString);
+        dispatch({ type: 'reset', payload: newState });
+    }, [extraKey]);
+
+    return {
+        state,
+        handlers: {
+            onPage: (payload) => dispatch({ type: 'onPage', payload }),
+            onFilter: (payload) => dispatch({ type: 'onFilter', payload }),
+            onSort: (payload) => dispatch({ type: 'onSort', payload }),
+        },
+    };
+
+    function reducer(state: DataTableState, action: Action): DataTableState {
+        switch (action.type) {
+            case 'reset':
+                return action.payload;
+            case 'onPage':
+                return { ...state, first: action.payload.first, rows: action.payload.rows };
+            case 'onFilter':
+                return { ...state, filters: { ...state.filters, ...action.payload } };
+            case 'onSort':
+                return { ...state, multiSortMeta: action.payload};
+            default:
+                return state;
+        }
+    }
+
+    function createDefaultState(primaryKey: string, rows: number, cols: XAttr[], queryString?: string): DataTableState {
+        const state: DataTableState = {
+            first: 0,
+            rows,
+            multiSortMeta: [{ field: primaryKey, order: -1 }],
+            filters: createDefaultFilters(cols),
+        };
+        if (queryString) {
+            const parsed = decodeDataTableState(queryString);
+            state.first = parsed.first;
+            if (parsed.rows > 0) state.rows = parsed.rows;
+            state.multiSortMeta = parsed.multiSortMeta;
+            Object.assign(state.filters, parsed.filters);
+        }
+        return state;
+    }
+
+    function createDefaultFilters(cols: XAttr[]): Filters {
+        return cols.reduce((filters, col) => {
+            const field = col.displayType === 'lookup' && col.lookup
+                ? `${col.field}.${col.lookup.labelAttributeName}`
+                : col.field;
+            filters[field] = {
+                operator: 'and',
+                constraints: [{ value: null, matchMode: displayTypeToMatch[col.displayType] as Match }],
+            };
+            return filters;
+        }, {} as Filters);
+    }
+
+
+
+    function decodeDataTableState(querystring: string): DataTableState {
+        const s = qs.parse(querystring) as {
+            offset?: string | number;
+            limit?: string | number;
+            sort?: Record<string, string>;
+            [key: string]: unknown;
+        };
+
+        const state: DataTableState = {
+            first: Number(s.offset ?? 0),
+            rows: Number(s.limit ?? 10),
+            multiSortMeta: expendSort(s.sort),
+            filters: {},
+        };
+        Object.entries(s).forEach(([k, v]) => {
+            if (!['offset', 'limit', 'sort'].includes(k)) {
+                state.filters[k] = expendFilters(v);
+            }
+        });
+        return state;
+    }
+
+    function expendSort(sorts?: Record<string, string>): SortMeta[] {
+        return Object.entries(sorts ?? []).map(([field, order]) => ({
+            field,
+            order: order === '1' ? 1 : -1,
+        }));
+    }
+}
+
+export interface DataTableStateManager {
+    state: DataTableState;
+    handlers: {
+        onPage: (payload:  PageAction['payload']) => void;
+        onFilter: (payload: FilterAction['payload']) => void;
+        onSort: (payload: SortAction['payload']) => void;
+    };
+}
+type Action  = SortAction | FilterAction | PageAction | ResetAction
+
+interface ResetAction {
+    type:'reset'
+    payload: DataTableState
+}
+
+interface SortAction{
+    type: 'onSort';
+    payload : SortMeta []
+}
+
+interface FilterAction{
+    type: 'onFilter';
+    payload: Filters;
+}
+
+interface PageAction{
+    type :'onPage',
+    payload:{first:number,rows:number},
+}
+
+type Match = 'startsWith' | 'contains' | 'notContains' | 'endsWith' | 'equals' | 'notEquals' | 'in' | 'notIn' | 'lt' | 'lte' | 'gt' | 'gte' | 'between' | 'dateIs' | 'dateIsNot' | 'dateBefore' | 'dateAfter' | 'custom' | undefined;
+
+
 interface Filter {
-    constraints: FilterConstraint[];
+    constraints: {
+        matchMode: Match
+        value: unknown;
+    }[];
     operator: string;
 }
 
@@ -28,33 +214,12 @@ interface DataTableState {
     filters: Filters;
 }
 
-interface ParsedQuery {
-    offset?: string | number;
-    limit?: string | number;
-    sort?: Record<string, string>;
-    [key: string]: unknown;
-}
-
 //the object give to backend, make the url looks shorter
 interface SanitizedState {
     offset?: number | string;
     limit?: number | string;
     sort?: Record<string, 1 | -1>;
     [key: string]: unknown;
-}
-
-interface Action {
-    type: 'onPage' | 'onFilter' | 'onSort';
-    payload: DataTableState;
-}
-
-export interface DataTableStateManager {
-    state: DataTableState;
-    handlers: {
-        onPage: (payload: DataTableState) => void;
-        onFilter: (payload: DataTableState) => void;
-        onSort: (payload: DataTableState) => void;
-    };
 }
 
 const displayTypeToMatch: Record<DisplayType, Match> = {
@@ -78,77 +243,6 @@ const displayTypeToMatch: Record<DisplayType, Match> = {
     treeSelect: 'startsWith',
 };
 
-export function encodeDataTableState(state: DataTableState | null): string {
-    if (!state) return '';
-    return qs.stringify(sanitizeState(deepClone(state)), {
-        encodeValuesOnly: true,
-        skipNulls: true,
-        arrayFormat: 'repeat',
-    });
-}
-
-export function useDataTableStateManager(
-    extraCacheKey: string,
-    primaryKey: string,
-    rowCount: number,
-    cols: XAttr[],
-    queryString?: string
-): DataTableStateManager {
-    const defaultState = createDefaultState(primaryKey, rowCount, cols, queryString);
-    const [state, dispatch] = useReducer(reducer, defaultState);
-    return {
-        state,
-        handlers: {
-            onPage: (payload) => dispatch({ type: 'onPage', payload }),
-            onFilter: (payload) => dispatch({ type: 'onFilter', payload }),
-            onSort: (payload) => dispatch({ type: 'onSort', payload }),
-        },
-    };
-}
-
-function decodeDataTableState(querystring: string): DataTableState {
-    const s = qs.parse(querystring) as ParsedQuery;
-    const state: DataTableState = {
-        first: Number(s.offset ?? 0),
-        rows: Number(s.limit ?? 10),
-        multiSortMeta: toSortMeta(s.sort),
-        filters: {},
-    };
-    Object.entries(s).forEach(([k, v]) => {
-        if (!['offset', 'limit', 'sort'].includes(k)) {
-            state.filters[k] = expendFilters(v);
-        }
-    });
-    return state;
-}
-
-function sanitizeState(payload: DataTableState): SanitizedState {
-    const filters = { ...payload.filters };
-    sanitizeFilters(filters);
-    flattenFilters(filters);
-    const state: SanitizedState = {
-        offset: payload.first,
-        limit: payload.rows,
-        ...filters,
-        sort: toSortRecord(payload.multiSortMeta),
-    };
-    cleanEmptyProperties(state);
-    return state;
-}
-
-function toSortMeta(sorts?: Record<string, string>): SortMeta[] {
-    return Object.entries(sorts ?? []).map(([field, order]) => ({
-        field,
-        order: order === '1' ? 1 : -1,
-    }));
-}
-
-function toSortRecord(sorts: SortMeta[] = []): Record<string, 1 | -1> {
-    return sorts.reduce((acc, sort) => {
-        acc[sort.field] = sort.order;
-        return acc;
-    }, {} as Record<string, 1 | -1>);
-}
 /*
 to make qs shorter and more readable
 convert
@@ -194,74 +288,4 @@ function flattenFilters(filters: Filters): void {
         // @ts-ignore
         delete item.constraints;
     });
-}
-
-function sanitizeFilters(filters: Filters): void {
-    Object.entries(filters).forEach(([k, item]) => {
-        if (item.constraints && item.constraints.length && item.constraints[0].value === null) {
-            delete filters[k];
-        } else if (item.constraints && item.constraints.length === 1 || item.operator === 'and') {
-            // @ts-ignore
-            delete item.operator;
-        }
-    });
-}
-
-function cleanEmptyProperties(obj: SanitizedState): void {
-    Object.keys(obj).forEach((key) => {
-        if (obj[key] === null || obj[key] === undefined) delete obj[key];
-    });
-}
-
-function createDefaultState(primaryKey: string, rows: number, cols: XAttr[], queryString?: string): DataTableState {
-    const state: DataTableState = {
-        first: 0,
-        rows,
-        multiSortMeta: [{ field: primaryKey, order: -1 }],
-        filters: createDefaultFilters(cols),
-    };
-    if (queryString) {
-        const parsed = decodeDataTableState(queryString);
-        state.first = parsed.first;
-        if (parsed.rows > 0) state.rows = parsed.rows;
-        state.multiSortMeta = parsed.multiSortMeta;
-        Object.assign(state.filters, parsed.filters);
-    }
-    return state;
-}
-
-
-
-function createDefaultFilters(cols: XAttr[]): Filters {
-    return cols.reduce((filters, col) => {
-        const field = col.displayType === 'lookup' && col.lookup
-            ? `${col.field}.${col.lookup.labelAttributeName}`
-            : col.field;
-        filters[field] = {
-            operator: 'and',
-            constraints: [{ value: null, matchMode: displayTypeToMatch[col.displayType] as Match }],
-        };
-        return filters;
-    }, {} as Filters);
-}
-
-function reducer(state: DataTableState, action: Action): DataTableState {
-    switch (action.type) {
-        case 'onPage':
-            return { ...state, first: action.payload.first, rows: action.payload.rows };
-        case 'onFilter':
-            return { ...state, filters: { ...state.filters, ...action.payload.filters } };
-        case 'onSort':
-            return { ...state, multiSortMeta: action.payload.multiSortMeta };
-        default:
-            return state;
-    }
-}
-
-function deepClone<T>(obj: T): T {
-    if (obj === null || typeof obj !== 'object') return obj;
-    if (Array.isArray(obj)) return obj.map(deepClone) as T;
-    return Object.fromEntries(
-        Object.entries(obj as object).map(([k, v]) => [k, deepClone(v)])
-    ) as T;
 }

@@ -35,11 +35,10 @@ export function useDataListPage(
     //entrance
     const location = useLocation();
     const initQs = location.search.replace("?", "");
-    console.log("initQs", schema.name, initQs);
 
     //data
     const columns = getListAttrs(schema.attributes);
-    const stateManager = useDataTableStateManager(schema.name, schema.primaryKey, schema.defaultPageSize, columns, initQs);
+    const stateManager = useDataTableStateManager(schema.name , schema.primaryKey, schema.defaultPageSize, columns, initQs);
     const qs = encodeDataTableState(stateManager.state);
     const currUrl = `${baseRouter}/${schema.name}?${qs}`;
     const {data, error, isLoading, mutate} = useListData(schema.name, qs);
