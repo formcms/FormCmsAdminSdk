@@ -19,8 +19,12 @@ export function getDefaultAuditLogPageConfig(){
     }
 }
 
-export function useAuditLogListPage(componentConfig:GeneralComponentConfig,baseRouter: string, schema: XEntity,
-                                    pageConfig:AuditLogListPageConfig = getDefaultAuditLogPageConfig()) {
+export function useAuditLogListPage(
+    componentConfig:GeneralComponentConfig,
+    baseRouter: string,
+    schema: XEntity,
+    pageConfig:AuditLogListPageConfig = getDefaultAuditLogPageConfig()
+) {
     //entrance
     const initQs = location.search.replace("?", "");
 

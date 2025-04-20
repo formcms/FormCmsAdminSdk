@@ -1,4 +1,6 @@
 // entity data management pages
+import {useActivityListPage} from "./activity/pages/useActivityListPage";
+
 export type {XEntity} from './types/xEntity'
 export type {DataItemPageConfig} from "./cms/pages/useDataItemPage";
 export {useDataItemPage,getDefaultDataItemPageConfig} from "./cms/pages/useDataItemPage";
@@ -94,3 +96,6 @@ export type {
     TextAreaInputProps,
     TextInputProps, TreeInputProps, TreeSelectInputProps
 } from './components/inputs'
+
+//for user portal
+export {useActivityListPage} from './activity/pages/useActivityListPage';

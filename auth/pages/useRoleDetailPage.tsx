@@ -8,7 +8,6 @@ import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { createConfirm } from "../../hooks/createConfirm";
 import { New } from "./useRoleListPage";
-import { MultiSelectInput } from "../../../../src/components/inputs/MultiSelectInput";
 import { FetchingStatus } from "../../containers/FetchingStatus";
 import {getEntityPermissionInputs} from "../types/entityPermissionInputs";
 import { useCheckError } from "../../hooks/useCheckError";
@@ -78,6 +77,8 @@ export function useRoleDetailPage(
 
     function RoleDetailPageMain() {
         const entityPermissionInputs = getEntityPermissionInputs(componentConfig.entityPermissionLabels);
+        const MultiSelectInput = componentConfig.inputComponents.multiSelect;
+
         return (
             <>
                 <FetchingStatus isLoading={loadingRole || loadingEntity} error={errorRole || errorEntities} componentConfig={componentConfig} />

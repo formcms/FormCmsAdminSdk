@@ -7,7 +7,6 @@ interface AuditLogRouterProps {
     baseRouter: string;
     AuditLogListPage: React.FC<{schema:XEntity,baseRouter:string}>;
     AuditLogDetailPage: React.FC<{schema:XEntity,baseRouter:string}>;
-
 }
 
 export function AuditLogRouter(

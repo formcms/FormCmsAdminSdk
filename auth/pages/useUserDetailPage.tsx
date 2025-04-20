@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { createConfirm } from "../../hooks/createConfirm";
 import { FetchingStatus } from "../../containers/FetchingStatus";
-import { MultiSelectInput } from "../../../../src/components/inputs/MultiSelectInput";
 import { useCheckError } from "../../hooks/useCheckError";
 import {getEntityPermissionInputs} from "../types/entityPermissionInputs";
 import {ComponentConfig} from "../../ComponentConfig";
@@ -57,6 +56,7 @@ export function useUserDetailPage(
 
     function UserDetailPageMain() {
         const entityPermissionInputs = getEntityPermissionInputs(componentConfig.entityPermissionLabels);
+        const MultiSelectInput = componentConfig.inputComponents.multiSelect;
         return (
             <>
                 <Confirm />
