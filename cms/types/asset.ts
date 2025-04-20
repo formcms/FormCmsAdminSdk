@@ -19,7 +19,6 @@ export interface AssetLink {
     id: number;
 }
 
-
 export interface Asset {
     path: string;
     url: string;
@@ -35,4 +34,3 @@ export interface Asset {
     linkCount: number;
     links: AssetLink[] | undefined;
 }
-

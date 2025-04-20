@@ -12,8 +12,8 @@
 
 export interface RoleAccess {
     name: string;
-    readWriteEntities: string[];
-    restrictedReadWriteEntities: string[];
-    readonlyEntities: string[];
-    restrictedReadonlyEntities: string[];
+    readWriteEntities: string[] | undefined;
+    restrictedReadWriteEntities: string[] | undefined;
+    readonlyEntities: string[] | undefined;
+    restrictedReadonlyEntities: string[] | undefined;
 }
