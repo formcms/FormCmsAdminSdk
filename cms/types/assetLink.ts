@@ -18,4 +18,3 @@ export interface AssetLink {
     updatedAt: Date;
     id: number;
 }
-

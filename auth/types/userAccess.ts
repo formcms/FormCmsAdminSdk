@@ -20,4 +20,5 @@ export interface UserAccess {
     restrictedReadWriteEntities: string[];
     restrictedReadonlyEntities: string[];
     allowedMenus: string[];
+    canAccessAdmin: boolean;
 }
