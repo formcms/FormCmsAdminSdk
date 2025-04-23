@@ -1,5 +1,5 @@
 import React from "react";
-import {Route, Routes} from "react-router-dom";
+import {Navigate, Route, Routes} from "react-router-dom";
 
 interface PortalRouterProps {
     baseRouter: string;
@@ -11,10 +11,12 @@ export function PortalRouter(
     {
         ActivityListPage,
         BookmarkPage,
+        baseRouter
     }: PortalRouterProps
 ) {
     return <Routes>
         <Route path={`/activities/:type`} element={ <ActivityListPage/> }/>
         <Route path={`/bookmarks/:folderId`} element={ <BookmarkPage/> }/>
+        <Route path='' element={ <Navigate to={`${baseRouter}/activities/view`}/> }/>
     </Routes>
 }
