@@ -1,19 +1,31 @@
 import {useParams} from "react-router-dom";
-import {XEntity} from "../../types/xEntity";
 import {encodeDataTableState, useDataTableStateManager} from "../../hooks/useDataTableStateManager";
-import {useEffect} from "react";
-import {useActivities} from "../services/activities";
+import {useEffect, useState} from "react";
+import {useActivities, deleteActivity as $deleteActivity} from "../services/activities";
+import {ActivityField} from "../types/util";
 
-export function useActivityListPage(
-    schema: XEntity,
-){
+export function useActivityListPage(){
     //entrance
     const {type} = useParams()
     const initQs = location.search.replace("?", "");
-    const columns = schema?.attributes?.filter(column => column.inList) ?? [];
-    const stateManager = useDataTableStateManager(schema.name,schema.primaryKey, schema.defaultPageSize, columns, initQs)
+
+    //data
+    const stateManager = useDataTableStateManager('activity' + type, ActivityField('id'), 8, [], initQs)
     const qs = encodeDataTableState(stateManager.state);
-    const {data, error, isLoading} =  useActivities(type!,qs);
+    const {data: activityResponse, error, isLoading,mutate} =  useActivities(type!,qs);
     useEffect(() => window.history.replaceState(null, "", `?${qs}`), [stateManager.state]);
-    return {type,data, error, isLoading, stateManager};
+
+    const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
+
+    return {
+        type,
+        activityResponse, error, isLoading,
+        stateManager,
+        deleteActivity,errorMessage
+    };
+    async function deleteActivity(id: number) {
+        const {error} = await $deleteActivity(id);
+        setErrorMessage(error?.message);
+        await mutate()
+    }
 }

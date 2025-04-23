@@ -2,6 +2,20 @@ import {useEffect, useReducer} from "react";
 import { DisplayType, XAttr } from "../types/xEntity";
 import qs from 'qs';
 
+export function keywordFilters(field:string, keyword:string):Filters{
+    return {
+        [field]:{
+            operator:'and',
+            constraints:[
+                {
+                    matchMode:'contains',
+                    value: keyword
+                }
+            ]
+        }
+    }
+}
+
 export function encodeDataTableState(state: DataTableState | null): string {
     if (!state) return '';
     return qs.stringify(sanitizeState(deepClone(state)), {

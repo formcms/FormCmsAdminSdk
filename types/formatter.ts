@@ -42,8 +42,8 @@ export function toDateStr  (s:string)  {
     return d.toLocaleDateString();
 }
 
-export function toDatetimeStr  (s:string)  {
-    const d = toDatetime(s);
+export function toDatetimeStr  (s:string|Date)  {
+    const d = typeof(s)==='string' ? toDatetime(s):s;
     return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
 }
 
