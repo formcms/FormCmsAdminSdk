@@ -1,23 +1,22 @@
 import React from "react";
-import {Route, Routes} from "react-router-dom";
-import {useActivityEntity} from "./services/activities";
-import {XEntity} from "../types/xEntity";
+import {Navigate, Route, Routes} from "react-router-dom";
 
 interface PortalRouterProps {
     baseRouter: string;
-    ActivityListPage: React.FC<{schema:XEntity}>;
+    ActivityListPage: React.FC;
+    BookmarkPage: React.FC;
 }
 
 export function PortalRouter(
     {
         ActivityListPage,
+        BookmarkPage,
+        baseRouter
     }: PortalRouterProps
 ) {
-    const {data: activity} = useActivityEntity();
-
-    return activity && <Routes>
-        <Route path={`/:type`} element={
-            <ActivityListPage schema={activity} />
-        }/>
+    return <Routes>
+        <Route path={`/activities/:type`} element={ <ActivityListPage/> }/>
+        <Route path={`/bookmarks/:folderId`} element={ <BookmarkPage/> }/>
+        <Route path='' element={ <Navigate to={`${baseRouter}/activities/view`}/> }/>
     </Routes>
 }

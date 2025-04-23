@@ -14,11 +14,11 @@ export interface BaseRouterProps {
 
 interface AccountRouterProps {
     baseRouter: string;
-    UserListPage: React.FC<BaseRouterProps>;
-    UserDetailPage: React.FC<BaseRouterProps>;
+    UserListPage?: React.FC<BaseRouterProps>;
+    UserDetailPage?: React.FC<BaseRouterProps>;
     ChangePasswordPage: React.FC<BaseRouterProps>;
-    RoleListPage: React.FC<BaseRouterProps>;
-    RoleDetailPage: React.FC<BaseRouterProps>;
+    RoleListPage?: React.FC<BaseRouterProps>;
+    RoleDetailPage?: React.FC<BaseRouterProps>;
 }
 
 export function AccountRouter(
@@ -32,10 +32,10 @@ export function AccountRouter(
 
     }:AccountRouterProps) {
     return <Routes>
-        <Route path={UserRoute} element={<UserListPage baseRouter={baseRouter}/>}/>
-        <Route path={`${UserRoute}/:id`} element={<UserDetailPage baseRouter={baseRouter}/>}/>
-        <Route path={RoleRoute} element={<RoleListPage baseRouter={baseRouter}/>}/>
-        <Route path={`${RoleRoute}/:name`} element={<RoleDetailPage baseRouter={baseRouter}/>}/>
+        {UserListPage &&<Route path={UserRoute} element={<UserListPage baseRouter={baseRouter}/>}/>}
+        {UserDetailPage &&<Route path={`${UserRoute}/:id`} element={<UserDetailPage baseRouter={baseRouter}/>}/>}
+        {RoleListPage && <Route path={RoleRoute} element={<RoleListPage baseRouter={baseRouter}/>}/>}
+        {RoleDetailPage && <Route path={`${RoleRoute}/:name`} element={<RoleDetailPage baseRouter={baseRouter}/>}/>}
         <Route path={ChangePasswordRoute} element={<ChangePasswordPage baseRouter={baseRouter}/>}/>
     </Routes>
 }
