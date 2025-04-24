@@ -33,7 +33,9 @@ export function Picklist({column, data, schema, getFullAssetsURL, componentConfi
     const {data: excludedSubgridData, mutate: execMutate} = useJunctionData(schema.name, id, column.field, true,
         encodeDataTableState(excludedStateManager.state));
 
-    const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError(componentConfig);
+    const {handleErrorOrSuccess:handleDeleteError, CheckErrorStatus: CheckDeleteStatus} = useCheckError(componentConfig);
+    const {handleErrorOrSuccess:handleSaveError, CheckErrorStatus: CheckSaveStatus} = useCheckError(componentConfig);
+
     const {confirm, Confirm} = createConfirm("picklist" + column.field, componentConfig);
     const LazyDataTable = componentConfig.dataComponents.lazyTable;
     const Button = componentConfig.etc.button;
@@ -49,7 +51,7 @@ export function Picklist({column, data, schema, getFullAssetsURL, componentConfi
 
     const handleSave = async () => {
         const {error} = await saveJunctionItems(schema.name, id, column.field, toAddItems)
-        await handleErrorOrSuccess(error, componentConfig.picklist.saveSuccessMessage, () => {
+        await handleSaveError(error, componentConfig.picklist.saveSuccessMessage, () => {
             mutateDate()
             setVisible(false)
         })
@@ -58,7 +60,7 @@ export function Picklist({column, data, schema, getFullAssetsURL, componentConfi
     const onDelete = async () => {
         confirm(componentConfig.picklist.deleteConfirmationMessage, componentConfig.picklist.deleteConfirmationHeader, async () => {
             const {error} = await deleteJunctionItems(schema.name, id, column.field, existingItems)
-            await handleErrorOrSuccess(error, componentConfig.picklist.deleteSuccessMessage, () => {
+            await handleDeleteError(error, componentConfig.picklist.deleteSuccessMessage, () => {
                 mutateDate()
             })
         })
@@ -78,25 +80,33 @@ export function Picklist({column, data, schema, getFullAssetsURL, componentConfi
             {column.header}
         </label><br/>
         <Confirm/>
+        <CheckDeleteStatus/>
         <Button outlined label={componentConfig.picklist.selectButtonLabel(column.header)}
                 onClick={() => setVisible(true)}
                 type={"button"}
                 icon={''}
         />
         {' '}
-        <Button severity={'danger'} outlined type={'button'} label={componentConfig.picklist.deleteButtonLabel}
-                onClick={onDelete} icon={''}/>
-        {targetSchema && subgridData && <LazyDataTable
-            dataKey={targetSchema.primaryKey}
-            formater={formater}
-            getFullAssetsURL={getFullAssetsURL}
-            selectionMode={'multiple'}
-            data={subgridData}
-            columns={tableColumns}
-            selectedItems={existingItems}
-            setSelectedItems={setExistingItems}
-            stateManager={existingStateManager}
-        />}
+        <Button
+            severity={'danger'}
+            outlined
+            type={'button'}
+            label={componentConfig.picklist.deleteButtonLabel}
+            onClick={onDelete}
+            icon={''}/>
+        {
+            targetSchema && subgridData && <LazyDataTable
+                dataKey={targetSchema.primaryKey}
+                formater={formater}
+                getFullAssetsURL={getFullAssetsURL}
+                selectionMode={'multiple'}
+                data={subgridData}
+                columns={tableColumns}
+                selectedItems={existingItems}
+                setSelectedItems={setExistingItems}
+                stateManager={existingStateManager}
+            />
+        }
         <Dialog
             width={'90%'}
             modal className="p-fluid"
@@ -104,7 +114,7 @@ export function Picklist({column, data, schema, getFullAssetsURL, componentConfi
             onHide={() => setVisible(false)}
             footer={footer}
             header={componentConfig.picklist.dialogHeader(column.header)}>
-            <CheckErrorStatus/>
+            <CheckSaveStatus/>
             {
                 targetSchema && excludedSubgridData && <LazyDataTable
                     dataKey={targetSchema.primaryKey}
