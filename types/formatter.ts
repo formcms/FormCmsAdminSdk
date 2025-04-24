@@ -43,6 +43,7 @@ export function toDateStr  (s:string)  {
 }
 
 export function toDatetimeStr  (s:string|Date)  {
+    if (!s) return null;
     const d = typeof(s)==='string' ? toDatetime(s):s;
     return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
 }
@@ -56,8 +57,9 @@ export const utcStrToDatetime = (s:string) => {
     return new Date(s);
 }
 
-export function utcStrToDatetimeStr  (s:string)  {
-    const d = utcStrToDatetime(s);
+export function utcStrToDatetimeStr  (s:string|Date)  {
+    if (!s) return null
+    const d = typeof(s) == 'string' ? utcStrToDatetime(s):s;
     return d.toLocaleDateString() + ' ' + d.toLocaleTimeString();
 }
 
