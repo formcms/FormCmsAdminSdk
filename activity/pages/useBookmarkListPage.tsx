@@ -6,7 +6,7 @@ import {updateBookmarkFolder as $updateBookmarkFolder,
     deleteBookmark as $deleteBookmark,
     deleteBookmarkFolder as $deleteBookmarkFolder,
     useBookmarkFolders, useBookmarks} from "../services/bookmarks";
-import {BookmarkFolder} from "../types/bookmarkFoder";
+import {BookmarkFolder} from "../types/bookmarkFolder";
 
 export function useBookmarkListPage() {
     //entrance

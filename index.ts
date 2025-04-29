@@ -1,8 +1,6 @@
-// entity data management pages
-import {toDatetimeStr} from "./types/formatter";
-
-export {keywordFilters} from './hooks/useDataTableStateManager'
-export type {XEntity} from './types/xEntity'
+//dashboard
+export {useDashboardPage} from "./dashboard/pages/useDashboardPage"
+//cms
 export type {DataItemPageConfig} from "./cms/pages/useDataItemPage";
 export {useDataItemPage,getDefaultDataItemPageConfig} from "./cms/pages/useDataItemPage";
 
@@ -107,4 +105,6 @@ export {PortalRouter} from './activity/PortalRouter';
 export {useBookmarkFolders} from './activity/services/bookmarks';
 
 //utils
-export {toDatetimeStr} from './types/formatter'
+export {toDatetimeStr, utcStrToDatetimeStr} from './types/formatter'
+export {keywordFilters} from './hooks/useDataTableStateManager'
+export type {XEntity} from './types/xEntity'

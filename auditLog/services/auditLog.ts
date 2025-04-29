@@ -4,6 +4,7 @@ import {decodeError, fetcher, swrConfig} from "../../utils/apiUtils";
 import { AuditLog } from "../types/auditLog";
 import {XEntity} from "../../types/xEntity";
 import {ListResponse} from "../../types/listResponse";
+import {DailyActionCount} from "../types/dailyActionCount";
 
 
 export  function useAuditLogsEntity() {
@@ -18,5 +19,10 @@ export  function useAuditLogs(qs:string) {
 
 export  function useAuditLogsDetail(id:string) {
     let res = useSWR<AuditLog>(fullAuditLogUrl(`/audit_log/${id}`), fetcher,swrConfig);
+    return {...res, error:decodeError(res.error)}
+}
+
+export function useAuditLogDailyCounts(n:number){
+    let res = useSWR<DailyActionCount[]>(fullAuditLogUrl(`/audit_log/counts?n=${n}`), fetcher,swrConfig);
     return {...res, error:decodeError(res.error)}
 }

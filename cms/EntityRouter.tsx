@@ -15,6 +15,7 @@ interface EntityRouterProps {
     TaskListPage: React.FC<{ schema: XEntity, baseRouter: string }>;
     AssetListPage: React.FC<{ schema: XEntity, baseRouter: string }>;
     AssetEditPage: React.FC<{ schema: XEntity, baseRouter: string }>;
+    DashboardPage: React.FC;
 }
 
 export function EntityRouter(
@@ -25,7 +26,8 @@ export function EntityRouter(
         DataItemPage,
         TaskListPage,
         AssetListPage,
-        AssetEditPage
+        AssetEditPage,
+        DashboardPage,
     }: EntityRouterProps
 ) {
     const {data: asset} = useAssetEntityWithLink()
@@ -41,5 +43,6 @@ export function EntityRouter(
         <Route path={`/${task.name}`} element={<TaskListPage schema={task} baseRouter={baseRouter}/>}> </Route>
         <Route path={`/${asset.name}`} element={<AssetListPage schema={asset} baseRouter={baseRouter}/>}> </Route>
         <Route path={`/${asset.name}/:id`} element={<AssetEditPage schema={asset} baseRouter={baseRouter}/>}> </Route>
+        <Route path={`/dashboard`} element={<DashboardPage/>}/>
     </Routes>
 }

@@ -1,7 +1,7 @@
 import useSWR from "swr";
 import {fullActivityUrl} from "../config";
 import {catchResponse, decodeError, fetcher, swrConfig} from "../../utils/apiUtils";
-import {BookmarkFolder} from "../types/bookmarkFoder";
+import {BookmarkFolder} from "../types/bookmarkFolder";
 import {ListResponse} from "../../types/listResponse";
 import axios from "axios";
 

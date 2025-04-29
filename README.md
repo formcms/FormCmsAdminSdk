@@ -10,15 +10,22 @@ Have suggestions? Connect with us on Reddit! https://www.reddit.com/r/FormCMS/
 
 
 ---
-## What is  FormCMS?
+## What is FormCMS?
 
-**FormCMS** is an open-source Content Management System designed to simplify and speed-up web development workflows. While it's particularly suited for CMS projects, it is also highly beneficial for general web applications, reducing the need for repetitive REST/GraphQL API development.
+**FormCMS** is an open-source Content Management System designed to streamline and accelerate web development workflows. Ideal for CMS projects and general web applications, it minimizes repetitive REST/GraphQL API development while offering powerful tools for data management, page design, and user interaction.
 
-- **CRUD Operations:**  FormCMS includes built-in RESTful APIs for Create, Read, Update, and Delete (CRUD) operations, complemented by a React-based admin panel for efficient data management.
+### Key Features
 
-- **GraphQL Queries:** Access multiple related entities in a single query, enhancing client-side performance, security, and flexibility.
+1. **Data Modeling and CRUD with RESTful APIs**  
+   FormCMS provides robust data modeling capabilities and built-in RESTful APIs for Create, Read, Update, and Delete (CRUD) operations. These are complemented by a React-based admin panel, enabling efficient and intuitive data management for developers and content creators.
 
-- **Grapes.js Page Designer:** Build dynamic pages effortlessly using the integrated page designer powered by [Grapes.js](https://grapesjs.com/) and [Handlebars](https://handlebarsjs.com/). Easily bind data sources for an interactive and streamlined design experience.
+2. **GraphQL Queries and Grapes.js Page Designer**  
+   Leverage GraphQL to fetch multiple related entities in a single query, boosting client-side performance, security, and flexibility. Additionally, the integrated [Grapes.js](https://grapesjs.com/) page designer, powered by [Handlebars](https://handlebarsjs.com/), allows for effortless creation of dynamic, data-bound pages, streamlining the design process.
+
+3. **User Social Activity**  
+   FormCMS now includes user engagement features, allowing users to like, share, and save content, with the system tracking view counts. Users can access their interaction history, liked posts, and saved posts through a dedicated user portal, enhancing interactivity and personalization.
+
+
 
 ---
 ## New CMS? — Data Modeling
@@ -480,34 +487,6 @@ By maintaining a detailed audit trail, the System enhances security and operatio
 
 ---
 
-## Export and Import Data
-<details>
-<summary>
-This feature allows you to export or import data
-</summary>
-
-This feature is helpful for the following scenarios:  
-1. Migrating data from one server to another, or even between different types of databases.   
-2. Backing up your data.   
-3. Cleaning data by exporting only the latest schema, excluding audit log data.   
-
-### Exporting Data
-1. Log in to the 'Admin Panel' and navigate to `Tasks`.
-2. Click `Add Export Task`.
-3. Wait a few minutes, then refresh the page. Once the task is complete, you can download the exported zip file.
-
-### Importing Data
-1. Log in to the 'Admin Panel' and go to `Tasks`.
-2. Click `Add Import Task`, then select the zip file you wish to import.
-3. Wait a few minutes, then refresh the page to check if the task was successful.
-
-</details>  
-
-
-
-
----
-
 ## Asset Library
 <details>
 <summary>
@@ -701,6 +680,34 @@ FormCMS provides three display formats for handling date and time data, each ser
 
 
 
+---
+
+## Export and Import Data
+<details>
+<summary>
+This feature allows you to export or import data
+</summary>
+
+This feature is helpful for the following scenarios:  
+1. Migrating data from one server to another, or even between different types of databases.   
+2. Backing up your data.   
+3. Cleaning data by exporting only the latest schema, excluding audit log data.   
+
+### Exporting Data
+1. Log in to the 'Admin Panel' and navigate to `Tasks`.
+2. Click `Add Export Task`.
+3. Wait a few minutes, then refresh the page. Once the task is complete, you can download the exported zip file.
+
+### Importing Data
+1. Log in to the 'Admin Panel' and go to `Tasks`.
+2. Click `Add Import Task`, then select the zip file you wish to import.
+3. Wait a few minutes, then refresh the page to check if the task was successful.
+
+</details>  
+
+
+
+
 
 ---
 
@@ -783,9 +790,6 @@ To customize text:
 
 Replace table columns, input fields, or other UI components with your custom versions as needed.
 </details>  
-
----
-
 
 ---
 ## **GraphQL Query**
@@ -1539,39 +1543,6 @@ To bind a `Data List` to a component, follow these steps:
 
 </details>
 
-
-
----
-
-## Schema Version Control
-<details>  
-<summary>  
-FormCMS saves each version of schemas, allowing users to roll back to earlier versions. Admins can freely test draft versions, while only published versions take effect.  
-</summary>  
-
-### Requirements
-To illustrate this feature, let's take a `Page` as an example. Once a page is published, it becomes publicly accessible. You may need version control for two main reasons:
-
-- You want to make changes but ensure they do not take effect until thoroughly tested.
-- If issues arise in the latest version, you need the ability to roll back to a previous version.
-
-### Choosing a Version
-After making changes, the latest version's status changes to `draft` in the [Page List Page](https://fluent-cms-admin.azurewebsites.net/_content/FormCMS/schema-ui/list.html?type=page).  
-To manage versions, click the `View History` button to navigate to the [History Version List Page](https://fluent-cms-admin.azurewebsites.net/_content/FormCMS/schema-ui/history.html?schemaId=01JKKB85KWA651945N5W0T6PJR).  
-Here, you can select any version and set it to `published` status.
-
-### Testing a `Draft` Version
-To preview a draft version, append `sandbox=1` as a query parameter in the URL: [Preview Draft Version Page](https://fluent-cms-admin.azurewebsites.net/story/?sandbox=1).  
-Alternatively, click the `View Page` button on the `Page Design` page.
-
-### Compare schema Changes
-You can compare the difference between different versions, use the [Schema Diff Tool](https://fluent-cms-admin.azurewebsites.net/_content/FormCMS/schema-ui/diff.html?schemaId=01JKKA93AJG2HNY648H9PC16PN&type=query&oldId=126&newId=138).
-
-### Duplicate
-You can duplicate any schema version and save it as a new schema.
-
-</details>  
-
 ---
 ## Online Course System Frontend
 <details> 
@@ -1680,6 +1651,188 @@ To create a category entity in the Schema Builder, include `parent` and `childre
   [Edit Example](https://fluent-cms-admin.azurewebsites.net/_content/FormCMS/schema-ui/page.html?schema=page&id=33)
 
 </details>  
+
+
+
+---
+
+## Schema Version Control
+<details>  
+<summary>  
+FormCMS saves each version of schemas, allowing users to roll back to earlier versions. Admins can freely test draft versions, while only published versions take effect.  
+</summary>  
+
+### Requirements
+To illustrate this feature, let's take a `Page` as an example. Once a page is published, it becomes publicly accessible. You may need version control for two main reasons:
+
+- You want to make changes but ensure they do not take effect until thoroughly tested.
+- If issues arise in the latest version, you need the ability to roll back to a previous version.
+
+### Choosing a Version
+After making changes, the latest version's status changes to `draft` in the [Page List Page](https://fluent-cms-admin.azurewebsites.net/_content/FormCMS/schema-ui/list.html?type=page).  
+To manage versions, click the `View History` button to navigate to the [History Version List Page](https://fluent-cms-admin.azurewebsites.net/_content/FormCMS/schema-ui/history.html?schemaId=01JKKB85KWA651945N5W0T6PJR).  
+Here, you can select any version and set it to `published` status.
+
+### Testing a `Draft` Version
+To preview a draft version, append `sandbox=1` as a query parameter in the URL: [Preview Draft Version Page](https://fluent-cms-admin.azurewebsites.net/story/?sandbox=1).  
+Alternatively, click the `View Page` button on the `Page Design` page.
+
+### Compare schema Changes
+You can compare the difference between different versions, use the [Schema Diff Tool](https://fluent-cms-admin.azurewebsites.net/_content/FormCMS/schema-ui/diff.html?schemaId=01JKKA93AJG2HNY648H9PC16PN&type=query&oldId=126&newId=138).
+
+### Duplicate
+You can duplicate any schema version and save it as a new schema.
+
+</details>  
+
+
+
+---
+
+## Social Activity
+<details>  
+<summary>  
+The Social Activity feature enhances user engagement by enabling views, likes, saves, and shares. It also provides detailed analytics to help understand content performance.
+</summary>  
+
+### Endpoints
+- `GET /api/activities/{entityName}/{recordId:long}`  
+  Increments the view count by 1. Returns the active status and count for: like, view, share, and save.
+
+- `GET /api/activities/record/{entityName}/{recordId}?type={view|share}`  
+  Retrieves activity info of type `view` or `share` for a given entity record.
+
+- `POST /api/activities/toggle/{entityName}/{recordId}?type={like|save}&active={true|false}`  
+  Toggles the activity (like or save) on or off based on the `active` flag.
+
+### Challenges
+The system cannot leverage traditional output caching due to dynamic nature of the content, which may lead to high database load under heavy traffic.
+
+To address this, buffered writes are introduced. Activity events are first stored in a buffer (in-memory or Redis), and then periodically flushed to the database, balancing performance and accuracy.
+
+---
+
+### Load Testing
+
+Below is a test script using [k6](https://k6.io/) to simulate traffic and measure performance:
+
+```javascript
+import http from 'k6/http';
+import { check } from 'k6';
+import { Trend } from 'k6/metrics';
+
+const ResponseTime = new Trend('response_time', true);
+
+export const options = {
+    stages: [
+        { duration: '30s', target: 300 },
+        { duration: '30s', target: 300 },
+        { duration: '30s', target: 0 },
+    ],
+    thresholds: {
+        'http_req_failed': ['rate<0.01'],
+        'http_req_duration': ['p(95)<500'],
+        'response_time': ['p(95)<500'],
+    },
+};
+
+export default function () {
+    const id = Math.floor(Math.random() * 100) + 1;
+    const res = http.get(`http://localhost:5000/api/activities/post/${id}`);
+    ResponseTime.add(res.timings.duration);
+    check(res, { 'status is 200': (r) => r.status === 200 });
+}
+```
+
+---
+
+### Performance Comparison
+
+#### No Buffer
+
+- ✅ Simple to deploy and debug
+- ❌ High database load under heavy traffic
+- ⏱ Avg. response time: **35.28ms**
+- 🧪 Total requests: **509,762**
+- 📉 Throughput: ~**5,664 req/s**
+
+#### Redis Buffer
+
+- ✅ High performance
+- ✅ Scalable across instances
+- ❌ More complex infrastructure (requires Redis setup)
+- ⏱ Avg. response time: **11.78ms**
+- 🧪 Total requests: **1,520,072**
+- 📉 Throughput: ~**16,889 req/s**
+
+#### Memory Buffer
+
+- ✅ Highest performance
+- ✅ Easy to deploy
+- ❌ Not horizontally scalable (buffer is local to instance)
+- ⏱ Avg. response time: **4ms**
+- 🧪 Total requests: **4,132,111**
+- 📉 Throughput: ~**45,912 req/s**
+
+---
+
+### Summary
+
+Each buffering strategy has its tradeoffs:
+
+| Strategy       | Performance | Scalability | Complexity | Avg Response Time |
+|----------------|-------------|-------------|------------|-------------------|
+| No Buffer      | Medium      | High        | Low        | ~35ms             |
+| Memory Buffer  | High        | Low         | Low        | ~4ms              |
+| Redis Buffer   | High        | High        | Medium     | ~12ms             |
+
+Choose the approach based on your system’s scalability requirements and infrastructure constraints.
+
+</details>
+
+
+
+---
+
+## User Portal
+
+<details>  
+<summary>  
+Users can access their view history, liked posts, and bookmarked posts in a personalized portal.  
+</summary> 
+
+The **User Portal** in FormCMS provides a centralized interface for users to manage their social activity, including viewing their interaction history, liked posts, and bookmarked content. This enhances user engagement by offering a tailored experience to revisit and organize content.
+
+### History
+Users can view a list of all items they have previously accessed, such as pages, posts, or other content. Each item in the history is displayed with a clickable link, allowing users to easily revisit the content.
+
+### Liked Items
+The Liked Items section displays all posts or content that the user has liked. Users can browse their liked items, with options to unlike content or click through to view the full item, fostering seamless interaction with preferred content.
+
+### Bookmarked Items
+Users can organize and view their saved content in the Bookmarked Items section. Bookmarks can be grouped into custom folders for easy categorization, enabling users to efficiently manage and access their saved items by folder or as a complete list.
+
+### Configuration
+The User Portal displays items with the following metadata:
+- **Image**: A thumbnail or visual representation of the item.
+- **Title**: The primary name or heading of the item.
+- **Subtitle**: A brief description or secondary text for the item.
+- **URL**: The link to access the full item.
+- **PublishedAt**: The publication date and time of the item.
+
+Metadata mappings are configured on the **Entity Settings** page, where administrators can define how data fields map to the portal's display. The following settings are available:
+
+- **PageUrl**: Specifies the base URL for item links (e.g., "/content/").
+- **BookmarkQuery**: Defines the query used to fetch bookmarked items.
+- **BookmarkQueryParamName**: Sets the parameter name for the query (e.g., "id").
+- **BookmarkTitleField**: Maps the field containing the item's title.
+- **BookmarkSubtitleField**: Maps the field for the item's subtitle.
+- **BookmarkImageField**: Maps the field for the item's image URL.
+- **BookmarkPublishTimeField**: Maps the field for the item's publication timestamp.
+
+These settings allow for flexible customization, ensuring the User Portal displays content accurately and consistently across history, liked items, and bookmarked items.
+
+</details>
 
 ---
 ## Optimizing Caching
@@ -2108,7 +2261,8 @@ The system comprises three main components:
 
 ### Repository Links  
 - [**Backend Server**](https://github.com/formcms/formcms/tree/main/server/FormCMS)  
-- [**Admin Panel UI**](https://github.com/formcms/formcms/tree/main/admin-panel)  
+- [**Admin Panel Sdk**](https://github.com/FormCms/FormCmsAdminSdk)
+- [**Admin Panel App**](https://github.com/FormCms/FormCmsAdminApp)
 - [**Schema Builder**](https://github.com/formcms/formcms/tree/main/server/FormCMS/wwwroot/schema-ui)  
 
 ---
