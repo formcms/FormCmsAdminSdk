@@ -1,3 +1,9 @@
+//configuration
+export {setCmsApiBaseUrl} from "./cms/configs";
+export {setAuditLogBaseUrl} from "./auditLog/config";
+export {setAuthApiBaseUrl} from "./auth/configs";
+export {setActivityBaseUrl} from './activity/config'
+
 //dashboard
 export {useDashboardPage} from "./dashboard/pages/useDashboardPage"
 //cms
@@ -48,12 +54,6 @@ export {useTaskListPage,getDefaultTaskListPageConfig} from "./cms/pages/useTaskL
 export type {AuditLogListPageConfig}from "./auditLog/pages/useAuditLogListPage";
 export {useAuditLogListPage,getDefaultAuditLogPageConfig} from "./auditLog/pages/useAuditLogListPage";
 export {useAuditLogDetailPage} from "./auditLog/pages/useAuditLogDetailPage";
-
-
-//configuration
-export {setCmsApiBaseUrl} from "./cms/configs";
-export {setAuditLogBaseUrl} from "./auditLog/config";
-export {setAuthApiBaseUrl} from "./auth/configs";
 
 //menu and layout
 export type {SystemMenuLabels} from "./hooks/useMenuItems"

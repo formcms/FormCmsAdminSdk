@@ -13,12 +13,16 @@ export function useDashboardPage(n:number) {
 
 function usePageData(n:number){
     const {data:pages} = usePageVisitCount(n);
-    const pageNames = pages?.map(x=>x.name);
-    const pageData = pages && {
-        label:'Page',
-        data: pages.map(x=>x.count)
+    if (pages) {
+
+        const pageNames = pages?.map(x => x.name);
+        const pageData = pages && {
+            label: 'Page',
+            data: pages.map(x => x.count)
+        }
+        return {pageNames, pageData};
     }
-    return {pageNames,pageData};
+    return {pageNames: undefined, pageData: undefined};
 }
 
 function useDailyVisit(n:number) {
@@ -44,28 +48,32 @@ function useDailyVisit(n:number) {
 }
 
 function useDailyActivity(n: number) {
-    const {data: dailyActivityCount =[]} = useActivityCounts(n);
-    const activityTypes = ['view','like','share','save'];
-    const pastDays = getPastDays(n);
-    return activityTypes.map(activityType => ({
-        label: activityType,
-        data: pastDays.map(day =>
-            dailyActivityCount.find(c => c.activityType === activityType && dateEqual(c.day, day))?.count ?? 0
-        )
-    }));
+    const {data: dailyActivityCount} = useActivityCounts(n);
+    if (dailyActivityCount) {
+        const activityTypes = ['view', 'like', 'share', 'save'];
+        const pastDays = getPastDays(n);
+        return activityTypes.map(activityType => ({
+            label: activityType,
+            data: pastDays.map(day =>
+                dailyActivityCount.find(c => c.activityType === activityType && dateEqual(c.day, day))?.count ?? 0
+            )
+        }));
+    }
 }
 
 function useDailyDataAction(n: number) {
-    const { data: dailyActionCounts = [] } = useAuditLogDailyCounts(n);
-    const actions = [ActionType.Create, ActionType.Update, ActionType.Delete];
-    const pastDays = getPastDays(n);
+    const { data: dailyActionCounts} = useAuditLogDailyCounts(n);
+    if (dailyActionCounts) {
+        const actions = [ActionType.Create, ActionType.Update, ActionType.Delete];
+        const pastDays = getPastDays(n);
 
-    return actions.map(action => ({
-        label: action,
-        data: pastDays.map(day =>
-            dailyActionCounts.find(c => c.action === action && dateEqual(c.day, day))?.count ?? 0
-        )
-    }));
+        return actions.map(action => ({
+            label: action,
+            data: pastDays.map(day =>
+                dailyActionCounts.find(c => c.action === action && dateEqual(c.day, day))?.count ?? 0
+            )
+        }));
+    }
 }
 
 
