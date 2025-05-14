@@ -76,10 +76,16 @@ function useDailyDataAction(n: number) {
     }
 }
 
+function formatDate(date:Date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
 
-function dateEqual(d1: Date | string, d2: Date): boolean {
-    d1 = new Date(d1);
-    return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
+function dateEqual(d1: string|Date, d2: Date): boolean {
+    d1 = typeof d1 === 'string' ? d1 : formatDate(d1);
+    return d1 == formatDate(d2);
 }
 
 function getPastDays(n: number) {
