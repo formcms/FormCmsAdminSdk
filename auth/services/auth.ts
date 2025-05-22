@@ -25,3 +25,7 @@ export async function changePassword(item: ProfileDto) {
 export async function logout() {
     return catchResponse(() => axios.get(fullAuthApiUrl(`/logout`)));
 }
+
+export  function getBackendGithubUrl() {
+    return fullAuthApiUrl(`/ext_login/GitHub/`);
+}

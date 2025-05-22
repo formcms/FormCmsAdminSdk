@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { login, useUserInfo } from "../services/auth";
-import { RegisterRoute } from "../AccountRouter";
+import {getBackendGithubUrl, login, useUserInfo} from "../services/auth";
+import {RegisterRoute} from "../AccountRouter";
 
-// Interface for configuration with no optional properties
 export interface LoginPageConfig {
     loginFailedError: string;
 }
@@ -39,6 +38,14 @@ export const useLoginPage = (
         }
     }
 
+    async function handleGitHubLogin ()  {
+        try {
+            window.location.href = getBackendGithubUrl()+"?returnUrl=" + window.location.href;
+        } catch (error) {
+            console.error('GitHub login failed:', error);
+        }
+    }
+
     return {
         email,
         setEmail,
@@ -47,6 +54,7 @@ export const useLoginPage = (
         error,
         setError,
         handleLogin,
+        handleGitHubLogin,
         ref,
         registerLink,
     };
