@@ -1,8 +1,12 @@
-// entity data management pages
-import {toDatetimeStr} from "./types/formatter";
+//configuration
+export {setCmsApiBaseUrl} from "./cms/configs";
+export {setAuditLogBaseUrl} from "./auditLog/config";
+export {setAuthApiBaseUrl} from "./auth/configs";
+export {setActivityBaseUrl} from './activity/config'
 
-export {keywordFilters} from './hooks/useDataTableStateManager'
-export type {XEntity} from './types/xEntity'
+//dashboard
+export {useDashboardPage} from "./dashboard/pages/useDashboardPage"
+//cms
 export type {DataItemPageConfig} from "./cms/pages/useDataItemPage";
 export {useDataItemPage,getDefaultDataItemPageConfig} from "./cms/pages/useDataItemPage";
 
@@ -50,12 +54,6 @@ export {useTaskListPage,getDefaultTaskListPageConfig} from "./cms/pages/useTaskL
 export type {AuditLogListPageConfig}from "./auditLog/pages/useAuditLogListPage";
 export {useAuditLogListPage,getDefaultAuditLogPageConfig} from "./auditLog/pages/useAuditLogListPage";
 export {useAuditLogDetailPage} from "./auditLog/pages/useAuditLogDetailPage";
-
-
-//configuration
-export {setCmsApiBaseUrl} from "./cms/configs";
-export {setAuditLogBaseUrl} from "./auditLog/config";
-export {setAuthApiBaseUrl} from "./auth/configs";
 
 //menu and layout
 export type {SystemMenuLabels} from "./hooks/useMenuItems"
@@ -107,4 +105,6 @@ export {PortalRouter} from './activity/PortalRouter';
 export {useBookmarkFolders} from './activity/services/bookmarks';
 
 //utils
-export {toDatetimeStr} from './types/formatter'
+export {toDatetimeStr, utcStrToDatetimeStr} from './types/formatter'
+export {keywordFilters} from './hooks/useDataTableStateManager'
+export type {XEntity} from './types/xEntity'

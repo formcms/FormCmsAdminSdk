@@ -10,11 +10,14 @@
 
 
 
-export interface BookmarkFolder {
-    userId: string;
-    name: string;
-    description: string;
-    updatedAt: Date;
-    id: number;
-    selected: boolean;
+export enum ActionType {
+    Create = "create",
+    Update = "update",
+    Delete = "delete",
+}
+
+export interface DailyActionCount {
+    action: ActionType;
+    day: Date;
+    count: number;
 }
