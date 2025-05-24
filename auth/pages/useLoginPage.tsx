@@ -21,14 +21,14 @@ export const useLoginPage = (
     const location = useLocation();
     const ref = new URLSearchParams(location.search).get("ref");
 
-    const [email, setEmail] = useState<string>("");
+    const [usernameOrEmail, setUsernameOrEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [error, setError] = useState("");
     const { mutate } = useUserInfo();
     const registerLink = `${baseRouter}${RegisterRoute}`;
 
     async function handleLogin() {
-        const res = await login({ email, password });
+        const res = await login({ usernameOrEmail, password });
         if (res.error) {
             setError(config.loginFailedError);
         } else {
@@ -40,8 +40,8 @@ export const useLoginPage = (
     }
 
     return {
-        email,
-        setEmail,
+        usernameOrEmail,
+        setUsernameOrEmail,
         password,
         setPassword,
         error,

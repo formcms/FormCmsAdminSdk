@@ -10,7 +10,7 @@
 
 
 
-export interface ProfileDto {
-    oldPassword: string;
+export interface LoginReq {
+    usernameOrEmail: string;
     password: string;
 }
