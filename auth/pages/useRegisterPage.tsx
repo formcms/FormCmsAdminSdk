@@ -18,6 +18,7 @@ export const useRegisterPage = (
     baseRouter: string,
     config: RegisterPageConfig = getDefaultUseRegisterPageConfig()
 ) => {
+    const [userName, setUserName] = useState<string>("");
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [confirmPassword, setConfirmPassword] = useState<string>("");
@@ -30,7 +31,7 @@ export const useRegisterPage = (
             return;
         }
         setErrors([]);
-        const { errorDetail: error } = await register({ email, password });
+        const { errorDetail: error } = await register({ userName, email, password });
         if (error) {
             if (error.errors) {
                 setErrors(Object.values(error.errors).map((x: any) => x[0]));
@@ -44,6 +45,8 @@ export const useRegisterPage = (
 
     return {
         loginLink: `${baseRouter}${LoginRoute}`,
+        userName,
+        setUserName,
         email,
         setEmail,
         password,
