@@ -29,6 +29,8 @@ export {useUserInfo} from "./auth/services/auth";
 export type {ChangePasswordPageConfig} from "./auth/pages/useChangePasswordPage";
 export {useChangePasswordPage,getDefaultUseChangePasswordPageConfig} from "./auth/pages/useChangePasswordPage";
 
+export {useSetAvatarPage} from "./auth/pages/useSetAvatarPage";
+
 export type {LoginPageConfig} from "./auth/pages/useLoginPage";
 export {useLoginPage,getDefaultUseLoginPageConfig} from "./auth/pages/useLoginPage";
 
