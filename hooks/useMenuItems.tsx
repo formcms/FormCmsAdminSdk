@@ -1,9 +1,10 @@
 import {useTopMenuBar} from "../auth/services/menu";
-import {ChangePasswordRoute, RoleRoute, UserRoute} from "../auth/AccountRouter";
+import {RoleRoute, UserRoute} from "../auth/AccountRouter";
 import {useAssetEntity} from '../cms/services/asset';
 import {useTaskEntity} from "../cms/services/task";
 import {logout, useUserInfo} from "../auth/services/auth";
 import {UserAccess} from "../auth/types/userAccess";
+import {ChangeAvatarRoute, ChangePasswordRoute} from "../auth/ProfileRouter";
 
 //have to pass access to canAccess(), otherwise got 'Do not call Hooks inside conditions or loops.',https://react.dev/warnings/invalid-hook-call-warning
 function canAccess(entityName: string, access?: UserAccess) {
@@ -109,10 +110,11 @@ export function useSystemMenuItems(
 
 export type UserProfileMenuLabels = {
     changePassword: string,
+    changeAvatar: string,
     logout: string
 }
 
-export function useUserProfileMenu(authRouterPrefix: string) {
+export function useUserProfileMenu(profilePrefix: string) {
     function profileMenu(key: keyof UserProfileMenuLabels) {
         return key
     }
@@ -128,7 +130,13 @@ export function useUserProfileMenu(authRouterPrefix: string) {
             key: profileMenu('changePassword'),
             label: 'Change Password',
             icon: 'pi pi-lock',
-            link: `${authRouterPrefix}${ChangePasswordRoute}`,
+            link: `${profilePrefix}${ChangePasswordRoute}`,
+        },
+        {
+            key: profileMenu('changeAvatar'),
+            label: `Change Avatar`,
+            icon: 'pi pi-sign-out',
+            link: `${profilePrefix}${ChangeAvatarRoute}`,
         },
         {
             key: profileMenu('logout'),

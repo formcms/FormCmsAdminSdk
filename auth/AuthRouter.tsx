@@ -1,6 +1,8 @@
 import {Route, Routes} from "react-router-dom";
 import React from "react";
-import {LoginRoute, RegisterRoute} from "./AccountRouter";
+
+export const LoginRoute= "/login";
+export const RegisterRoute= "/register";
 
 interface AuthRouterProps {
     baseRouter: string;

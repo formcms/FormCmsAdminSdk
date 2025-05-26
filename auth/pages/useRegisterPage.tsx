@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { register } from "../services/auth";
-import { LoginRoute } from "../AccountRouter";
+import {LoginRoute} from "../AuthRouter";
 
 export interface RegisterPageConfig {
     passwordMismatchError: string;

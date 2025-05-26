@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import {getBackendGithubUrl, login, useUserInfo} from "../services/auth";
-import {RegisterRoute} from "../AccountRouter";
+import {RegisterRoute} from "../AuthRouter";
 
 export interface LoginPageConfig {
     loginFailedError: string;

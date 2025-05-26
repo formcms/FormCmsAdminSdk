@@ -59,9 +59,12 @@ export {useAuditLogDetailPage} from "./auditLog/pages/useAuditLogDetailPage";
 export type {SystemMenuLabels} from "./hooks/useMenuItems"
 export {useUserProfileMenu, useAssetMenuItems, useEntityMenuItems, useSystemMenuItems} from "./hooks/useMenuItems";
 export {EntityRouter} from "./cms/EntityRouter";
+
 export {AccountRouter} from "./auth/AccountRouter";
-export {AuditLogRouter} from "./auditLog/AuditLogRouter";
+export {ProfileRouter} from "./auth/ProfileRouter";
 export {AuthRouter} from "./auth/AuthRouter";
+
+export {AuditLogRouter} from "./auditLog/AuditLogRouter";
 
 //global component config
 export type {ComponentConfig} from "./ComponentConfig";
@@ -98,7 +101,8 @@ export type {
 
 //for user portal
 export type {Activity} from './activity/types/activity'
-export type {Bookmark} from './activity/types/bookmark'
+export type {Bookmark,} from './activity/types/bookmark'
+export type {BookmarkFolder,} from './activity/types/bookmarkFolder'
 export {useActivityListPage} from './activity/pages/useActivityListPage';
 export {useBookmarkListPage} from './activity/pages/useBookmarkListPage';
 export {PortalRouter} from './activity/PortalRouter';

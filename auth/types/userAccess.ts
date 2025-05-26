@@ -14,6 +14,7 @@ export interface UserAccess {
     id: string;
     email: string;
     name: string;
+    avatarUrl: string;
     roles: string[];
     readWriteEntities: string[];
     readonlyEntities: string[];

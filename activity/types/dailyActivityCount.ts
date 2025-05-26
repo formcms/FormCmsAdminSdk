@@ -10,14 +10,8 @@
 
 
 
-export enum ActionType {
-    Create = "create",
-    Update = "update",
-    Delete = "delete",
-}
-
-export interface DailyActionCount {
-    action: ActionType;
+export interface DailyActivityCount {
+    activityType: string;
     day: Date;
     count: number;
 }
