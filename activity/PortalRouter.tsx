@@ -20,6 +20,6 @@ export function PortalRouter(
         <Route path={`/notifications`} element={ <NotificationPage/> }/>
         <Route path={`/activities/:type`} element={ <ActivityListPage/> }/>
         <Route path={`/bookmarks/:folderId`} element={ <BookmarkPage/> }/>
-        <Route path='' element={ <Navigate to={`${baseRouter}/activities/view`}/> }/>
+        <Route path='' element={ <Navigate to={`${baseRouter}/notifications`}/> }/>
     </Routes>
 }
