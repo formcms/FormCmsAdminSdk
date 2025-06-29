@@ -23,8 +23,23 @@ export function useBookmarkListPage() {
     const folder = (folders??[]).find(f=>f.id === folderId);
 
     const [errorMessage, setErrorMessage] = useState<string>();
+
+    const orderFields = (updateAtLabel:string, publishedAtLabel:string)=>[
+        {
+            value: ActivityField('publishedAt'),
+            label: publishedAtLabel,
+        },
+        {
+            value: ActivityField('updatedAt'),
+            label: updateAtLabel,
+        }
+    ];
+
+    const searchField = ActivityField('title');
+
     return {
         folder,
+        searchField,orderFields,
         bookmarkResponse, error, isLoading,
         stateManager,
         updateBookmarkFolder, deleteBookmark, deleteBookmarkFolder, errorMessage
