@@ -112,7 +112,7 @@ export type {Notification} from './notifications/types/notification'
 export type {NotificationField} from './notifications/types/utils'
 export {useNotificationPage}from './notifications/pages/useNotificationPage'
 
-export {PortalRouter} from './activity/PortalRouter';
+export type {Price} from './sub/types/price'
 
 //utils
 export {toDatetimeStr, utcStrToDatetimeStr} from './types/formatter'
