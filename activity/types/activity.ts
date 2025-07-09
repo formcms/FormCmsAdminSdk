@@ -21,6 +21,6 @@ export interface Activity {
     url: string;
     image: string;
     subtitle: string;
-    publishedAt: Date;
+    publishedAt: Date | undefined;
     updatedAt: Date;
 }

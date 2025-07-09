@@ -103,12 +103,18 @@ export type {
 
 //for user portal
 export type {Activity} from './activity/types/activity'
-export type {Bookmark,} from './activity/types/bookmark'
-export type {BookmarkFolder,} from './activity/types/bookmarkFolder'
 export {useActivityListPage} from './activity/pages/useActivityListPage';
-export {useBookmarkListPage} from './activity/pages/useBookmarkListPage';
-export {PortalRouter} from './activity/PortalRouter';
+
+export type {Bookmark} from './activity/types/bookmark'
+export type {BookmarkFolder} from './activity/types/bookmarkFolder'
 export {useBookmarkFolders} from './activity/services/bookmarks';
+export {useBookmarkListPage} from './activity/pages/useBookmarkListPage';
+
+export type {Notification} from './notifications/types/notification'
+export type {NotificationField} from './notifications/types/utils'
+export {useNotificationPage}from './notifications/pages/useNotificationPage'
+
+export type {Price} from './sub/types/price'
 
 //utils
 export {toDatetimeStr, utcStrToDatetimeStr} from './types/formatter'

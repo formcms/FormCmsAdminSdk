@@ -33,4 +33,5 @@ export interface Asset {
     id: number;
     linkCount: number;
     links: AssetLink[] | undefined;
+    progress: number;
 }

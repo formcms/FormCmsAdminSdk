@@ -20,6 +20,6 @@ export interface Bookmark {
     url: string;
     image: string;
     subtitle: string;
-    publishedAt: Date;
+    publishedAt: Date | undefined;
     updatedAt: Date;
 }

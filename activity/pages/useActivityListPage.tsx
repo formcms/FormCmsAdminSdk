@@ -17,8 +17,22 @@ export function useActivityListPage(){
 
     const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
+
+    const orderFields = (publishedAtLabel:string, updatedAtLabel:string)=> [
+        {
+            value: ActivityField('publishedAt'),
+            label: publishedAtLabel,
+        },
+        {
+            value: ActivityField('updatedAt'),
+            label: updatedAtLabel,
+        }
+    ];
+
+    const searchField = ActivityField('title');
+
     return {
-        type,
+        type, searchField, orderFields,
         activityResponse, error, isLoading,
         stateManager,
         deleteActivity,errorMessage
