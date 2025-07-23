@@ -50,7 +50,7 @@ function useDailyVisit(n:number) {
 function useDailyActivity(n: number) {
     const {data: dailyActivityCount} = useActivityCounts(n);
     if (dailyActivityCount) {
-        const activityTypes = ['view', 'like', 'share', 'save'];
+        const activityTypes = ['view', 'like', 'share', 'save','comment'];
         const pastDays = getPastDays(n);
         return activityTypes.map(activityType => ({
             label: activityType,

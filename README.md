@@ -1,31 +1,39 @@
 # FormCMS, powered by Asp.net Core(c#) and React, featuring Rest APIs, GraphQL and Grapes.js Page designer.
 
-Welcome to [FormCMS](https://github.com/FormCMS/FormCMS)! 🚀  
-[![GitHub stars](https://img.shields.io/github/stars/FormCMS/FormCMS.svg?style=social&label=Star)](https://github.com/FormCMS/FormCMS/stargazers)
+Welcome to [FormCMS](https://github.com/FormCms/FormCms)! 🚀  
+[![GitHub stars](https://img.shields.io/github/stars/FormCms/FormCms.svg?style=social&label=Star)](https://github.com/FormCMS/FormCMS/stargazers)
 
 Our mission is to make **data modeling**, **backend development**, and **frontend development** as simple and intuitive as filling out a **form** 📋  
 We’d love for you to contribute to FormCMS! Check out our [CONTRIBUTING guide](https://github.com/formcms/formcms/blob/main/CONTRIBUTING.md) to get started.  
 Love FormCMS? Show your support by giving us a ⭐ on GitHub and help us grow! 🌟  
-Have suggestions? Connect with us on Reddit! https://www.reddit.com/r/FormCMS/
+
+Have suggestions? [Report an Issue](https://github.com/FormCms/FormCms/issues).
+
 
 
 ---
 ## What is FormCMS?
 
-**FormCMS** is an open-source Content Management System designed to streamline and accelerate web development workflows. Ideal for CMS projects and general web applications, it minimizes repetitive REST/GraphQL API development while offering powerful tools for data management, page design, and user interaction.
+**FormCMS** is an open-source Content Management System designed to simplify and accelerate web development workflows for CMS projects and general web applications. It streamlines data modeling, backend development, and frontend design, making them as intuitive as filling out a form. With a focus on fostering **user engagement**, FormCMS provides robust social features alongside powerful tools for data management, API development, and dynamic page creation.
 
 ### Key Features
 
-1. **Data Modeling and CRUD with RESTful APIs**  
-   FormCMS provides robust data modeling capabilities and built-in RESTful APIs for Create, Read, Update, and Delete (CRUD) operations. These are complemented by a React-based admin panel, enabling efficient and intuitive data management for developers and content creators.
-
-2. **GraphQL Queries and Grapes.js Page Designer**  
-   Leverage GraphQL to fetch multiple related entities in a single query, boosting client-side performance, security, and flexibility. Additionally, the integrated [Grapes.js](https://grapesjs.com/) page designer, powered by [Handlebars](https://handlebarsjs.com/), allows for effortless creation of dynamic, data-bound pages, streamlining the design process.
-
-3. **User Social Activity**  
-   FormCMS now includes user engagement features, allowing users to like, share, and save content, with the system tracking view counts. Users can access their interaction history, liked posts, and saved posts through a dedicated user portal, enhancing interactivity and personalization.
-
-
+#### 1. **Data Modeling and CRUD with RESTful APIs**  
+   FormCMS offers intuitive data modeling and built-in RESTful APIs for Create, Read, Update, and Delete (CRUD) operations. These are complemented by a React-based admin panel, enabling seamless data management for developers and content creators alike.
+#### 2. **GraphQL Queries and Grapes.js Page Designer**  
+   Harness the power of GraphQL to fetch multiple related entities in a single query, enhancing client-side performance, security, and flexibility. The integrated [Grapes.js](https://grapesjs.com/) page designer, powered by [Handlebars](https://handlebarsjs.com/), allows effortless creation of dynamic, data-bound pages, simplifying the design process.
+#### 3. **Rich Social Engagement Features**  
+   FormCMS enhances user interaction with built-in social capabilities:  
+   - **Likes, Shares, and Saves**: Users can engage with content by liking, sharing, or saving it, with the system tracking view counts for analytics.  
+   - **User Portal**: A personalized portal allows users to access their interaction history, view liked and saved content, and manage their bookmarks, fostering deeper engagement.  
+   - **Notifications**: Users receive real-time alerts for actions like comment likes or replies, boosting interactivity.  
+   - **Comments**: A YouTube-inspired commenting system encourages community interaction and discussion.  
+   - **Popular Score**: A dynamic metric ranks content based on views, likes, shares, and recency, powering trending sections and personalized feeds.  
+#### 4. **Additional Features for Enhanced Functionality**  
+   - **Video Processing**: Converts MPEG files to HLS format for seamless streaming, managed by a dedicated plugin.  
+   - **Payment Integration**: Supports subscription-based access to all content or one-time purchases for individual items.  
+   - **Authentication**: Built on the ASP.NET Core Identity Framework, with flexible options for customization or replacement.  
+By combining robust CMS functionality with a strong emphasis on social engagement, FormCMS empowers developers to create interactive, scalable, and user-centric web applications with ease.  
 
 ---
 ## New CMS? — Data Modeling
@@ -603,6 +611,75 @@ Permissions filter the library dialog and validate actions against ownership and
 
 
 
+
+
+---
+
+## Asset Security Concern
+
+<details>  
+<summary>  
+FormCMS takes measures to reduce security vulnerabilities  
+</summary>  
+
+### Large File Limitation
+
+By default, ASP.NET Core buffers uploaded files entirely in memory, which can lead to excessive memory consumption.
+FormCMS restricts individual file uploads to a default size of 10MB. This limit is configurable.
+
+```csharp
+// Set max file size to 15MB  
+builder.AddSqliteCms(databaseConnectionString, settings => settings.MaxRequestBodySize = 1024 * 1024 * 15),  
+```
+
+### Chunked Uploading
+
+For files exceeding the maximum size limit, FormCMS supports chunked uploading.
+The client uploads the file in 1MB chunks.
+
+### Custom File Storage Location
+
+FormCMS supports both local and cloud-based file storage.
+By default, uploaded files are saved to `<app>/wwwroot/files`.
+However, this default setting may present some challenges:
+
+1. It's difficult to retain uploaded files when redeploying the application.
+2. Uploading large files to the system drive can exhaust disk space.
+
+You can configure a different path for file storage as shown below:
+
+```csharp
+builder.AddSqliteCms(databaseConnectionString, settings => settings.LocalFileStoreOptions.PathPrefix = "/data/"),  
+```
+
+### File Type Restrictions and Signature Verification
+
+FormCMS allows uploading only specific file types: `'gif'`, `'png'`, `'jpeg'`, `'jpg'`, `'zip'`, `'mp4'`, `'mpeg'`, `'mpg'`.
+It verifies the binary signature of each file to prevent spoofing.
+You can extend the file signature dictionary as needed.
+
+```csharp
+public Dictionary<string, byte[][]> FileSignature { get; set; } = new()  
+{  
+    {  
+        ".gif", [  
+            "GIF8"u8.ToArray()  
+        ]  
+    },  
+    {  
+        ".png", [  
+            [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]  
+        ]  
+    },  
+```
+
+</details>  
+
+---
+
+
+
+
 ---
 ## Date and Time
 <details>
@@ -790,6 +867,54 @@ To customize text:
 
 Replace table columns, input fields, or other UI components with your custom versions as needed.
 </details>  
+
+
+---
+## Video Processing Plugin
+<details>
+<summary>
+FormCMS's video processing plugin converts MPEG files to HLS format, enabling seamless online video streaming.
+</summary>
+
+### Overview
+The video processing plugin can be deployed as a standalone node for scalability or deployed to the same node as the web app for simplicity.
+
+### Deployment Options
+
+#### Distributed Deployment
+```
+Web Apps (n) ┌──→ NATS Message Broker ───→ Video Processing Apps (m)
+             │                                 │
+             └────────→ Cloud Storage ◄────────┘
+```
+- Multiple web apps send video processing requests via a NATS message broker.
+- Video processing apps (scalable instances) convert videos and store outputs in cloud storage.
+
+#### Single-Node Deployment
+```
+Web App ───→ Channel ───→ Video Processing Worker
+   │                                     │
+   └──────→ Storage (Local/Cloud) ◄──────┘
+```
+- A single web app communicates with a background worker via a channel.
+- Processed videos are saved to local or cloud storage.
+
+### Video Upload
+Upload videos as you would any asset. When the server detects a video file, it triggers a processing event by sending a message.
+
+### Video Processing
+Upon receiving the message, the plugin:
+1. Converts the MPEG file to an HLS-compliant `.m3u8` playlist and segmented video files.
+2. Stores the output in cloud storage.
+
+### Video Playback
+Integrate videos into your site using the Grape.js Video component:
+- Drag and drop the component into your layout.
+- Set the source to `{{video_field_name.url}}` for seamless playback.
+
+</details>
+
+
 
 ---
 ## **GraphQL Query**
@@ -1541,6 +1666,8 @@ To bind a `Data List` to a component, follow these steps:
 |               | - **Infinite Scroll**: Automatically loads more content as users scroll. Ideal for a single component at the bottom of the page.                                      |
 |               | - **None**: Displays all available content at once without requiring additional user actions.                                                                          |
 
+### Copy component between Pages   
+You can copy a component to the clipboard on one page and paste it from the clipboard on another page.   
 </details>
 
 ---
@@ -1864,7 +1991,7 @@ The **Popular Score** is a simple way to measure how engaging content (like post
 ---
 
 ### Calculation of the Popular Score
-The Popular Score combines views, likes, shares, and time since posting, with each part weighted to reflect its importance. Newer content gets a boost, while older content loses a bit of its score.
+The Popular Score combines views, likes, shares, bookmarks, comments, and time since posting, with each part weighted to reflect its importance. Newer content gets a boost, while older content loses a bit of its score.
 
 Scores are updated frequently (e.g., every minute) and stored in a fast system like Redis to keep things running smoothly.
 To favor fresh content, the score is slightly reduced for older posts. The older the content, the more its score drops.
@@ -1886,6 +2013,103 @@ To handle lots of interactions without slowing down:
 - **Fast Storage**: Use Redis to store scores for instant access.
 - **Background Processing**: Update scores in the background to keep the platform responsive.
 
+</details>
+
+
+## Comments Plugin
+<details>
+<summary>
+FormCMS's Comments Plugin enables adding a comments feature to any entity, enhancing user interaction.  
+</summary>
+
+### Adding the Comments Component
+1. In the Page Designer, drag the `Comments` component from the `Blocks` toolbox onto your page. Customize its layout as needed.  
+2. From the `Layout Manager` toolbox, select the `Comment-form` component and set its `Entity Name` trait.  
+
+After configuring, click `Save and Publish` to enable the comments feature. The Comments Plugin is designed for `Detail Pages`, where comments are associated with an `Entity Name` and `RecordId` (automatically retrieved from the page URL parameters).  
+
+### Comment Interactions
+Authenticated users can add, edit, delete, like, and reply to comments. The Comments Plugin sends events for these actions, which are handled by other plugins. For example:  
+- The Notification Plugin processes these events to send notice to the comment's creator.  
+- The Engage Activity Plugin uses these events to update the record's engagement score.  
+
+### Integrating Comments with GraphQL
+Each `Detail Page` is linked to a FormCMS GraphQL query. To include comments:  
+- Add the `Comments` field to your GraphQL query.  
+- The Comments Plugin automatically attaches comment data to the query results.  
+
+### Update Score and Daily Activity
+
+* Each comment contributes to increasing the record's popularity score.
+* The admin panel displays the daily comment count.
+
+</details>
+
+
+
+
+---
+## Notification Plugin
+<details>
+<summary>
+FormCMS's Notification Plugin alerts users when their comments are liked or replied to, boosting engagement.  
+</summary>
+
+### Adding the Notification Bell  
+The Notification Bell displays the number of unread notifications for a user, enhancing their interaction with the platform. To add it:  
+- In the Page Designer, drag the `Notification Bell` block from the toolbox onto your page.  
+
+### Viewing Notifications in the User Portal  
+When a user clicks the Notification Bell, they are directed to the Notification List page in the User Portal. From there, users can:  
+- View a list of their notifications.  
+- Click any notification to access the associated content, such as the original comment or data.  
+
+</details>
+
+
+
+
+
+---
+## Subscription
+
+<details>
+<summary>
+A website can integrate a subscription feature to generate revenue.
+</summary>
+
+### Overview
+FormCms integrates Stripe to ensure secure payments. FormCms does not store any credit card information; it only uses the Stripe subscription ID to query subscription status.
+Admins and users can visit the Stripe website to view transactions and logs.
+
+### Register Stripe Developer Account and Obtain Keys
+Follow the Stripe documentation to obtain the Stripe Publishable Key and Secret Key.
+Add these keys to the `appSettings.json` file as follows:
+```json
+"Stripe": {
+"SecretKey": "sk_***",
+"PublishableKey": "pk_***"
+}
+```
+
+### Set the Access Level
+For the online course demo system at https://fluent-cms-admin.azurewebsites.net/, each course may include multiple lessons.
+The course video serves as an introduction, and the first lesson of a course is free. When users attempt to access further lessons, they are restricted and prompted by FormCms to subscribe.
+
+To implement this, add an `accessLevel` field to the `lesson` entity.
+Then, include a condition `accessLevel:{lte: $access_level}` in the query to provide data for the Lesson Page:
+```graphql
+query lesson($lesson_id:Int, $access_level:Int){
+lesson(idSet:[$lesson_id],
+accessLevel:{lte: $access_level}
+){
+id, name, description, introduction, accessLevel
+}
+```
+
+### The Subscription Page
+When an unpaid user attempts to access restricted content (requiring a subscription), FormCms redirects them to the Stripe website for payment.
+After payment, users can view their subscription status in the user portal.
 </details>
 
 ---
