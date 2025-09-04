@@ -1,6 +1,7 @@
 import {encodeDataTableState, useDataTableStateManager} from "../../hooks/useDataTableStateManager";
 import {FetchingStatus} from "../../containers/FetchingStatus";
 import {
+    addEmitMessageTask,
     addExportTask,
     archiveExportTask,
     getAddImportTaskUploadUrl,
@@ -17,13 +18,16 @@ import {XEntity} from "../../types/xEntity";
 import {formater} from "../../types/formatter";
 import {toDataTableColumns} from "../../types/attrUtils";
 import {GeneralComponentConfig} from "../../ComponentConfig";
+import {useForm} from "react-hook-form";
 
 export interface TaskListPageConfig {
     exportSuccess: string;
     importSuccess: string;
     archiveSuccess: string;
     uploadImportDialogHeader: string
+    emitMsgDialogHeader: string
     taskLabels: SystemTaskLabels | undefined | null
+    submitEmitMessageLabel:string
 }
 
 export function getDefaultTaskListPageConfig(): TaskListPageConfig {
@@ -32,6 +36,8 @@ export function getDefaultTaskListPageConfig(): TaskListPageConfig {
         importSuccess: `Task added!`,
         archiveSuccess: `Export task archived!`,
         uploadImportDialogHeader: 'Upload a file to import',
+        emitMsgDialogHeader: 'Input the entity name to emit message',
+        submitEmitMessageLabel: 'Submit',
         taskLabels: undefined
     };
 }
@@ -47,14 +53,15 @@ export function useTaskListPage(
     const {data, error, isLoading, mutate} = useTasks(encodeDataTableState(stateManager.state));
 
     // State
-    const [visible, setVisible] = useState(false);
+    const [importDialogVisible, setImportDialogVisible] = useState(false);
+    const [emitMsgDialogVisible, setEmitMsgDialogVisible] = useState(false);
 
+    const {register, handleSubmit, control} = useForm();
     const {handleErrorOrSuccess, CheckErrorStatus} = useCheckError(componentConfig);
     const LazyDataTable = componentConfig.dataComponents.lazyTable;
     const Dialog = componentConfig.etc.dialog;
     const Button = componentConfig.etc.button;
     const Upload = componentConfig.etc.upload;
-
 
     async function handleAddExportTask() {
         const {error} = await addExportTask();
@@ -68,16 +75,25 @@ export function useTaskListPage(
 
     async function onAddImportTaskUpload() {
         await mutate();
-        setVisible(false);
+        setImportDialogVisible(false);
     }
 
     async function handleAddImportTask() {
-        setVisible(true);
+        setImportDialogVisible(true);
     }
 
     async function handleArchiveExportTask(id: number) {
         const {error} = await archiveExportTask(id);
         await handleErrorOrSuccess(error, pageConfig.archiveSuccess, mutate);
+    }
+
+    async function handleAddEmitMessageTask() {
+        setEmitMsgDialogVisible(true);
+    }
+
+    async function onAddEmitMessageTask(formData:any){
+        await addEmitMessageTask(formData);
+        setEmitMsgDialogVisible(false);
     }
 
     const actionBodyTemplate = (item: SystemTask) => {
@@ -121,13 +137,31 @@ export function useTaskListPage(
                     )}
                 </div>
                 <Dialog
-                    visible={visible}
+                    visible={importDialogVisible}
                     header={pageConfig.uploadImportDialogHeader}
                     modal
                     className="p-fluid"
-                    onHide={() => setVisible(false)}
+                    onHide={() => setImportDialogVisible(false)}
                 >
                     <Upload url={getAddImportTaskUploadUrl()} onUpload={onAddImportTaskUpload} />
+                </Dialog>
+                <Dialog
+                    visible={emitMsgDialogVisible}
+                    header={pageConfig.emitMsgDialogHeader}
+                    modal
+                    className="p-fluid"
+                    onHide={() => setEmitMsgDialogVisible(false)}
+                >
+                    <form onSubmit={handleSubmit(onAddEmitMessageTask)} >
+                        <div className="formgrid grid">
+                            <input className={"w-full p-inputtext p-component"}
+                                type="text"
+                                placeholder="Enter Entity name"
+                                {...register("entityName", { required: true })}
+                            />
+                            <Button type={'submit'} label={pageConfig.submitEmitMessageLabel}/>
+                        </div>
+                    </form>
                 </Dialog>
             </>
         );
@@ -137,6 +171,7 @@ export function useTaskListPage(
         handleAddExportTask,
         handleAddImportTask,
         handleImportDemoData,
+        handleAddEmitMessageTask,
         TaskListMain,
         CheckErrorStatus,
     };

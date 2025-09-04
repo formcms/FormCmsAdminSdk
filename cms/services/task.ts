@@ -18,6 +18,10 @@ export  function addExportTask() {
     return catchResponse(()=>axios.post(fullCmsApiUrl(`/tasks/export`)));
 }
 
+export  function addEmitMessageTask(data:any) {
+    return catchResponse(()=>axios.post(fullCmsApiUrl(`/tasks/emit`), data));
+}
+
 export  function importDemoData() {
     return catchResponse(()=>axios.post(fullCmsApiUrl(`/tasks/import/demo`)));
 }
