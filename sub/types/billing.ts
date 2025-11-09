@@ -14,6 +14,7 @@ export enum SubscriptionStatus {
     Active = "active",
     Expired = "expired",
     Canceled = "canceled",
+    Invalid = "invalid",
 }
 
 export interface Price {
@@ -31,6 +32,7 @@ export interface Billing {
     subscriptionId: string;
     priceId: string;
     status: SubscriptionStatus | undefined;
+    billingCycleAnchor: Date | undefined;
     price: Price | undefined;
     id: number;
 }

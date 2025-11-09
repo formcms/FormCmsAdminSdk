@@ -22,11 +22,13 @@ export enum TaskType {
     Default = "default",
     Export = "export",
     Import = "import",
+    EmitMessage = "emitMessage",
 }
 
 export interface SystemTask {
     taskStatus: TaskStatus;
     type: TaskType;
+    taskSettings: string;
     createdBy: string;
     id: number;
     taskId: string;

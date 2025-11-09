@@ -11,6 +11,12 @@ export function createSubSession(priceId: string)  {
         axios.post<Session>(fullActivityUrl(`/subscriptions/sub_sessions?price=${priceId}&back=${window.location.href}`)));
 }
 
+export function useSubsKey()  {
+    let res = useSWR<string>(
+        fullSubUrl(`/subscriptions/sub_key`), fetcher, swrConfig);
+    return {...res, error: decodeError(res.error)}
+}
+
 export function useSubBilling()  {
     let res = useSWR<Billing>(
         fullSubUrl(`/subscriptions/sub_info`), fetcher, swrConfig);
