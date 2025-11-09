@@ -2,7 +2,7 @@
 export {setCmsApiBaseUrl} from "./cms/configs";
 export {setAuditLogBaseUrl} from "./auditLog/config";
 export {setAuthApiBaseUrl} from "./auth/configs";
-export {setActivityBaseUrl} from './activity/config'
+export {setActivityBaseUrl} from './engagements/config'
 
 //dashboard
 export {useDashboardPage} from "./dashboard/pages/useDashboardPage"
@@ -102,13 +102,13 @@ export type {
 } from './components/inputs'
 
 //for user portal
-export type {Activity} from './activity/types/activity'
-export {useActivityListPage} from './activity/pages/useActivityListPage';
+export type {EngagementStatus} from './engagements/types/engagement'
+export {useActivityListPage} from './engagements/pages/useActivityListPage';
 
-export type {Bookmark} from './activity/types/bookmark'
-export type {BookmarkFolder} from './activity/types/bookmarkFolder'
-export {useBookmarkFolders} from './activity/services/bookmarks';
-export {useBookmarkListPage} from './activity/pages/useBookmarkListPage';
+export type {Bookmark} from './engagements/types/bookmark'
+export type {BookmarkFolder} from './engagements/types/bookmarkFolder'
+export {useBookmarkFolders} from './engagements/services/bookmarks';
+export {useBookmarkListPage} from './engagements/pages/useBookmarkListPage';
 
 export type {Notification} from './notifications/types/notification'
 export type {NotificationField} from './notifications/types/utils'

@@ -1,6 +1,6 @@
 import {useParams} from "react-router-dom";
 import {encodeDataTableState, useDataTableStateManager} from "../../hooks/useDataTableStateManager";
-import {ActivityField} from "../types/util";
+import {EngagementField} from "../types/util";
 import {useEffect, useState} from "react";
 import {updateBookmarkFolder as $updateBookmarkFolder,
     deleteBookmark as $deleteBookmark,
@@ -14,7 +14,7 @@ export function useBookmarkListPage() {
     const folderId = Number(params.folderId);
     //data
     const initQs = location.search.replace("?", "");
-    const stateManager = useDataTableStateManager('bookmarks' + folderId, ActivityField('id'), 8, [], initQs)
+    const stateManager = useDataTableStateManager('bookmarks' + folderId, EngagementField('id'), 8, [], initQs)
     const qs = encodeDataTableState(stateManager.state);
     const {data : bookmarkResponse, error, isLoading,mutate:mutateBookmark} =  useBookmarks(+folderId!,qs);
     useEffect(() => window.history.replaceState(null, "", `?${qs}`), [stateManager.state]);
@@ -26,16 +26,16 @@ export function useBookmarkListPage() {
 
     const orderFields = (updateAtLabel:string, publishedAtLabel:string)=>[
         {
-            value: ActivityField('publishedAt'),
+            value: EngagementField('publishedAt'),
             label: publishedAtLabel,
         },
         {
-            value: ActivityField('updatedAt'),
+            value: EngagementField('updatedAt'),
             label: updateAtLabel,
         }
     ];
 
-    const searchField = ActivityField('title');
+    const searchField = EngagementField('title');
 
     return {
         folder,

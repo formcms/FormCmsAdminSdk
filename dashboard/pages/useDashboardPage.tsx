@@ -1,6 +1,6 @@
 import {useAuditLogDailyCounts} from '../../auditLog/services/auditLog'
 import {ActionType} from "../../auditLog/types/auditLog";
-import {useActivityCounts, usePageVisitCount, useVisitCounts} from "../../activity/services/activities";
+import {useActivityCounts, usePageVisitCount, useVisitCounts} from "../../engagements/services/engagements";
 
 export function useDashboardPage(n:number) {
     const pastDays = getPastDayLabels(n);

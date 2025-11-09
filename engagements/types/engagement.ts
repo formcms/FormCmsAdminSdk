@@ -10,10 +10,10 @@
 
 
 
-export interface Activity {
+export interface EngagementStatus {
     entityName: string;
-    recordId: number;
-    activityType: string;
+    recordId: string;
+    engagementType: string;
     userId: string;
     isActive: boolean;
     id: number;

@@ -1,7 +1,7 @@
-import {Activity} from "./activity";
+import {EngagementStatus} from "./engagement";
 import {Bookmark} from "./bookmark";
 
-export function ActivityField(key: keyof Activity) {
+export function EngagementField(key: keyof EngagementStatus) {
     return key as string;
 }
 

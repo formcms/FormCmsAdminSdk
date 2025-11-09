@@ -1,7 +1,7 @@
 import {catchResponse, decodeError, fetcher, swrConfig} from "../../utils/apiUtils";
 import {Session} from "../types/session";
 import axios from "axios";
-import {fullActivityUrl} from "../../activity/config";
+import {fullActivityUrl} from "../../engagements/config";
 import useSWR from "swr";
 import {fullSubUrl} from "../config";
 import {Billing} from "../types/billing";
