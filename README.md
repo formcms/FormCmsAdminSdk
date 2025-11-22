@@ -1817,26 +1817,26 @@ You can duplicate any schema version and save it as a new schema.
 
 ---
 
-## Social Activity
+## User Engagement 
 <details>  
 <summary>  
-The Social Activity feature enhances user engagement by enabling views, likes, saves, and shares. It also provides detailed analytics to help understand content performance.
+The user engaagment feature enhances user engagement by enabling views, likes, saves, and shares. It also provides detailed analytics to help understand content performance.
 </summary>  
 
 ### Endpoints
-- `GET /api/activities/{entityName}/{recordId:long}`  
-  Increments the view count by 1. Returns the active status and count for: like, view, share, and save.
+- `GET /api/engagements/{entityName}/{recordId:long}`  
+  Increments the view count by 1. Returns the engagement status and count for: like, view, share, and save.
 
-- `GET /api/activities/record/{entityName}/{recordId}?type={view|share}`  
-  Retrieves activity info of type `view` or `share` for a given entity record.
+- `GET /api/engagements/record/{entityName}/{recordId}?type={view|share}`  
+  Retrieves engagement info of type `view` or `share` for a given entity record.
 
-- `POST /api/activities/toggle/{entityName}/{recordId}?type={like|save}&active={true|false}`  
-  Toggles the activity (like or save) on or off based on the `active` flag.
+- `POST /api/engagements/toggle/{entityName}/{recordId}?type={like|save}&active={true|false}`  
+  Toggles the engagement (like or save) on or off based on the `active` flag.
 
 ### Challenges
 The system cannot leverage traditional output caching due to dynamic nature of the content, which may lead to high database load under heavy traffic.
 
-To address this, buffered writes are introduced. Activity events are first stored in a buffer (in-memory or Redis), and then periodically flushed to the database, balancing performance and accuracy.
+To address this, buffered writes are introduced. Engagement events are first stored in a buffer (in-memory or Redis), and then periodically flushed to the database, balancing performance and accuracy.
 
 ---
 
@@ -1866,7 +1866,7 @@ export const options = {
 
 export default function () {
     const id = Math.floor(Math.random() * 100) + 1;
-    const res = http.get(`http://localhost:5000/api/activities/post/${id}`);
+    const res = http.get(`http://localhost:5000/api/engagements/post/${id}`);
     ResponseTime.add(res.timings.duration);
     check(res, { 'status is 200': (r) => r.status === 200 });
 }
@@ -1928,7 +1928,7 @@ Choose the approach based on your system’s scalability requirements and infras
 Users can access their view history, liked posts, bookmarked posts, and manage authentication via GitHub OAuth in a personalized portal.  
 </summary> 
 
-The **User Portal** in FormCMS provides a centralized interface for users to manage their social activity, including viewing their interaction history, liked posts, bookmarked content, and authenticating seamlessly via GitHub OAuth. This enhances user engagement by offering a tailored experience to revisit, organize content, and simplify account creation.
+The **User Portal** in FormCMS provides a centralized interface for users to manage their social engagement, including viewing their interaction history, liked posts, bookmarked content, and authenticating seamlessly via GitHub OAuth. This enhances user engagement by offering a tailored experience to revisit, organize content, and simplify account creation.
 
 ### History
 Users can view a list of all items they have previously accessed, such as pages, posts, or other content. Each item in the history is displayed with a clickable link, allowing users to easily revisit the content.
@@ -2030,16 +2030,16 @@ FormCMS's Comments Plugin enables adding a comments feature to any entity, enhan
 After configuring, click `Save and Publish` to enable the comments feature. The Comments Plugin is designed for `Detail Pages`, where comments are associated with an `Entity Name` and `RecordId` (automatically retrieved from the page URL parameters).  
 
 ### Comment Interactions
-Authenticated users can add, edit, delete, like, and reply to comments. The Comments Plugin sends events for these actions, which are handled by other plugins. For example:  
-- The Notification Plugin processes these events to send notice to the comment's creator.  
-- The Engage Activity Plugin uses these events to update the record's engagement score.  
+Authenticated users can add, edit, delete, like, and reply to comments. The Comments Plugin sends events for these actions, which are handled by other plugins. For example:
+- The Notification Plugin processes these events to send notice to the comment's creator.
+- The Engagement Plugin uses these events to update the record's engagement score.
 
 ### Integrating Comments with GraphQL
-Each `Detail Page` is linked to a FormCMS GraphQL query. To include comments:  
-- Add the `Comments` field to your GraphQL query.  
-- The Comments Plugin automatically attaches comment data to the query results.  
+Each `Detail Page` is linked to a FormCMS GraphQL query. To include comments:
+- Add the `Comments` field to your GraphQL query.
+- The Comments Plugin automatically attaches comment data to the query results.
 
-### Update Score and Daily Activity
+### Update Score and Daily Engagement
 
 * Each comment contributes to increasing the record's popularity score.
 * The admin panel displays the daily comment count.

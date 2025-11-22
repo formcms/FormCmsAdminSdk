@@ -55,7 +55,7 @@ function useDailyActivity(n: number) {
         return activityTypes.map(activityType => ({
             label: activityType,
             data: pastDays.map(day =>
-                dailyActivityCount.find(c => c.activityType === activityType && dateEqual(c.day, day))?.count ?? 0
+                dailyActivityCount.find(c => c.engagementType === activityType && dateEqual(c.day, day))?.count ?? 0
             )
         }));
     }
