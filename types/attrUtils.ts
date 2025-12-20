@@ -27,7 +27,7 @@ export type DateTableColumn = {
 export function toDataTableColumns(attr: XAttr, onClick?: DateTableColumn['onClick'], locked?:boolean): DateTableColumn {
 
     const field = attr.displayType == "lookup" || attr.displayType === "treeSelect"
-        ? attr.lookup!.name + "." + attr.lookup!.labelAttributeName
+        ? attr.field + "." + attr.lookup!.labelAttributeName
         : attr.field;
 
     let contentType: DateTableColumn['contentType'] = 'text';
